@@ -1,0 +1,27 @@
+ <!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="/client/css/main.css">
+	</head>
+	<body>
+
+	 <div id = "LoginDiv">
+		<label for="username">Username:</label>
+		<input type="text" id="LoginDiv-username"></input><br>
+		<label for="password">Password:</label>
+		<input type="password" id="LoginDiv-password"></input>
+
+		<div id="buttonDiv"></div>
+			<button id="LoginDiv-signIn">Sign In</button>
+			<button id="LoginDiv-signUp">Sign Up</button>
+		</div>
+	</div>
+	</body>
+</html>
+
+<script src="https://cdn.socket.io/socket.io-1.4.5.js">
+</script>
+
+<script type="text/javascript">
+	var socket = io();
+</script>
