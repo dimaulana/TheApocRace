@@ -1,0 +1,27 @@
+{
+  "name": "comp4770",
+  "version": "1.0.0",
+  "description": "Team project at Memorial University",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.16.4",
+    "socket.io": "^2.2.0"
+  },
+  "engines": {
+  	  "node": "4.1.x"
+  },
+  "devDependencies": {},
+  "scripts": {
+  	"start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hparpia8/COMP4770.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hparpia8/COMP4770/issues"
+  },
+  "homepage": "https://github.com/hparpia8/COMP4770#readme"
+}
