@@ -16,6 +16,23 @@
 			<button id="LoginDiv-signUp">Sign Up</button>
 		</div>
 	</div>
+
+	<div id="gameDiv" style="display: none;">
+		<!-- <canvas id="ctx" width="500" height="500" style="border=2px; border-color: black; background-color: lightgray"></canvas> -->
+
+
+		<!-- Chat box -->
+		<div id="chatDiv" >
+			<h3> Welcome to Apocalyptic Chat </h3>
+			<div id="chat-box">
+			</div>
+
+			<form id="chat-form">
+				<input id="chat-input" type="text"> </input>
+			</form>
+		</div>
+	</div>
+
 	</body>
 </html>
 
@@ -24,4 +41,64 @@
 
 <script type="text/javascript">
 	var socket = io();
+
+	//Sign In 
+	var signDiv = document.getElementById('LoginDiv');
+	var signDivUsername = document.getElementById('LoginDiv-username');
+	var signDivSignIn = document.getElementById('LoginDiv-signIn');
+	var signDivSignUp = document.getElementById('LoginDiv-signUp');
+	var signDivPassword = document.getElementById('LoginDiv-password');
+
+	signDivSignIn.onclick = function() {
+		console.log
+		socket.emit('signIn', {username:signDivUsername.value, 
+			password:signDivPassword.value}); 
+	}
+
+	signDivSignUp.onclick = function() {
+		socket.emit('signUp', {username:signDivUsername.value, 
+			password:signDivPassword.value}); 
+	}
+
+	socket.on('signInResponse', function(data) {
+		if (data.success) {
+			signDiv.style.display = 'none';
+			gameDiv.style.display = 'inline-block';
+		}
+		else 
+			alert("Sign in failed.");
+	});
+
+	socket.on('signUpResponse', function(data) {
+		if (data.success) {
+			alert("Sign up successful.");
+		}
+		else 
+			alert("Sign up unsuccessful.");
+	});
+
+	// Chat stuff
+	var chatBox = document.getElementById("chat-box");   
+	var chatInput = document.getElementById("chat-input");
+	var chatForm = document.getElementById("char-form");
+
+	socket.on('addToChat', function(data) {
+		chatBox.innerHTML += '<div>' + data + '<div>';
+	});
+
+	socket.on('evalAnswer', function(data) {
+		console.log(data);
+	});
+
+	chatForm.onsubmit = function(e) {
+		e.preventDefault();
+		if (chatInput.value[0] === '/')
+			socket.emit('evalServer', chatInput.value.slice(1));
+		else
+			socket.emit('sendMsgToServer', chatInput.value);
+
+		chatInput.value = '';
+	}
+
+
 </script>

@@ -1,5 +1,6 @@
-//var mongojs = require("mongojs");
-//var db = mongojs('localhost:27017/myGame', ['account', 'progress']);
+var mongojs = require("mongojs");
+// NOTE: Our db run for now is apoRun
+var db = mongojs('localhost:27017/apoRun', ['account', 'progress']);
 
 var express = require('express');
 var app = express();
@@ -17,9 +18,9 @@ console.log('Server started');
 
 var DEBUG = true;
 
+var SOCKET_LIST = {};
+
 var isValidPassword = function(data, cb) {
-	// TODO: Make use of db
-	return cb(true);
 	db.account.find({username:data.username, password:data.password}, function(err, res) {
 		if (res.length > 0)
 			cb(true);
@@ -30,7 +31,6 @@ var isValidPassword = function(data, cb) {
 }
 
 var isUsernameTaken = function(data, cb) {
-	return cb(false);
 	db.account.find({username:data.username}, function(err, res) {
 		if (res.length > 0)
 			cb(true);
@@ -41,7 +41,6 @@ var isUsernameTaken = function(data, cb) {
 }
 
 var addUser = function(data, cb) {
-	return cb();
 	db.account.insert({username:data.username, password:data.password}, function(err) {
 		cb();
 	});
@@ -49,8 +48,60 @@ var addUser = function(data, cb) {
 
 var io = require('socket.io')(serv,{});
 io.sockets.on('connection',function(socket) {
-	console.log("Connected");
+	socket.id = Math.random();
+	SOCKET_LIST[socket.id] = socket;
+
+	socket.on('signIn',function(data) {
+		isValidPassword(data, function(res) {
+			if (res) {
+				//Player.onConnect(socket);
+				socket.emit('signInResponse', {success:true});
+			}
+			else {
+				socket.emit('signInResponse', {success:false});
+			}
+		});
+	});
+
+	socket.on('signUp',function(data) {
+		isUsernameTaken(data, function(res) {
+			if(res){
+				socket.emit('signUpResponse', {success:false});
+			}
+			else {
+				addUser(data, function() {
+					socket.emit('signUpResponse', {success:true}); 
+				});
+			}		
+		});
+	});
+
+	
+	socket.on('disconnect',function() {
+		delete SOCKET_LIST[socket.id];
+		//Player.onDisconnect(socket);
+	});
+
+	socket.on('sendMsgToServer',function(data) {
+		var playerName = ("" + socket.id).slice(2,7);
+		for (var i in SOCKET_LIST) {
+			SOCKET_LIST[i].emit('addToChat', playerName + ': ' + data);
+		}
+
+	});
+
+	socket.on('evalServer',function(data) {
+		if (!DEBUG)
+			return;
+		
+		var res = eval(data)
+		for (var i in SOCKET_LIST) {
+			SOCKET_LIST[i].emit('evalAnswer', res);
+		}
+
+	})
 });
 
+// Update player and bullet
 setInterval(function() {
 },1000/25);
