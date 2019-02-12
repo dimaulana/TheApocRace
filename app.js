@@ -2,6 +2,9 @@ var mongojs = require("mongojs");
 // NOTE: Our db run for now is apoRun
 var db = mongojs('localhost:27017/apoRun', ['account', 'progress']);
 
+// Files needed for game
+require('./Assets');
+
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
