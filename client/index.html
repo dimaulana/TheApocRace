@@ -80,7 +80,7 @@
 	// Chat stuff
 	var chatBox = document.getElementById("chat-box");   
 	var chatInput = document.getElementById("chat-input");
-	var chatForm = document.getElementById("char-form");
+	var chatForm = document.getElementById("chat-form");
 
 	socket.on('addToChat', function(data) {
 		chatBox.innerHTML += '<div>' + data + '<div>';

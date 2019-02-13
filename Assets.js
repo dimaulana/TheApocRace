@@ -80,6 +80,3 @@ class Asset {
 		return this.fontMap.get(name);
 	}
 }
-
-var asset = new Asset();
-asset.loadAssets('newf.txt');
