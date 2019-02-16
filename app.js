@@ -1,13 +1,25 @@
-var mongojs = require("mongojs");
-// NOTE: Our db run for now is apoRun
-var db = mongojs('localhost:27017/apoRun', ['user', 'assets']);
+// Game Engine class
+// Starts the game server and sets up the necessary files
+// and services
+//
+// Author: Hussein Parpia
 
-// Files needed for game
+
+// Files and services needed for game
 require('./Assets');
+require('./DatabaseManager');
 
+var mongojs = require("mongojs");
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
+
+// Set up the database;
+DatabaseManager();
+
+
+// db handles the read and write to database using mongojs
+var db = mongojs('localhost:27017/apoRun', ['user', 'assets']);
 
 app.get('/', function(req,res) {
 	res.sendFile(__dirname + '/client/index.html');
