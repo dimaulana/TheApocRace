@@ -1,8 +1,6 @@
 
 class Entity{
 
-    var components = []
-
     constructor(tag){
         this.tag = tag,
         this.id = this.getUniqueId(),
@@ -10,6 +8,8 @@ class Entity{
         this.y = 250,
         this.spdX = 0,
         this.spdY = 0
+        this.components = []
+
     }
 
     update(){
@@ -37,20 +37,25 @@ class Entity{
         return true;
     }
 
-    getComponent(Component component){
+    getComponent(component){
         return component;
     }
 
-    removeComponent(Component component){
+    removeComponent(component){
         delete components[component]
     }
 
-    updateComponent(Component component){
+    updateComponent(component){
         //TODO
     }
 
 
 }
+
+module.exports = Entity;
+
+// var entity = new Entity("sahil");
+// console.log(entity);
 
 
 
