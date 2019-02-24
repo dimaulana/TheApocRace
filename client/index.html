@@ -1,69 +1,80 @@
- <!DOCTYPE html>
-<html>
-	<head>
-		<link rel="stylesheet" type="text/css" href="/client/css/main.css">
-	</head>
-	<body>
-
-	 <div id = "LoginDiv">
-		<label for="username">Username:</label>
-		<input type="text" id="LoginDiv-username"></input><br>
-		<label for="password">Password:</label>
-		<input type="password" id="LoginDiv-password"></input>
-
-		<div id="buttonDiv"></div>
-			<button id="LoginDiv-signIn">Sign In</button>
-			<button id="LoginDiv-signUp">Sign Up</button>
-		</div>
-	</div>
-
-	<div id="gameDiv" style="display: none;">
-		<!-- <canvas id="ctx" width="500" height="500" style="border=2px; border-color: black; background-color: lightgray"></canvas> -->
+<!-- Author: Dido Maulana -->
 
 
-		<!-- Chat box -->
-		<div id="chatDiv" >
-			<h3> Welcome to Apocalyptic Chat </h3>
-			<div id="chat-box">
+<!DOCTYPE html>
+<head> 
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="client/css/main.css" />
+</head>
+<body>
+    <div class="star">
+
+			<!-- Login Screen -->
+    <div id="account" class="wrapper">
+				<h1>The Apocalyptic Race</h1>
+				<div class="row justify-content-center">
+            <form method="POST" id="account-info" class="form-signin justify-content-center" onsubmit="validate(); return false;">       
+              <input id="account-username" type="text" class="form-control" name="username" placeholder="Username" required="" autofocus="" />
+							<input id="account-password" type="password" class="form-control" name="password" placeholder="Password" required=""/>      
+								<div class="btn-group">								
+									<button id="signIn" class="btn btn-primary ml-2" type="submit">Sign In</button>   
+									<button id="signUp" class="btn btn-primary ml-2" type="submit">Sign Up</button>   
+									<button id="forgotPass" class="btn btn-primary ml-2" type="submit">Forgot Password</button>   
+								</div>
+            </form>
+          </div>
+				</div>
+
+
+			<div class="contentDiv">
+
+			</div>	
+
+
 			</div>
-
-			<form id="chat-form">
-				<input id="chat-input" type="text"> </input>
-			</form>
-		</div>
-	</div>
-
-	</body>
+</body>
 </html>
 
-<script src="https://cdn.socket.io/socket.io-1.4.5.js">
-</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 
 <script type="text/javascript">
 	var socket = io();
 
-	//Sign In 
-	var signDiv = document.getElementById('LoginDiv');
-	var signDivUsername = document.getElementById('LoginDiv-username');
-	var signDivSignIn = document.getElementById('LoginDiv-signIn');
-	var signDivSignUp = document.getElementById('LoginDiv-signUp');
-	var signDivPassword = document.getElementById('LoginDiv-password');
+var buttonClicked;
 
-	signDivSignIn.onclick = function() {
-		console.log
-		socket.emit('signIn', {username:signDivUsername.value, 
-			password:signDivPassword.value}); 
-	}
+$("button").click(function() {
+    buttonClicked = $(this).attr("id");
+});
 
-	signDivSignUp.onclick = function() {
-		socket.emit('signUp', {username:signDivUsername.value, 
-			password:signDivPassword.value}); 
-	}
+
+function validate() {
+	var user = $('#account-username').val();
+	var pw = $('#account-password').val();
+
+		switch (buttonClicked) {
+			case "signIn": 
+				socket.emit('signIn', {username: user, password: pw});
+				console.log("emitted");
+				break;
+			case "signUp":
+				socket.emit('signUp', {username: user, password: pw});
+				console.log("sign up");
+				break;
+			case "forgotPass":
+				console.log("Too bad");
+				break;
+		}
+}
+
 
 	socket.on('signInResponse', function(data) {
 		if (data.success) {
-			signDiv.style.display = 'none';
-			gameDiv.style.display = 'inline-block';
+			console.log("Success");
+			account.style.display = 'none';
+			menuBuilder();
 		}
 		else 
 			alert("Sign in failed.");
@@ -78,9 +89,9 @@
 	});
 
 	// Chat stuff
-	var chatBox = document.getElementById("chat-box");   
+/* 	var chatBox = document.getElementById("chat-box");   
 	var chatInput = document.getElementById("chat-input");
-	var chatForm = document.getElementById("char-form");
+	var chatForm = document.getElementById("chat-form");
 
 	socket.on('addToChat', function(data) {
 		chatBox.innerHTML += '<div>' + data + '<div>';
@@ -99,6 +110,6 @@
 
 		chatInput.value = '';
 	}
-
+ */
 
 </script>
