@@ -11,6 +11,7 @@
 html, body {   
 	width: 100%;   
 	height: 100%;   
+	background: linear-gradient(to right, #FF8000, #173B0B);
 }
 
 /* Bootstrap button color override */
@@ -25,11 +26,6 @@ html, body {
 }
 
 /* Log In page styling */
-.wrapper {	
-	margin-top: 150px;
-  margin-bottom: 150px;
-}
-
 .form-signin {
 	max-width: 400px;
   padding: 15px 35px 45px;
@@ -61,6 +57,12 @@ input[type=password]:focus {
 	box-shadow: inset 0 1.5px 3px rgba(190, 190, 190, .4), 0 0 0 5px #e6f2f9;
 }
 
+/* Menu buttons styling */
+.menu .btn {
+	margin-bottom: 10px;
+	width: 500px;
+}
+
  /* Chat div styling */ 
 #chatDiv {
 	vertical-align: bottom;
@@ -82,9 +84,6 @@ input[type=password]:focus {
 
 
 /* Star background*/
-body { 
-	background: linear-gradient(to right, #FF8000, #173B0B) !important;
-  }
   
   .star {
 	background: url(../images/stars.png) repeat top center;
