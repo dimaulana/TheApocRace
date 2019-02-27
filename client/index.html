@@ -3,17 +3,28 @@
 
 <!DOCTYPE html>
 <head> 
+	<!-- JQuery, Bootstrap CDN -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+
+<!-- Internal script import -->
+<script src="client/script/menuBuilder.js"></script>
+
+
 <link rel="stylesheet" type="text/css" href="client/css/main.css" />
 </head>
 <body>
     <div class="star">
+			<div class="container h-100">
 
+
+				<div class="row h-100 justify-content-center align-items-center">
+						<div class="content">
+								<h1>The Apocalyptic Race</h1>  
 			<!-- Login Screen -->
-    <div id="account" class="wrapper">
-				<h1>The Apocalyptic Race</h1>
-				<div class="row justify-content-center">
+    <div id="account">
+
             <form method="POST" id="account-info" class="form-signin justify-content-center" onsubmit="validate(); return false;">       
               <input id="account-username" type="text" class="form-control" name="username" placeholder="Username" required="" autofocus="" />
 							<input id="account-password" type="password" class="form-control" name="password" placeholder="Password" required=""/>      
@@ -24,15 +35,24 @@
 								</div>
             </form>
           </div>
-				</div>
 
-
-			<div class="contentDiv">
+<!-- Interface Container -->
+			<div class="interface">
 
 			</div>	
 
+<!-- Menu Container -->
+			<div class="menu btn-group-vertical">
+					 
+				 </div>
+
 
 			</div>
+		</div>
+	</div>
+</div>
+
+
 </body>
 </html>
 
@@ -73,8 +93,8 @@ function validate() {
 	socket.on('signInResponse', function(data) {
 		if (data.success) {
 			console.log("Success");
-			account.style.display = 'none';
-			menuBuilder();
+			$('#account').hide();
+			generateMenus("mainMenu");
 		}
 		else 
 			alert("Sign in failed.");
