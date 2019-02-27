@@ -6,8 +6,8 @@
 
 
 // Files and services needed for game
-require('./Assets');
-require('./DatabaseManager');
+require('./server/Assets');
+require('./server/DatabaseManager');
 
 var mongojs = require("mongojs");
 var express = require('express');
