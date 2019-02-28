@@ -9,7 +9,7 @@ var MongoClient = require('mongodb').MongoClient;
 
 DatabaseManager = function () {
 	this.url = "mongodb://localhost:27017/apoRun";
-	this.collections = ['user', 'asset'];
+	this.collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
 
 	MongoClient.connect(this.url, async function(err, db) {
 		if (err) throw err;
