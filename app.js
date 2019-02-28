@@ -9,6 +9,7 @@
 require('./server/Assets');
 require('./server/DatabaseManager');
 
+var EntityManager = require('./server/EntityManager');
 var mongojs = require("mongojs");
 var express = require('express');
 var app = express();
@@ -17,9 +18,12 @@ var serv = require('http').Server(app);
 // Set up the database;
 DatabaseManager();
 
+let entityManager;
+
 
 // db handles the read and write to database using mongojs
-var db = mongojs('localhost:27017/apoRun', ['user', 'assets']);
+var collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
+var db = mongojs('localhost:27017/apoRun', collections);
 
 app.get('/', function(req,res) {
 	res.sendFile(__dirname + '/client/index.html');
@@ -36,7 +40,7 @@ var DEBUG = true;
 var SOCKET_LIST = {};
 
 var isValidPassword = function(data, cb) {
-	db.account.find({username:data.username, password:data.password}, function(err, res) {
+	db.user.find({username:data.username, password:data.password}, function(err, res) {
 		if (res.length > 0)
 			cb(true);
 		else
@@ -46,7 +50,7 @@ var isValidPassword = function(data, cb) {
 }
 
 var isUsernameTaken = function(data, cb) {
-	db.account.find({username:data.username}, function(err, res) {
+	db.user.find({username:data.username}, function(err, res) {
 		if (res.length > 0)
 			cb(true);
 		else
@@ -56,8 +60,23 @@ var isUsernameTaken = function(data, cb) {
 }
 
 var addUser = function(data, cb) {
-	db.account.insert({username:data.username, password:data.password}, function(err) {
+	db.user.insert({username:data.username, password:data.password}, function(err) {
 		cb();
+	});
+}
+
+var updatePassword = function(data, cb) {
+
+	db.user.findAndModify({
+		query: { username: data.username},
+		update: { $set: {password: data.password }},
+		new: true
+	}, function(err, res) {
+		// check if the password has been updated;
+		if (res.password === data.password)
+			cb(true);
+		else
+			cb(false);
 	});
 }
 
@@ -69,8 +88,9 @@ io.sockets.on('connection',function(socket) {
 	socket.on('signIn',function(data) {
 		isValidPassword(data, function(res) {
 			if (res) {
-				//Player.onConnect(socket);
 				socket.emit('signInResponse', {success:true});
+				entityManager = new EntityManager();
+				//entityManager.addEntity("player");
 			}
 			else {
 				socket.emit('signInResponse', {success:false});
@@ -88,6 +108,26 @@ io.sockets.on('connection',function(socket) {
 					socket.emit('signUpResponse', {success:true}); 
 				});
 			}		
+		});
+	});
+
+	socket.on('resetPassword', function(data) {
+		// Check if username is valid;
+		isUsernameTaken(data, function(res) {
+			if (res) {
+				updatePassword(data, function(res) {
+					if (res) {
+						socket.emit('resetPassResponse', {success:true});
+						entityManager = new EntityManager();
+					}
+					else {
+						socket.emit('resetPassResponse', {success:false});
+					}
+				});
+			}
+			else {
+				socket.emit('resetPassResponse', {success:false});
+			}
 		});
 	});
 

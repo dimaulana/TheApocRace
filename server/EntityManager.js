@@ -1,6 +1,6 @@
 var Entity = require('./Entity');
 
-class EntityManager{
+class EntityManager {
 
 	constructor(){
 		this.entities = new Array();
@@ -31,13 +31,13 @@ class EntityManager{
 	});
 		return entityWithTag;
 	}
-}
+};
 
+module.exports = EntityManager;
 // Test Code working 100: keep it here until we have tested with front end. This serves as sample for people 
 // to refer to.
 
 // var entityManager = new EntityManager();
-// entityManager.addEntity("user");
 // entityManager.addEntity("user");
 // entityManager.addEntity("enemy");
 
