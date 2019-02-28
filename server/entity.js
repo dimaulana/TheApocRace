@@ -1,3 +1,4 @@
+var Component = require('./Component');
 
 class Entity{
 
@@ -9,7 +10,6 @@ class Entity{
         this.spdX = 0,
         this.spdY = 0
         this.components = []
-
     }
 
     update(){
@@ -19,6 +19,15 @@ class Entity{
     updatePosition(spdX, spdY){
         this.x += spdX;
         this.y += spdY;
+    }
+
+    getInitPack() {
+        return {
+            id: this.tag,
+            x: this.x,
+            y: this.y,
+
+        }
     }
 
     getUniqueId() {
@@ -33,11 +42,20 @@ class Entity{
         return null;
     }
 
-    hasComponent(){
-        return true;
+    addComponent(componentType) {
+
     }
 
-    getComponent(component){
+    hasComponent(componentType){
+        var c = getComponent(componentType);
+        if (c != null)
+            return true;
+    }
+
+    getComponent(componentType){
+        var component = this.component.filter(function(c) {
+            return (c instanceof componentType);
+        }
         return component;
     }
 
