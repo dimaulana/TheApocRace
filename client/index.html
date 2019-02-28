@@ -4,58 +4,59 @@
 <!DOCTYPE html>
 <head> 
 	<!-- JQuery, Bootstrap CDN -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 
 
-<!-- Internal script import -->
-<script src="client/script/menuBuilder.js"></script>
+	<!-- Internal script import -->
+	<script src="client/script/menuBuilder.js"></script>
 
 
-<link rel="stylesheet" type="text/css" href="client/css/main.css" />
+	<link rel="stylesheet" type="text/css" href="client/css/main.css" />
 </head>
 <body>
-    <div class="star">
-			<div class="container h-100">
+	<div class="star">
+		<div class="container h-100">
 
 
-				<div class="row h-100 justify-content-center align-items-center">
-						<div class="content">
-								<h1>The Apocalyptic Race</h1>  
-			<!-- Login Screen -->
-    <div id="account">
+			<div class="row h-100 justify-content-center align-items-center">
+				<div class="content">
+					<h1>The Apocalyptic Race</h1>  
+					<!-- Login Screen -->
+					<div id="account">
 
-            <form method="POST" id="account-info" class="form-signin justify-content-center" onsubmit="validate(); return false;">       
-              <input id="account-username" type="text" class="form-control" name="username" placeholder="Username" required="" autofocus="" />
+						<form method="POST" id="account-info" class="form-signin justify-content-center" onsubmit="validate(); return false;">       
+							<input id="account-username" type="text" class="form-control" name="username" placeholder="Username" required="" autofocus="" />
 							<input id="account-password" type="password" class="form-control" name="password" placeholder="Password" required=""/>      
-								<div class="btn-group">								
-									<button id="signIn" class="btn btn-primary ml-2" type="submit">Sign In</button>   
-									<button id="signUp" class="btn btn-primary ml-2" type="submit">Sign Up</button>   
-									<button id="forgotPass" class="btn btn-primary ml-2" type="submit">Forgot Password</button>   
-								</div>
-            </form>
-          </div>
+							<div class="btn-group">								
+								<button id="signIn" class="btn btn-primary ml-2" type="submit">Sign In</button>   
+								<button id="signUp" class="btn btn-primary ml-2" type="submit">Sign Up</button>   
+								<button id="forgotPass" class="btn btn-primary ml-2" type="submit">Forgot Password</button> 
+								<button id="resetPass" class="btn btn-primary ml-2" type="submit" style="display: none;">Reset Password</button>
 
-<!-- Interface Container -->
-			<div class="interface">
+							</div>
+						</form>
+					</div>
 
-			</div>	
+					<!-- Interface Container -->
+					<div class="interface">
 
-<!-- Menu Container -->
-			<div class="menu btn-group-vertical">
-					 
-				 </div>
+					</div>	
+
+					<!-- Menu Container -->
+					<div class="menu btn-group-vertical">
+
+					</div>
 
 
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 
 
 </body>
 </html>
-
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
@@ -63,31 +64,68 @@
 <script type="text/javascript">
 	var socket = io();
 
-var buttonClicked;
+	var buttonClicked;
 
-$("button").click(function() {
-    buttonClicked = $(this).attr("id");
-});
+	$("button").click(function() {
+		buttonClicked = $(this).attr("id");
+	});
 
 
-function validate() {
-	var user = $('#account-username').val();
-	var pw = $('#account-password').val();
+	function validate() {
+		var user = $('#account-username').val();
+		var pw = $('#account-password').val();
 
 		switch (buttonClicked) {
 			case "signIn": 
 				socket.emit('signIn', {username: user, password: pw});
 				console.log("emitted");
 				break;
+
 			case "signUp":
 				socket.emit('signUp', {username: user, password: pw});
 				console.log("sign up");
 				break;
+
 			case "forgotPass":
-				console.log("Too bad");
+				showHideResetPassword(true);
+				console.log("Reseting Password");
 				break;
+
+			case "resetPass":
+				socket.emit('resetPassword', {username: user, password: pw});
+				break;
+
 		}
-}
+	}
+
+	function showHideResetPassword(show) {
+
+		var display;
+		var resetDisplay;
+		var placeholder;
+
+		var passElement  = document.getElementById("account-password");
+		if (show) {
+			placeholder = "New Password";
+			passElement.value = "";
+
+			display = "none";
+			resetDisplay = "inline";
+		}
+
+		else {
+			placeholder = "Password";
+			display = "inline";
+			resetDisplay = "none";
+		}
+
+		passElement.placeholder = placeholder;
+
+		document.getElementById("signIn").style.display = display;
+		document.getElementById("signUp").style.display = display;
+		document.getElementById("forgotPass").style.display = display;
+		document.getElementById("resetPass").style.display = resetDisplay;
+	}
 
 
 	socket.on('signInResponse', function(data) {
@@ -104,9 +142,20 @@ function validate() {
 		if (data.success) {
 			alert("Sign up successful.");
 		}
-		else 
+		else
 			alert("Sign up unsuccessful.");
 	});
+
+	socket.on('resetPassResponse', function(data) {
+		if (data.success) {
+			alert("Password reset successful");
+			showHideResetPassword(false);
+		}
+		else 
+			alert("Password reset failed");
+	});
+
+
 
 	// Chat stuff
 /* 	var chatBox = document.getElementById("chat-box");   
@@ -130,6 +179,6 @@ function validate() {
 
 		chatInput.value = '';
 	}
- */
+	*/
 
 </script>
