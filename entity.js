@@ -53,10 +53,3 @@ class Entity{
 }
 
 module.exports = Entity;
-
-// var entity = new Entity("sahil");
-// console.log(entity);
-
-
-
-
