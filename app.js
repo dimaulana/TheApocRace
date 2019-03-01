@@ -39,6 +39,7 @@ var DEBUG = true;
 
 var SOCKET_LIST = {};
 
+//------ User login functions
 var isValidPassword = function(data, cb) {
 	db.user.find({username:data.username, password:data.password}, function(err, res) {
 		if (res.length > 0)
@@ -118,7 +119,7 @@ io.sockets.on('connection',function(socket) {
 				updatePassword(data, function(res) {
 					if (res) {
 						socket.emit('resetPassResponse', {success:true});
-						entityManager = new EntityManager();
+						//entityManager = new EntityManager();
 					}
 					else {
 						socket.emit('resetPassResponse', {success:false});
@@ -129,6 +130,14 @@ io.sockets.on('connection',function(socket) {
 				socket.emit('resetPassResponse', {success:false});
 			}
 		});
+	});
+
+	socket.on('playGame', function(data) {
+		// Create player and other entities
+
+		// TODO: Add GamePlay files with functions to 
+		// Load level and initialize the entities.
+
 	});
 
 	
@@ -154,7 +163,7 @@ io.sockets.on('connection',function(socket) {
 			SOCKET_LIST[i].emit('evalAnswer', res);
 		}
 
-	})
+	});
 });
 
 // Update player and bullet

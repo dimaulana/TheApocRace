@@ -61,6 +61,3 @@ module.exports = {
 	Stats: Stats,
 	Input: Input
 }
-
-//export {default as Component }
-//export {default as Transform }
