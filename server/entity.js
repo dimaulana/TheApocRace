@@ -121,14 +121,14 @@ module.exports = Entity;
 
 
 // Example of using Entity Class;
-//
-// var e = new Entity("nothing");
-// e.addComponent("Transform");
-// e.addComponent("Lifespan");
-// e.addComponent("Input");
-// e.addComponent("Stats");
-// console.log(e);
-// var c = e.getComponent("Transform");
-// console.log(c.pos);
+
+var e = new Entity("nothing");
+e.addComponent("Transform");
+e.addComponent("Lifespan");
+e.addComponent("Input");
+e.addComponent("Stats");
+console.log(e);
+var c = e.getComponent("Transform");
+console.log(c.pos.x);
 
 
