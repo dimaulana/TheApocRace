@@ -9,17 +9,18 @@ class Transform extends Component{
 	
 	constructor(){
 		super();
-		this.pos = new Vec2(0.0, 0.0);
-		this.prevPos = new Vec2(0.0, 0.0);
-		this.scale = new Vec2(1.0, 1.0);
-		this.speed = new Vec2(0.0, 0.0);
+		//this.pos = new Vec2(0.0, 0.0);
+		//this.prevPos = new Vec2(0.0, 0.0);
+		this.pos = {"x": 0.0, "y": 0.0};
+		//this.scale = {1.0, 1.0};
+		//this.speed = {0.0, 0.0};
 		this.angle = 0;
 	}
 }
 
 class LifeSpan extends Component{
 
-	constructor(lifeSpan){
+	constructor(){
 		super();
 		this.clock = new Date();
 		this.lifeSpan = 0;
@@ -57,4 +58,13 @@ class Input extends Component{
 	}
 }
 
-module.exports = Component;
+module.exports = {
+	Component: Component,
+	Transform: Transform,
+	LifeSpan: LifeSpan,
+	Stats: Stats,
+	Input: Input
+}
+
+//export {default as Component }
+//export {default as Transform }
