@@ -1,4 +1,11 @@
-var Component = require('./Component');
+var Component = require('./Component.js');
+//var Transform = require('./Transform');
+
+
+//var Component = new Component.Component();
+
+
+//import {Component, Transform } from './Component'
 
 class Entity{
 
@@ -9,7 +16,7 @@ class Entity{
         this.y = 250,
         this.spdX = 0,
         this.spdY = 0
-        this.components = []
+        this.components = new Array();
     }
 
     update(){
@@ -42,20 +49,60 @@ class Entity{
         return null;
     }
 
-    addComponent(componentType) {
+    addComponent(type) {
+        var c;
 
+        switch (type) {
+            case "Transform":
+                c = new Component.Transform(); break;
+
+            case "Lifespan":
+                c = new Component.LifeSpan(); break;
+
+            case "Stats":
+                c = new Component.Stats(); break;
+
+            case "Input":
+                c = new Component.Input(); break;
+
+            default:
+                console.log("Type: ", type , " not found");
+                break;
+
+        }
+
+        this.components.push(c);
     }
 
-    hasComponent(componentType){
-        var c = getComponent(componentType);
+    hasComponent(type){
+        var c = getComponent(type);
+
         if (c != null)
             return true;
     }
 
-    getComponent(componentType){
-        var component = this.component.filter(function(c) {
-            return (c instanceof componentType);
+    getComponent(type){
+        var component = this.components.find(function(c) {
+            switch (type) {
+            case "Transform":
+                return (c instanceof Component.Transform);
+
+            case "Lifespan":
+                return (c instanceof Component.Lifespan);
+
+            case "Stats":
+                return (c instanceof Component.Stats);
+
+            case "Input":
+                return (c instanceof Component.Input);
+
+            default:
+                console.log("Type: ", type , " not found");
+                return null;
+
         }
+        });
+
         return component;
     }
 
@@ -71,3 +118,17 @@ class Entity{
 }
 
 module.exports = Entity;
+
+
+// Example of using Entity Class;
+//
+// var e = new Entity("nothing");
+// e.addComponent("Transform");
+// e.addComponent("Lifespan");
+// e.addComponent("Input");
+// e.addComponent("Stats");
+// console.log(e);
+// var c = e.getComponent("Transform");
+// console.log(c.pos);
+
+
