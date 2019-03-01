@@ -1,3 +1,5 @@
+var Vec2 = require('./Vec2')
+
 class Component{
 	
 	constructor(){
@@ -9,11 +11,11 @@ class Transform extends Component{
 	
 	constructor(){
 		super();
-		//this.pos = new Vec2(0.0, 0.0);
-		//this.prevPos = new Vec2(0.0, 0.0);
-		this.pos = {"x": 0.0, "y": 0.0};
-		//this.scale = {1.0, 1.0};
-		//this.speed = {0.0, 0.0};
+		this.pos = new Vec2(0.0, 0.0);
+		this.prevPos = new Vec2(0.0, 0.0);
+		this.pos = new Vec2(0.0, 0.0);
+		this.scale = new Vec2(1.0, 1.0);
+		this.speed = new Vec2(0.0, 0.0);
 		this.angle = 0;
 	}
 }
