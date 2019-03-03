@@ -161,15 +161,19 @@
 		else 
 			alert("Password reset failed");
 	});
+
+	
+//Setting canvas
+var gameCanvas = document.getElementById("gameCan").getContext("2d");
+gameCanvas.font = '30px Arial';
+								   
+						     
+						     
 /*	
-//Setting canvas	
 <!-- var player;
 var HEIGHT = 1280;
 var WIDTH = 720;
 player = Player();	
-var gameCanvas = document.getElementById("gameCan").getContext("2d");
-gameCanvas.font = '30px Arial';
-		
 Player = function(){
 	var self = Actor('player','myId',50,40,30,5,20,20,Img.player,10,1);
 	
