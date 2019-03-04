@@ -29,12 +29,6 @@ class LifeSpan extends Component{
 	}
 }
 
-// const lSpan = new LifeSpan();
-// lSpan.lifeSpan = 1021;
-// console.log(lSpan.lifeSpan);
-// console.log(lSpan.clock);
-
-
 class Stats extends Component{
 
 	constructor(){
@@ -67,6 +61,3 @@ module.exports = {
 	Stats: Stats,
 	Input: Input
 }
-
-//export {default as Component }
-//export {default as Transform }

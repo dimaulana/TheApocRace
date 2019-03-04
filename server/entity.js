@@ -1,21 +1,11 @@
 var Component = require('./Component.js');
-//var Transform = require('./Transform');
 
-
-//var Component = new Component.Component();
-
-
-//import {Component, Transform } from './Component'
 
 class Entity{
 
     constructor(tag){
         this.tag = tag,
         this.id = this.getUniqueId(),
-        this.x = 250,
-        this.y = 250,
-        this.spdX = 0,
-        this.spdY = 0
         this.components = new Array();
     }
 
@@ -28,13 +18,13 @@ class Entity{
         this.y += spdY;
     }
 
+
+    // Init Pack for Entities.
+    // For now everything is packed into components.
     getInitPack() {
         return {
-            id: this.tag,
-            x: this.x,
-            y: this.y,
-
-        }
+            Component: this.components
+        };
     }
 
     getUniqueId() {
@@ -72,6 +62,7 @@ class Entity{
         }
 
         this.components.push(c);
+        return c;
     }
 
     hasComponent(type){
@@ -100,7 +91,7 @@ class Entity{
                 console.log("Type: ", type , " not found");
                 return null;
 
-        }
+            }
         });
 
         return component;
@@ -121,14 +112,16 @@ module.exports = Entity;
 
 
 // Example of using Entity Class;
-
-var e = new Entity("nothing");
-e.addComponent("Transform");
-e.addComponent("Lifespan");
-e.addComponent("Input");
-e.addComponent("Stats");
-console.log(e);
-var c = e.getComponent("Transform");
-console.log(c.pos.x);
+//
+// var e = new Entity("nothing");
+// e.addComponent("Transform");
+// e.addComponent("Lifespan");
+// e.addComponent("Input");
+// e.addComponent("Stats");
+// console.log(e);
+// var c = e.getComponent("Transform");
+// console.log(c.pos.x);
+// var pack = e.getInitPack();
+// console.log(pack);
 
 

@@ -6,12 +6,7 @@ class EntityManager {
 		this.entities = new Array();
 		this.mapOfEntities = new Map();
 	}
-
-
-	init(){
-		//TODO
-	}
-
+	
 	update(){
 		//TODO
 	}
@@ -27,13 +22,14 @@ class EntityManager {
 
 	getEntitiesByTag(tag){
 		var entityWithTag =  this.entities.filter(function(e) {
-		return e.tag == tag;
+			return e.tag == tag;
 	});
 		return entityWithTag;
 	}
 };
 
 module.exports = EntityManager;
+
 // Test Code working 100: keep it here until we have tested with front end. This serves as sample for people 
 // to refer to.
 
