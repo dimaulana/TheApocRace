@@ -42,7 +42,11 @@
 					<div class="interface">
 
 					</div>	
-
+					<!--Canvas container -->
+					<div class="gameC">
+					<canvas id="gameCan" width="1280" height="720" style="border:1px solid #000000; display:none; "> </canvas>
+					</div>
+					
 					<!-- Menu Container -->
 					<div class="menu btn-group-vertical">
 
@@ -155,6 +159,8 @@
 			alert("Password reset failed");
 	});
 
+	var gameCanvas = document.getElementById("gameCan").getContext("2d");
+	gameCanvas.font = '30px Arial';
 
 
 	// Chat stuff
