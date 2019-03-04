@@ -41,15 +41,7 @@
 					<!-- Interface Container -->
 					<div class="interface">
 
-					</div>
-						
-					<!--Canvas container -->
-					<div class="gameC">
-					<canvas id="gameCan" width="1280" height="720" style="border:1px solid #000000; display:none;></canvas>
-					
-					
-					
-					</div>
+					</div>	
 
 					<!-- Menu Container -->
 					<div class="menu btn-group-vertical">
@@ -68,6 +60,7 @@
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
 <script type="text/javascript">
 	var socket = io();
 
@@ -162,129 +155,7 @@
 			alert("Password reset failed");
 	});
 
-	
-//Setting canvas
-var gameCanvas = document.getElementById("gameCan").getContext("2d");
-gameCanvas.font = '30px Arial';
-								   
-						     
-						     
-/*	
-<!-- var player;
-var HEIGHT = 1280;
-var WIDTH = 720;
-player = Player();	
-Player = function(){
-	var self = Actor('player','myId',50,40,30,5,20,20,Img.player,10,1);
-	
-	self.updatePosition = function(){
-		if(self.pressingRight)
-			self.x += 10;
-		if(self.pressingLeft)
-			self.x -= 10;	
-		if(self.pressingDown)
-			self.y += 10;	
-		if(self.pressingUp)
-			self.y -= 10;	
-		
-		//ispositionvalid
-		if(self.x < self.width/2)
-			self.x = self.width/2;
-		if(self.x > WIDTH-self.width/2)
-			self.x = WIDTH - self.width/2;
-		if(self.y < self.height/2)
-			self.y = self.height/2;
-		if(self.y > HEIGHT - self.height/2)
-			self.y = HEIGHT - self.height/2;
-	}
-	
-	self.pressingDown = false;
-	self.pressingUp = false;
-	self.pressingLeft = false;
-	self.pressingRight = false;
-	return self;
-	
-}
 
-Entity = function(type,id,x,y,spdX,spdY,width,height,img){
-	var self = {
-		type:type,
-		id:id,
-		x:x,
-		y:y,
-		spdX:spdX,
-		spdY:spdY,
-		width:width,
-		height:height,
-		img:img,
-	};
-	self.update = function(){
-		self.updatePosition();
-		self.draw();
-	}
-	self.draw = function(){
-		gameCanvas.save();
-		var x = self.x-self.width/2;
-		var y = self.y-self.height/2;
-		gameCanvas.drawImage(self.img,x,y);
-		gameCanvas.restore();
-	}
-	self.getDistance = function(entity2){	//return distance (number)
-		var vx = self.x - entity2.x;
-		var vy = self.y - entity2.y;
-		return Math.sqrt(vx*vx+vy*vy);
-	}
-Actor = function(type,id,x,y,spdX,spdY,width,height,img,hp,atkSpd){
-	var self = Entity(type,id,x,y,spdX,spdY,width,height,img);
-	
-	self.hp = hp;
-	self.atkSpd = atkSpd;
-	self.attackCounter = 0;
-	self.aimAngle = 0;
-	
-	var super_update = self.update;
-	self.update = function(){
-		super_update();
-		self.attackCounter += self.atkSpd;
-	}
-	
-	
-	return self;
-}
-
-	
-	var Img = {};
-	Img.player = new Image();
-	Img.player.src = "C:\Users\Dr Vic\Documents\GitHub\COMP4770\client\images\stand.png";
-	//Img.enemy = new Image();
-	//Img.enemy.src = 'img/enemy.png';
-	
-	Img.background= new Image();
-	Img.background.src = 'images\player.png';
-
-	//Controls WASD
-document.onkeydown = function(event){
-	if(event.keyCode === 68)	//d
-		player.pressingRight = true;
-	else if(event.keyCode === 83)	//s
-		player.pressingDown = true;
-	else if(event.keyCode === 65) //a
-		player.pressingLeft = true;
-	else if(event.keyCode === 87) // w
-		player.pressingUp = true;
-}
-
-document.onkeyup = function(event){
-	if(event.keyCode === 68)	//d
-		player.pressingRight = false;
-	else if(event.keyCode === 83)	//s
-		player.pressingDown = false;
-	else if(event.keyCode === 65) //a
-		player.pressingLeft = false;
-	else if(event.keyCode === 87) // w
-		player.pressingUp = false;
-} -->
-*/	
 
 	// Chat stuff
 /* 	var chatBox = document.getElementById("chat-box");   
