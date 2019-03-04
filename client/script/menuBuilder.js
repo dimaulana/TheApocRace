@@ -48,7 +48,7 @@ $(document).ready(function() {
         else {
             switch(menuClicked) {
                 case "Story Mode":
-                   $('#gameCan').show();
+                    $('.interface').load("ENTER PAGE URL HERE");
                     break;
                 case "Custom":
                     $('.interface').load("ENTER PAGE URL HERE");
