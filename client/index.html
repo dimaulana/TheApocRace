@@ -2,7 +2,7 @@
 
 
 <!DOCTYPE html>
-<head> 
+<head>
 	<!-- JQuery, Bootstrap CDN -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -24,17 +24,17 @@
 
 			<div class="row h-100 justify-content-center align-items-center">
 				<div class="content">
-					<h1>The Apocalyptic Race</h1>  
+					<h1>The Apocalyptic Race</h1>
 					<!-- Login Screen -->
 					<div id="account">
 
-						<form method="POST" id="account-info" class="form-signin justify-content-center" onsubmit="validate(); return false;">       
+						<form method="POST" id="account-info" class="form-signin justify-content-center" onsubmit="validate(); return false;">
 							<input id="account-username" type="text" class="form-control" name="username" placeholder="Username" required="" autofocus="" />
-							<input id="account-password" type="password" class="form-control" name="password" placeholder="Password" required=""/>      
-							<div class="btn-group">								
-								<button id="signIn" class="btn btn-primary ml-2" type="submit">Sign In</button>   
-								<button id="signUp" class="btn btn-primary ml-2" type="submit">Sign Up</button>   
-								<button id="forgotPass" class="btn btn-primary ml-2" type="submit">Forgot Password</button> 
+							<input id="account-password" type="password" class="form-control" name="password" placeholder="Password" required=""/>
+							<div class="btn-group">
+								<button id="signIn" class="btn btn-primary ml-2" type="submit">Sign In</button>
+								<button id="signUp" class="btn btn-primary ml-2" type="submit">Sign Up</button>
+								<button id="forgotPass" class="btn btn-primary ml-2" type="submit">Forgot Password</button>
 								<button id="resetPass" class="btn btn-primary ml-2" type="submit" style="display: none;">Reset Password</button>
 
 							</div>
@@ -44,7 +44,7 @@
 					<!-- Interface Container -->
 					<div class="interface">
 
-					</div>	
+					</div>
 					<!-- Menu Container -->
 					<div class="menu btn-group-vertical">
 
@@ -78,7 +78,7 @@
 		var pw = $('#account-password').val();
 
 		switch (buttonClicked) {
-			case "signIn": 
+			case "signIn":
 				socket.emit('signIn', {username: user, password: pw});
 				console.log("emitted");
 				break;
@@ -136,7 +136,7 @@
 			$('#account').hide();
 			generateMenus("mainMenu");
 		}
-		else 
+		else
 			alert("Sign in failed.");
 	});
 
@@ -153,12 +153,12 @@
 			alert("Password reset successful");
 			showHideResetPassword(false);
 		}
-		else 
+		else
 			alert("Password reset failed");
 	});
 
 //canvas
-var ctx = document.getElementById("game").getContext("2d"); 
+var ctx = document.getElementById("game").getContext("2d");
 ctx.font = '30px Arial';
 
 var HEIGHT = 720;
@@ -171,10 +171,10 @@ var score = 0;
 
 var Img = {};
 Img.player = new Image();
-Img.player.src = "/client/images/player.png";
+Img.player.src = "/client/images/character1.1.png";
 
 testCollisionRectRect = function(rect1,rect2){
-	return rect1.x <= rect2.x+rect2.width 
+	return rect1.x <= rect2.x+rect2.width
 		&& rect2.x <= rect1.x+rect1.width
 		&& rect1.y <= rect2.y + rect2.height
 		&& rect2.y <= rect1.y + rect1.height;
@@ -263,12 +263,12 @@ Entity = function(type,id,x,y,spdX,spdY,width,height,img){
 			height:entity2.height,
 		}
 		return testCollisionRectRect(rect1,rect2);
-		
+
 	}
 	self.updatePosition = function(){
 		self.x += self.spdX;
 		self.y += self.spdY;
-				
+
 		if(self.x < 0 || self.x > WIDTH){
 			self.spdX = -self.spdX;
 		}
@@ -276,13 +276,13 @@ Entity = function(type,id,x,y,spdX,spdY,width,height,img){
 			self.spdY = -self.spdY;
 		}
 	}
-	
+
 	return self;
 }
 
 Actor = function(type,id,x,y,spdX,spdY,width,height,img,hp,atkSpd){
 	var self = Entity(type,id,x,y,spdX,spdY,width,height,img);
-	
+
 	self.hp = hp;
 	self.atkSpd = atkSpd;
 	self.attackCounter = 0;
@@ -291,5 +291,3 @@ Actor = function(type,id,x,y,spdX,spdY,width,height,img,hp,atkSpd){
 	return self;
 }
 </script>
-
-
