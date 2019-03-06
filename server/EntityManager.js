@@ -14,6 +14,7 @@ class EntityManager {
 	addEntity(name){
 		var entity = new Entity(name);
 		this.entities.push(entity);
+		return entity;
 	}
 
 	getEntities(){

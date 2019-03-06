@@ -10,6 +10,8 @@ require('./server/Assets');
 require('./server/DatabaseManager');
 
 var EntityManager = require('./server/EntityManager');
+var GamePlay = require('./server/GamePlay');
+
 var mongojs = require("mongojs");
 var express = require('express');
 var app = express();
@@ -90,8 +92,6 @@ io.sockets.on('connection',function(socket) {
 		isValidPassword(data, function(res) {
 			if (res) {
 				socket.emit('signInResponse', {success:true});
-				entityManager = new EntityManager();
-				//entityManager.addEntity("player");
 			}
 			else {
 				socket.emit('signInResponse', {success:false});
@@ -119,7 +119,6 @@ io.sockets.on('connection',function(socket) {
 				updatePassword(data, function(res) {
 					if (res) {
 						socket.emit('resetPassResponse', {success:true});
-						//entityManager = new EntityManager();
 					}
 					else {
 						socket.emit('resetPassResponse', {success:false});
@@ -134,10 +133,11 @@ io.sockets.on('connection',function(socket) {
 
 	socket.on('playGame', function(data) {
 		// Create player and other entities
-
-		// TODO: Add GamePlay files with functions to 
-		// Load level and initialize the entities.
-
+		var game = new GamePlay({
+			level:1,
+			username:'hp',
+			socket: socket,
+		});
 	});
 
 	
