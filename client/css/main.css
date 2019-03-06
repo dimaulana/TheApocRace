@@ -103,3 +103,10 @@ input[type=password]:focus {
 	from { background-position: 0 0;}
 	to {background-position: -2000px 5000px;}
   }
+  
+  /*Canvas background*/
+  .gameC {
+	background: url(../images/speed.jpg) repeat top center;
+	height: 720;
+	width: 1280;
+  }
