@@ -7,6 +7,7 @@ Img.player = new Image();
 Img.player.src = "/client/images/player.png";
 var ctx = document.getElementById("game").getContext("2d");
 
+
 testCollisionRectRect = function(rect1,rect2){
 	return rect1.x <= rect2.x+rect2.width 
 		&& rect2.x <= rect1.x+rect1.width
@@ -14,26 +15,65 @@ testCollisionRectRect = function(rect1,rect2){
 		&& rect2.y <= rect1.y + rect1.height;
 }
 
-Player = function(){
-	var self = {
-		x:50,
-		y: 600,
-		hp: 0,
-		width: 30,
-		height: 5,
-		img: 'client/images/player.png'
+Player = function(param){
+	self.speed = param.speed;
+	self.hp = param.hp;
+	self.score = param.score;
+	self.width = param.width,
+	self.height = param.height,
+	self.pos = param.pos,
+	self.prevPos = param.prevPos,
+	self.alive = param.alive,
+	self.angle = param.angle,
+	self.img = 'client/images/player.png',
+	
+	self.update = function(){
+		self.updateSpeed();
+		
+		if(self.pressingAttack){
+			self.shootBullet(self.mouseAngle);
+		}
 	}
-
+	self.shootBullet = function(angle){
+		if(Math.random() < 0.1)
+			self.inventory.addItem("potion",1);
+		Bullet({
+			parent:self.id,
+			angle:angle,
+			x:self.x,
+			y:self.y,
+		});
+	}
+	
+	self.updateSpeed = function(){
+		if(self.pressingRight)
+			self.spdX = self.maxSpd;
+		else if(self.pressingLeft)
+			self.spdX = -self.maxSpd;
+		else
+			self.spdX = 0;
+		
+		if(self.pressingUp)
+			self.spdY = -self.maxSpd;
+		else if(self.pressingDown)
+			self.spdY = self.maxSpd;
+		else
+			self.spdY = 0;		
+	}
+	
 	self.draw = function(){
-		// ctx.save();
 		var x = self.x-self.width/2;
 		var y = self.y-self.height/2;
-		// var image = getImage(self.img);
 		ctx.drawImage(Img.player,x,y);
-		//ctx.restore();
 	}
+	
+	Player.list[self.id] = self;
+	
 	return self;
 }
+
+Player.list = {}
+
 
 function getImage(imageName) {
   var x = document.createElement("IMG");
