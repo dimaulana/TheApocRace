@@ -16,16 +16,33 @@ testCollisionRectRect = function(rect1,rect2){
 }
 
 Player = function(param){
-	self.speed = param.speed;
-	self.hp = param.hp;
-	self.score = param.score;
-	self.width = param.width,
-	self.height = param.height,
-	self.pos = param.pos,
-	self.prevPos = param.prevPos,
-	self.alive = param.alive,
-	self.angle = param.angle,
-	self.img = 'client/images/player.png',
+
+	var self = {
+		x: param.x,
+		y: param.y,
+		speed: param.speed,
+		hp: param.hp,
+		score :param.score,
+		width: param.width,
+		height :param.height,
+		pos: param.pos,
+		prevPos :param.prevPos,
+		alive: param.alive,
+		angle :param.angle,
+		img: 'client/images/player.png',
+	}
+	// might get a better idea, keeping it here.
+
+	// self.speed = param.speed;
+	// self.hp = param.hp;
+	// self.score = param.score;
+	// self.width = param.width,
+	// self.height = param.height,
+	// self.pos = param.pos,
+	// self.prevPos = param.prevPos,
+	// self.alive = param.alive,
+	// self.angle = param.angle,
+	// self.img = 'client/images/player.png',
 	
 	self.update = function(){
 		self.updateSpeed();
@@ -61,7 +78,7 @@ Player = function(param){
 			self.spdY = 0;		
 	}
 	
-	self.draw = function(){
+	self.draw = function(player){
 		var x = self.x-self.width/2;
 		var y = self.y-self.height/2;
 		ctx.drawImage(Img.player,x,y);
