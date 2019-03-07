@@ -159,19 +159,22 @@ io.sockets.on('connection',function(socket) {
 
 		// TODO: Get level for story mode;
 		//var myLevel = getLevelStoppedPreviously();
+		var myLevel = 1;
 
-		var param = {
+		startGame({
 			level: myLevel,
 			username: currentUser.name,
 			socket: socket,
-		}
+		});
 	});
 
 	socket.on('playLevel', function(data) {
-
+		startGame({
+			level: data.level,
+			username: currentUser.name,
+			socket: socket,
+		});
 	});
-
-
 
 	
 	socket.on('disconnect',function() {
