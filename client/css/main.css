@@ -8,14 +8,14 @@
 		  text-align: center;
 	  }
 
-html, body {   
-	width: 100%;   
-	height: 100%;   
+html, body {
+	width: 100%;
+	height: 100%;
 	background: linear-gradient(to right, #FF8000, #173B0B);
 }
 
 /* Bootstrap button color override */
-.btn-primary { 
+.btn-primary {
 	background-color: #173B0B;
 	border-color: #173B0B;
 }
@@ -30,7 +30,7 @@ html, body {
 	max-width: 400px;
   padding: 15px 35px 45px;
   margin: 0 auto;
-  border: 1px solid rgba(0,0,0,0.1);  
+  border: 1px solid rgba(0,0,0,0.1);
  background-color: #4d3f3fa8;
 }
 
@@ -63,7 +63,7 @@ input[type=password]:focus {
 	width: 500px;
 }
 
- /* Chat div styling */ 
+ /* Chat div styling */
 #chatDiv {
 	vertical-align: bottom;
 }
@@ -75,7 +75,7 @@ input[type=password]:focus {
 }
 #chat-form {
 	width: 300px;
-	height: 100px; 
+	height: 100px;
 }
 #chat-input {
 	margin-left: 0px;
@@ -84,7 +84,7 @@ input[type=password]:focus {
 
 
 /* Star background*/
-  
+
   .star {
 	background: url(../images/stars.png) repeat top center;
 	height: 100%;
@@ -97,16 +97,16 @@ input[type=password]:focus {
 	position: absolute;
 	animation: 50s twinkle linear infinite;
   }
-  
+
   /*Keyframe for moving stars */
   @keyframes twinkle {
 	from { background-position: 0 0;}
 	to {background-position: -2000px 5000px;}
   }
-  
+
   /*Canvas background*/
   .gameC {
-	background: url(../images/speed.jpg) repeat top center;
+	background: url(../images/finishedCity1.png) repeat top center;
 	height: 720;
 	width: 1280;
   }
