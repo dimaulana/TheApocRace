@@ -7,6 +7,7 @@ Img.player = new Image();
 Img.player.src = "/client/images/player.png";
 var ctx = document.getElementById("game").getContext("2d");
 
+
 testCollisionRectRect = function(rect1,rect2){
 	return rect1.x <= rect2.x+rect2.width 
 		&& rect2.x <= rect1.x+rect1.width
@@ -14,26 +15,82 @@ testCollisionRectRect = function(rect1,rect2){
 		&& rect2.y <= rect1.y + rect1.height;
 }
 
-Player = function(){
-	var self = {
-		x:50,
-		y: 600,
-		hp: 0,
-		width: 30,
-		height: 5,
-		img: 'client/images/player.png'
-	}
+Player = function(param){
 
-	self.draw = function(){
-		// ctx.save();
+	var self = {
+		x: param.x,
+		y: param.y,
+		speed: param.speed,
+		hp: param.hp,
+		score :param.score,
+		width: param.width,
+		height :param.height,
+		pos: param.pos,
+		prevPos :param.prevPos,
+		alive: param.alive,
+		angle :param.angle,
+		img: 'client/images/player.png',
+	}
+	// might get a better idea, keeping it here.
+
+	// self.speed = param.speed;
+	// self.hp = param.hp;
+	// self.score = param.score;
+	// self.width = param.width,
+	// self.height = param.height,
+	// self.pos = param.pos,
+	// self.prevPos = param.prevPos,
+	// self.alive = param.alive,
+	// self.angle = param.angle,
+	// self.img = 'client/images/player.png',
+	
+	self.update = function(){
+		self.updateSpeed();
+		
+		if(self.pressingAttack){
+			self.shootBullet(self.mouseAngle);
+		}
+	}
+	self.shootBullet = function(angle){
+		if(Math.random() < 0.1)
+			self.inventory.addItem("potion",1);
+		Bullet({
+			parent:self.id,
+			angle:angle,
+			x:self.x,
+			y:self.y,
+		});
+	}
+	
+	self.updateSpeed = function(){
+		if(self.pressingRight)
+			self.spdX = self.maxSpd;
+		else if(self.pressingLeft)
+			self.spdX = -self.maxSpd;
+		else
+			self.spdX = 0;
+		
+		if(self.pressingUp)
+			self.spdY = -self.maxSpd;
+		else if(self.pressingDown)
+			self.spdY = self.maxSpd;
+		else
+			self.spdY = 0;		
+	}
+	
+	self.draw = function(player){
 		var x = self.x-self.width/2;
 		var y = self.y-self.height/2;
-		// var image = getImage(self.img);
 		ctx.drawImage(Img.player,x,y);
-		//ctx.restore();
 	}
+	
+	Player.list[self.id] = self;
+	
 	return self;
 }
+
+Player.list = {}
+
 
 function getImage(imageName) {
   var x = document.createElement("IMG");
@@ -52,75 +109,4 @@ startNewGame = function(player){
 	frameCount = 0;
 	score = 0;
 	player.draw();
-}
-
-Entity = function(type,id,x,y,spdX,spdY,width,height,img){
-	var self = {
-		type:type,
-		id:id,
-		x:x,
-		y:y,
-		spdX:spdX,
-		spdY:spdY,
-		width:width,
-		height:height,
-		img:img,
-	};
-	self.update = function(){
-		self.updatePosition();
-		self.draw();
-	}
-	self.draw = function(){
-		ctx.save();
-		var x = self.x-self.width/2;
-		var y = self.y-self.height/2;
-		ctx.drawImage(self.img,x,y);
-		ctx.restore();
-	}
-	self.getDistance = function(entity2){	//return distance (number)
-		var vx = self.x - entity2.x;
-		var vy = self.y - entity2.y;
-		return Math.sqrt(vx*vx+vy*vy);
-	}
-
-	self.testCollision = function(entity2){	//return if colliding (true/false)
-		var rect1 = {
-			x:self.x-self.width/2,
-			y:self.y-self.height/2,
-			width:self.width,
-			height:self.height,
-		}
-		var rect2 = {
-			x:entity2.x-entity2.width/2,
-			y:entity2.y-entity2.height/2,
-			width:entity2.width,
-			height:entity2.height,
-		}
-		return testCollisionRectRect(rect1,rect2);
-		
-	}
-	self.updatePosition = function(){
-		self.x += self.spdX;
-		self.y += self.spdY;
-				
-		if(self.x < 0 || self.x > WIDTH){
-			self.spdX = -self.spdX;
-		}
-		if(self.y < 0 || self.y > HEIGHT){
-			self.spdY = -self.spdY;
-		}
-	}
-	
-	return self;
-}
-
-Actor = function(type,id,x,y,spdX,spdY,width,height,img,hp,atkSpd){
-	var self = Entity(type,id,x,y,spdX,spdY,width,height,img);
-	
-	self.hp = hp;
-	self.atkSpd = atkSpd;
-	self.attackCounter = 0;
-	self.aimAngle = 0;
-
-	return self;
 }

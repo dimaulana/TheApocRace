@@ -49,7 +49,22 @@ $(document).ready(function() {
             switch(menuClicked) {
                 case "Story Mode":
                     $('#gameCan').show();
-                    var player = new Player();
+                    var param ={
+                        x: 50,
+                        y:600,
+                        speed: 10,
+                        hp: 10,
+                        score :10,
+                        width: 10,
+                        height :10,
+                        pos: 10,
+                        prevPos :10,
+                        alive: 10,
+                        angle :10,
+                    }
+                
+                    var player = new Player(param);
+                    
                     console.log(player)
                     startNewGame(player);
                     break;
