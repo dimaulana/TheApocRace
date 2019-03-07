@@ -4,7 +4,7 @@ document.getElementsByTagName('head')[0].appendChild(script);
 
 var Img = {};
 Img.player = new Image();
-Img.player.src = "/client/images/player.png";
+Img.player.src = "/client/images/character.png";
 var ctx = document.getElementById("game").getContext("2d");
 
 
@@ -29,7 +29,7 @@ Player = function(param){
 		prevPos :param.prevPos,
 		alive: param.alive,
 		angle :param.angle,
-		img: 'client/images/player.png',
+		img: 'client/images/character.png',
 	}
 	// might get a better idea, keeping it here.
 
