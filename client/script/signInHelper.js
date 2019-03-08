@@ -1,10 +1,13 @@
 	var socket = io();
+	//making menu builder here as it will be used to pass socket to player creation
+	var menuBuilder = new MenuBuilder(socket);
 
 	var buttonClicked;
 
 	$("button").click(function() {
 		buttonClicked = $(this).attr("id");
 	});
+
 
 
 	function validate() {

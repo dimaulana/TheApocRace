@@ -7,6 +7,12 @@ var buildMenu = ["New Level", "Load Level", "Back"];
 var playMenu = ["Story Mode", "Custom", "Back"];
 var currentPage;
 
+var MenuBuilder = function(socket){
+    var self = {
+        socket: socket
+    }
+}
+
 /* Shows button clicked where to go */
 $(document).ready(function() {
     $('.menu').on('click', '.btn', function() {
@@ -49,6 +55,7 @@ $(document).ready(function() {
             switch(menuClicked) {
                 case "Story Mode":
                     $('#gameCan').show();
+                    startNewGame();
                     break;
                 case "Custom":
                     $('.interface').load("ENTER PAGE URL HERE");
