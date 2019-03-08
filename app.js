@@ -84,19 +84,25 @@ var updatePassword = function(data, cb) {
 	});
 }
 
+// Saves the user information to be used throughout the game engine
 var User = function(data) {
 	var self = {
 		//id: data.userID,
 		name: data.username,
-		//socketID = data.socketID
+		socketID: data.socketID
 	}
+
+	return self;
 }
+
 var currentUser;
 
+
+// Initializes the GamePlay object with the required data;
 var startGame = function(data) {
 	var game = new GamePlay({
 			level: data.level,
-			username: data.username,
+			username: currentUser.name,
 			socket: data.socket,
 		});
 }
@@ -110,11 +116,12 @@ io.sockets.on('connection',function(socket) {
 		isValidPassword(data, function(res) {
 			if (res) {
 				socket.emit('signInResponse', {success:true});
+
+				// Create User once signed In;
 				currentUser = User({
 					socketID: socket.id,
 					username: data.username,
 				});
-
 			}
 			else {
 				socket.emit('signInResponse', {success:false});
@@ -163,7 +170,6 @@ io.sockets.on('connection',function(socket) {
 
 		startGame({
 			level: myLevel,
-			//username: currentUser.name,
 			socket: socket,
 		});
 	});
@@ -171,7 +177,6 @@ io.sockets.on('connection',function(socket) {
 	socket.on('playLevel', function(data) {
 		startGame({
 			level: data.level,
-			username: currentUser.name,
 			socket: socket,
 		});
 	});
