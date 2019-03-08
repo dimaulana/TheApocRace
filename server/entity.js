@@ -22,9 +22,40 @@ class Entity{
     // Init Pack for Entities.
     // For now everything is packed into components.
     getInitPack() {
-        return {
-            Component: this.components
-        };
+        var param = {};
+        for component in this.components {
+            switch (component) {
+                case "Transform":
+                    param.pos: component.pos;
+                    param.prevPos: component.prevPos;
+                    param.scale: component.scale;
+                    param.speed: component.speed;
+                    param.angle: component.angle;
+
+                    break;
+
+                case "Lifespan":
+                    param.lifespan: component.lifespan;
+                    break;
+
+                case "Stats":
+                    param.score: component.score;
+                    param.hp: component.hp;
+                    param.lives: component.lives;
+                    param.alive: component.alive;
+                    break;
+
+                case "Input":
+                    // Not needed now!
+                    break;
+
+                default:
+                    ///console.log("Type: ", type , " not found");
+                    break;
+
+            }
+
+        }
     }
 
     getUniqueId() {

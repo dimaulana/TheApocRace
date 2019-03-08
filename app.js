@@ -10,6 +10,8 @@ require('./server/Assets');
 require('./server/DatabaseManager');
 
 var EntityManager = require('./server/EntityManager');
+var GamePlay = require('./server/GamePlay');
+
 var mongojs = require("mongojs");
 var express = require('express');
 var app = express();
@@ -38,6 +40,7 @@ console.log('Server started');
 var DEBUG = true;
 
 var SOCKET_LIST = {};
+
 
 //------ User login functions
 var isValidPassword = function(data, cb) {
@@ -81,6 +84,23 @@ var updatePassword = function(data, cb) {
 	});
 }
 
+var User = function(data) {
+	var self = {
+		//id: data.userID,
+		name: data.username,
+		//socketID = data.socketID
+	}
+}
+var currentUser;
+
+var startGame = function(data) {
+	var game = new GamePlay({
+			level: data.level,
+			username: data.username,
+			socket: data.socket,
+		});
+}
+
 var io = require('socket.io')(serv,{});
 io.sockets.on('connection',function(socket) {
 	socket.id = Math.random();
@@ -90,8 +110,11 @@ io.sockets.on('connection',function(socket) {
 		isValidPassword(data, function(res) {
 			if (res) {
 				socket.emit('signInResponse', {success:true});
-				entityManager = new EntityManager();
-				//entityManager.addEntity("player");
+				currentUser = User({
+					socketID: socket.id,
+					name: data.username,
+				});
+
 			}
 			else {
 				socket.emit('signInResponse', {success:false});
@@ -119,7 +142,6 @@ io.sockets.on('connection',function(socket) {
 				updatePassword(data, function(res) {
 					if (res) {
 						socket.emit('resetPassResponse', {success:true});
-						//entityManager = new EntityManager();
 					}
 					else {
 						socket.emit('resetPassResponse', {success:false});
@@ -132,12 +154,26 @@ io.sockets.on('connection',function(socket) {
 		});
 	});
 
-	socket.on('playGame', function(data) {
+	socket.on('storyMode', function(data) {
 		// Create player and other entities
 
-		// TODO: Add GamePlay files with functions to 
-		// Load level and initialize the entities.
+		// TODO: Get level for story mode;
+		//var myLevel = getLevelStoppedPreviously();
+		var myLevel = 1;
 
+		startGame({
+			level: myLevel,
+			username: currentUser.name,
+			socket: socket,
+		});
+	});
+
+	socket.on('playLevel', function(data) {
+		startGame({
+			level: data.level,
+			username: currentUser.name,
+			socket: socket,
+		});
 	});
 
 	

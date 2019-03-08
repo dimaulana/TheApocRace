@@ -101,9 +101,17 @@ function getImage(imageName) {
   return x;
 }
 
-startNewGame = function(player){
+startNewGame = function(){
 	$(".star").hide();
 	$('#game').show();
+
+	var player;
+	socket.emit('storyMode', {});
+
+	socket.on('initPack', function(data) {
+		player = data.player;
+	}); 
+	
 	player.hp = 10;
 	timeWhenGameStarted = Date.now();
 	frameCount = 0;
