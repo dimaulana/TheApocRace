@@ -14,9 +14,8 @@ class GamePlay {
 
 	init() {
 		this.spawnPlayer();
-		this.socket.emit('initPack', {
-			player: this.player
-		});
+		this.socket.emit('initPack', this.player.getInitPack());
+
 	}
 
 	spawnPlayer() {
@@ -24,6 +23,7 @@ class GamePlay {
 		this.player.addComponent("Transform");
 		this.player.addComponent("Input");
 		this.player.addComponent("Stats");
+		this.player.addComponent("Dimension");
 
 		// All the components;
 	}

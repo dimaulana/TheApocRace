@@ -17,21 +17,20 @@ testCollisionRectRect = function(rect1,rect2){
 var player;
 var gameStarted;
 
-Player = function(param){
+Player = function(param) {
 
 	var self = {
-		socket: param.socket,
-		x: param.x,
-		y: param.y,
-		speedX: param.speed,
-		speedY: param.speed,
+		//socket: param.socket,
+		x: param.pos.x,
+		y: param.pos.y,
+		speedX: param.speed.x,
+		speedY: param.speed.y,
 		speedMax: param.speedMax,
 		hp: param.hp,
 		score: param.score,
+		lives: param.lives,
 		width: param.width,
 		height: param.height,
-		pos: param.pos,
-		prevPos: param.prevPos,
 		alive: param.alive,
 		angle: param.angle,
 		right: false,
@@ -42,18 +41,6 @@ Player = function(param){
 
 
 	}
-	// might get a better idea, keeping it here.
-
-	// self.speed = param.speed;
-	// self.hp = param.hp;
-	// self.score = param.score;
-	// self.width = param.width,
-	// self.height = param.height,
-	// self.pos = param.pos,
-	// self.prevPos = param.prevPos,
-	// self.alive = param.alive,
-	// self.angle = param.angle,
-	// self.img = 'client/images/player.png',
 
 	self.update = function(){
 		self.updateSpeed();
@@ -111,33 +98,17 @@ startNewGame = function(){
 
 	socket.emit('storyMode', {});
 
-	var param ={
-		socket: socket,
-		x: 50,
-		y:500,
-		speed: 0,
-		speedMax: 5,
-		hp: 10,
-		score: 10,
-		width: 10,
-		height: 10,
-		pos: 10,
-		prevPos :10,
-		alive: 10,
-		angle :10,
-	}
-	player = new Player(param);
+	socket.on('initPack', function(data) {
+		console.log(data);
+		player = new Player(data);
+		player.draw();
+		addListener();
+		gameStarted = true;
+		timeWhenGameStarted = Date.now();
+		frameCount = 0;
+		score = 0;
 
-	//socket.on('initPack', function(data) {
-	//}); 
-
-	timeWhenGameStarted = Date.now();
-	frameCount = 0;
-	score = 0;
-	player.draw();
-	addListener();
-	gameStarted = true;
-
+	});
 } 
 
 function addListener() {

@@ -17,17 +17,14 @@
 		switch (buttonClicked) {
 			case "signIn":
 				socket.emit('signIn', {username: user, password: pw});
-				console.log("emitted");
 				break;
 
 			case "signUp":
 				socket.emit('signUp', {username: user, password: pw});
-				console.log("sign up");
 				break;
 
 			case "forgotPass":
 				showHideResetPassword(true);
-				console.log("Reseting Password");
 				break;
 
 			case "resetPass":
@@ -69,7 +66,6 @@
 
 	socket.on('signInResponse', function(data) {
 		if (data.success) {
-			console.log("Success");
 			$('#account').hide();
 			generateMenus("mainMenu");
 		}

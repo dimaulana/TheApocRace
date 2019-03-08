@@ -171,7 +171,7 @@ io.sockets.on('connection',function(socket) {
 	socket.on('playLevel', function(data) {
 		startGame({
 			level: data.level,
-			username: currentUser.name,
+			//username: currentUser.name,
 			socket: socket,
 		});
 	});
