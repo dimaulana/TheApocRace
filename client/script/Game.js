@@ -121,9 +121,9 @@ startNewGame = function(){
 		alive: 10,
 		angle :10,
 	}
+	player = new Player(param);
 
 	socket.on('initPack', function(data) {
-		player = new Player(param);
 	}); 
 	
 	timeWhenGameStarted = Date.now();

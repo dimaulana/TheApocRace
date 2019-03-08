@@ -7,7 +7,7 @@ var buildMenu = ["New Level", "Load Level", "Back"];
 var playMenu = ["Story Mode", "Custom", "Back"];
 var currentPage;
 
-var menuBuilder = function(socket){
+var MenuBuilder = function(socket){
     var self = {
         socket: socket
     }
