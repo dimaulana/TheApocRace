@@ -7,7 +7,6 @@ Img.player = new Image();
 Img.player.src = "/client/images/character.png";
 var ctx = document.getElementById("game").getContext("2d");
 
-
 testCollisionRectRect = function(rect1,rect2){
 	return rect1.x <= rect2.x+rect2.width 
 		&& rect2.x <= rect1.x+rect1.width
@@ -18,6 +17,7 @@ testCollisionRectRect = function(rect1,rect2){
 Player = function(param){
 
 	var self = {
+		socket: param.socket,
 		x: param.x,
 		y: param.y,
 		speed: param.speed,
@@ -88,7 +88,6 @@ Player = function(param){
 	
 	return self;
 }
-
 Player.list = {}
 
 
@@ -108,13 +107,33 @@ startNewGame = function(){
 	var player;
 	socket.emit('storyMode', {});
 
+	var param ={
+		socket: self.socket,
+		x: 50,
+		y:600,
+		speed: 10,
+		hp: 10,
+		score :10,
+		width: 10,
+		height :10,
+		pos: 10,
+		prevPos :10,
+		alive: 10,
+		angle :10,
+	}
+
 	socket.on('initPack', function(data) {
-		player = data.player;
+		player = new Player(param);
 	}); 
 	
-	player.hp = 10;
 	timeWhenGameStarted = Date.now();
 	frameCount = 0;
 	score = 0;
 	player.draw();
-}
+} 
+
+
+
+
+
+
