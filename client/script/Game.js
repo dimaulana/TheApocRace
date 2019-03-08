@@ -42,21 +42,10 @@ Player = function(param){
 
 
 	}
-	// might get a better idea, keeping it here.
-
-	// self.speed = param.speed;
-	// self.hp = param.hp;
-	// self.score = param.score;
-	// self.width = param.width,
-	// self.height = param.height,
-	// self.pos = param.pos,
-	// self.prevPos = param.prevPos,
-	// self.alive = param.alive,
-	// self.angle = param.angle,
-	// self.img = 'client/images/player.png',
 
 	self.update = function(){
 		self.updateSpeed();
+		self.setViewPortOnPlayer();
 		/*
 		if(self.pressingAttack){
 			self.shootBullet(self.mouseAngle);
@@ -64,6 +53,14 @@ Player = function(param){
 		}*/
 		self.x+=self.speedX;
 		self.y+=self.speedY;
+	}
+
+	self.setViewPortOnPlayer = function(){
+		var playerPosition = self.pos;
+		var gameCanvas = document.getElementById("game");
+		gameCanvas.scrollTop = playerPosition.x;
+    	gameCanvas.scrollLeft = playerPosition.y;
+		console.log("player position: ",playerPosition);
 	}
 
 	self.updateSpeed = function() {
@@ -103,8 +100,6 @@ function getImage(imageName) {
   	return x;
 }
 
-
-
 startNewGame = function(){
 	$(".star").hide();
 	$('#game').show();
@@ -127,9 +122,6 @@ startNewGame = function(){
 		angle :10,
 	}
 	player = new Player(param);
-
-	//socket.on('initPack', function(data) {
-	//}); 
 
 	timeWhenGameStarted = Date.now();
 	frameCount = 0;
@@ -165,7 +157,6 @@ function addListener() {
 		if(event.keyCode === 68) {	//d
 			player.right = false;
 		}
-		//player.updateSpeed();
 		else if(event.keyCode === 83) {	//s
 			player.down = false;
 		}
