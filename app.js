@@ -112,7 +112,7 @@ io.sockets.on('connection',function(socket) {
 				socket.emit('signInResponse', {success:true});
 				currentUser = User({
 					socketID: socket.id,
-					name: data.username,
+					username: data.username,
 				});
 
 			}
@@ -163,7 +163,7 @@ io.sockets.on('connection',function(socket) {
 
 		startGame({
 			level: myLevel,
-			username: currentUser.name,
+			//username: currentUser.name,
 			socket: socket,
 		});
 	});
