@@ -81,7 +81,7 @@ Player = function(param) {
 
 	self.draw = function(player) {
 		ctx.clearRect(0, 0, 1280, 720);
-		if(self.x + self.speedMax > 500){
+		if(self.x + self.speedMax > 1280){
 			self.setViewPortOnPlayer(self.x, self.y);			
 		}		
 		ctx.drawImage(Img.player,self.x,self.y);
