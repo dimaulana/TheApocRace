@@ -16,7 +16,7 @@ testCollisionRectRect = function(rect1,rect2){
 
 var player;
 var gameStarted;
-
+var backgroundSound;
 Player = function(param){
 
 	var self = {
@@ -91,7 +91,26 @@ Player = function(param){
 
 	return self;
 }
-
+//Sound function that helps play sound
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    
+    this.sound.setAttribute("storyMode", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }    
+}
+	
+	
+	
+	
+	
 
 
 function getImage(imageName) {
@@ -130,7 +149,10 @@ startNewGame = function(){
 
 	//socket.on('initPack', function(data) {
 	//}); 
-
+     backgroundSound = new sound('client/sound/background.mp3');
+	 backgroundSound.play();
+	 //selectorSound= new sound('client/sound/gunshot.wav');
+	 //selectorSound.play();
 	timeWhenGameStarted = Date.now();
 	frameCount = 0;
 	score = 0;
