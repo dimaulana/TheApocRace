@@ -2,29 +2,62 @@ var Vec2 = require('./Vec2')
 
 class Component{
 	
-	constructor(){
-	
-	}	
+	constructor() {}
+
+	ofType(type) {
+		switch(type) {
+			case "Transform":
+				return (this instanceof Transform);
+
+			case "Lifespan":
+				return (this instanceof Lifespan);
+
+			case "Stats":
+				return (this instanceof Stats);
+
+			case "Input":
+				return (this instanceof Input);
+
+			case "Dimension":
+				return (this instanceof Dimension);
+
+			default:
+				console.log("Type: ", type , " not found");
+				return false;
+		}
+
+    }
+
 }
+
 
 class Transform extends Component{
 	
 	constructor(){
 		super();
-		this.pos = new Vec2(0.0, 0.0);
+		this.pos = new Vec2(50, 500);
 		this.prevPos = new Vec2(0.0, 0.0);
 		this.scale = new Vec2(1.0, 1.0);
 		this.speed = new Vec2(0.0, 0.0);
+		this.speedMax = 5;
 		this.angle = 0;
 	}
 }
 
-class LifeSpan extends Component{
+class Dimension extends Component {
+	constructor() {
+		super();
+		this.width = 95;
+		this.height = 130;
+	}
+}
+
+class Lifespan extends Component{
 
 	constructor(){
 		super();
 		this.clock = new Date();
-		this.lifeSpan = 0;
+		this.lifespan = 0;
 	}
 }
 
@@ -34,7 +67,7 @@ class Stats extends Component{
 		super();
 		this.alive = true;
 		this.score = 0;
-		this.hp = 0;
+		this.hp = 10;
 		this.lives = 3;
 	}
 }
@@ -56,7 +89,8 @@ class Input extends Component{
 module.exports = {
 	Component: Component,
 	Transform: Transform,
-	LifeSpan: LifeSpan,
+	Lifespan: Lifespan,
 	Stats: Stats,
-	Input: Input
+	Input: Input,
+	Dimension: Dimension
 }

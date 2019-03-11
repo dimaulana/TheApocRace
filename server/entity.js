@@ -23,39 +23,38 @@ class Entity{
     // For now everything is packed into components.
     getInitPack() {
         var param = {};
+        
         this.components.forEach(function(component) {
-            switch (component) {
-                case "Transform":
-                    param.pos = component.pos;
-                    param.prevPos = component.prevPos;
-                    param.scale = component.scale;
-                    param.speed = component.speed;
-                    param.angle = component.angle;
-
-                    break;
-
-                case "Lifespan":
-                    param.lifespan = component.lifespan;
-                    break;
-
-                case "Stats":
-                    param.score = component.score;
-                    param.hp = component.hp;
-                    param.lives = component.lives;
-                    param.alive = component.alive;
-                    break;
-
-                case "Input":
-                    // Not needed now!
-                    break;
-
-                default:
-                    ///console.log("Type: ", type , " not found");
-                    break;
-
+            if (component.ofType("Transform")) {
+                param.pos = component.pos;
+                param.prevPos = component.prevPos;
+                param.scale = component.scale;
+                param.speed = component.speed;
+                param.speedMax = component.speedMax;
+                param.angle = component.angle;
             }
-
+            else if (component.ofType("Lifespan")) {
+                param.lifespan = component.lifespan;
+            }
+            else if (component.ofType("Stats")) {
+                param.score = component.score;
+                param.hp = component.hp;
+                param.lives = component.lives;
+                param.alive = component.alive;
+            }
+            else if (component.ofType("Dimension")) {
+                param.width = component.width;
+                param.height = component.height;
+            }
+            else if (component.ofType("Input")) {
+                // Not needed now!
+            }
+            else {
+                // Do nothing;
+            }
         });
+
+        return param;
     }
 
     getUniqueId() {
@@ -66,7 +65,7 @@ class Entity{
         return this.id;
     }
 
-    destroy(){
+    destroy() {
         return null;
     }
 
@@ -78,13 +77,16 @@ class Entity{
                 c = new Component.Transform(); break;
 
             case "Lifespan":
-                c = new Component.LifeSpan(); break;
+                c = new Component.Lifespan(); break;
 
             case "Stats":
                 c = new Component.Stats(); break;
 
             case "Input":
                 c = new Component.Input(); break;
+
+            case "Dimension":
+                c = new Component.Dimension(); break;
 
             default:
                 console.log("Type: ", type , " not found");
@@ -105,24 +107,7 @@ class Entity{
 
     getComponent(type){
         var component = this.components.find(function(c) {
-            switch (type) {
-            case "Transform":
-                return (c instanceof Component.Transform);
-
-            case "Lifespan":
-                return (c instanceof Component.Lifespan);
-
-            case "Stats":
-                return (c instanceof Component.Stats);
-
-            case "Input":
-                return (c instanceof Component.Input);
-
-            default:
-                console.log("Type: ", type , " not found");
-                return null;
-
-            }
+            return c.ofType(type);
         });
 
         return component;
@@ -149,9 +134,11 @@ module.exports = Entity;
 // e.addComponent("Lifespan");
 // e.addComponent("Input");
 // e.addComponent("Stats");
-// console.log(e);
+// //console.log(e);
 // var c = e.getComponent("Transform");
+// var d = e.getComponent("Lifespan");
 // console.log(c.pos.x);
+// console.log(d);
 // var pack = e.getInitPack();
 // console.log(pack);
 

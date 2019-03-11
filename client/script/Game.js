@@ -7,8 +7,15 @@ Img.player = new Image();
 Img.player.src = "/client/images/character.png";
 var ctx = document.getElementById("game").getContext("2d");
 
+var player;
+
+// When the game has not started, paused is true in order to 
+// stop the updates;
+var paused = true;
+
+
 testCollisionRectRect = function(rect1,rect2){
-	return rect1.x <= rect2.x + rect2.width 
+	return rect1.x <= rect2.x + rect2.width
 		&& rect2.x <= rect1.x +rect1.width
 		&& rect1.y <= rect2.y + rect2.height
 		&& rect2.y <= rect1.y + rect1.height;
@@ -17,43 +24,31 @@ testCollisionRectRect = function(rect1,rect2){
 var player;
 var gameStarted;
 var backgroundSound;
-Player = function(param){
+
+Player = function(param) {
 
 	var self = {
-		socket: param.socket,
-		x: param.x,
-		y: param.y,
-		speedX: param.speed,
-		speedY: param.speed,
+		//socket: param.socket,
+		x: 200,
+		y:200,
+		speedX: param.speed.x,
+		speedY: param.speed.y,
 		speedMax: param.speedMax,
 		hp: param.hp,
 		score: param.score,
+		lives: param.lives,
 		width: param.width,
 		height: param.height,
-		pos: param.pos,
-		prevPos: param.prevPos,
 		alive: param.alive,
 		angle: param.angle,
 		right: false,
-		keyLeft: false,
+		left: false,
 		up:  false,
 		down: false,
 		img: 'client/images/character.png',
 
 
 	}
-	// might get a better idea, keeping it here.
-
-	// self.speed = param.speed;
-	// self.hp = param.hp;
-	// self.score = param.score;
-	// self.width = param.width,
-	// self.height = param.height,
-	// self.pos = param.pos,
-	// self.prevPos = param.prevPos,
-	// self.alive = param.alive,
-	// self.angle = param.angle,
-	// self.img = 'client/images/player.png',
 
 	self.update = function(){
 		self.updateSpeed();
@@ -62,15 +57,25 @@ Player = function(param){
 			self.shootBullet(self.mouseAngle);
 
 		}*/
-		self.x+=self.speedX;
-		self.y+=self.speedY;
+		self.x += self.speedX;
+		self.y += self.speedY;
+
+	}
+
+	self.setViewPortOnPlayer = function(x, y){
+		ctx.save();
+		console.log("out of canvas");
+		ctx.translate(x - ctx.canvas.width/2,0);
+		ctx.restore();
 	}
 
 	self.updateSpeed = function() {
-		if(self.right)
+		if (self.right)
 			self.speedX = self.speedMax;
-		else if(self.keyLeft)
+
+		else if (self.left && ((self.x - self.speedMax) > 0))
 			self.speedX = -self.speedMax;
+
 		else
 			self.speedX = 0;
 
@@ -79,13 +84,14 @@ Player = function(param){
 		else if(self.down)
 			self.speedY = self.speedMax;
 		else
-			self.speedY = 0;		
+			self.speedY = 0;
 	}
 
 	self.draw = function(player) {
 		ctx.clearRect(0, 0, 1280, 720);
-		//var x = self.x-self.width/2;
-		//var y = self.y-self.height/2;
+		if(self.x + self.speedMax > 1280){
+			self.setViewPortOnPlayer(self.x, self.y);
+		}
 		ctx.drawImage(Img.player,self.x,self.y);
 	}
 
@@ -112,6 +118,10 @@ function sound(src) {
 	
 	
 
+// @Sahil: For testing;
+var offsetX = 0;
+var offsetY = 0;
+
 
 function getImage(imageName) {
   	var x = document.createElement("IMG");
@@ -122,77 +132,69 @@ function getImage(imageName) {
   	return x;
 }
 
-
-
 startNewGame = function(){
 	$(".star").hide();
 	$('#game').show();
 
 	socket.emit('storyMode', {});
 
-	var param ={
-		socket: socket,
-		x: 50,
-		y:500,
-		speed: 0,
-		speedMax: 5,
-		hp: 10,
-		score: 10,
-		width: 10,
-		height: 10,
-		pos: 10,
-		prevPos :10,
-		alive: 10,
-		angle :10,
-	}
-	player = new Player(param);
+	socket.on('initPack', function(data) {
+		player = new Player(data);
+		player.draw();
+		addListener();
+		paused = false;
+		timeWhenGameStarted = Date.now();
+		frameCount = 0;
+		score = 0;
+    backgroundSound = new sound('client/sound/background.mp3');
+	  backgroundSound.play();
+	  timeWhenGameStarted = Date.now();
+	  frameCount = 0;
+	  score = 0;
+	  player.draw();
+	  addListener();
+	  gameStarted = true;
 
-	//socket.on('initPack', function(data) {
-	//}); 
-     backgroundSound = new sound('client/sound/background.mp3');
-	 backgroundSound.play();
-	 //selectorSound= new sound('client/sound/gunshot.wav');
-	 //selectorSound.play();
-	timeWhenGameStarted = Date.now();
-	frameCount = 0;
-	score = 0;
-	player.draw();
-	addListener();
-	gameStarted = true;
-
-} 
+   } 
+ });
+}
 
 function addListener() {
-	// Controls WASD works after adding input component 
+	// Controls WASD works after adding input component
 	document.onkeydown = function(event) {
 		if(event.keyCode === 68) {	//d
 			player.right = true;
+			offsetX++;
+
 		}
 		else if(event.keyCode === 83) {	//s
 			player.down = true;
 		}
 		else if(event.keyCode === 65) { //a
-			player.keyLeft = true;
+			player.left = true;
+			offsetX--;
+
 		}
 		else if(event.keyCode === 87) {// w
 			player.up = true;
 		}
-		/*
-		else if(event.keyCode === 80) //p
-		paused = !paused;
-	 	 */
+		
+		else if(event.keyCode === 80) {//p
+			// TODO: Game Menu;
+			paused = !paused;
+		}
+	 	 
 	}
 
 	document.onkeyup = function(event) {
 		if(event.keyCode === 68) {	//d
 			player.right = false;
 		}
-		//player.updateSpeed();
 		else if(event.keyCode === 83) {	//s
 			player.down = false;
 		}
 		else if(event.keyCode === 65) { //a
-			player.keyLeft = false;
+			player.left = false;
 		}
 		else if(event.keyCode === 87) {// w
 			player.up = false;
@@ -201,14 +203,15 @@ function addListener() {
 }
 
 setInterval(function() {
-	if (!gameStarted) return;
+	if (paused) return;
 	player.update();
 	player.draw();
-
 },30);
 
 
-
-
-
-
+// @Sahil: For testing;
+function clamp(value, min, max){
+    if(value < min) return min;
+    else if(value > max) return max;
+    return value;
+}
