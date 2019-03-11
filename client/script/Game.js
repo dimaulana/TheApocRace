@@ -7,6 +7,13 @@ Img.player = new Image();
 Img.player.src = "/client/images/character.png";
 var ctx = document.getElementById("game").getContext("2d");
 
+var player;
+
+// When the game has not started, paused is true in order to 
+// stop the updates;
+var paused = true;
+
+
 testCollisionRectRect = function(rect1,rect2){
 	return rect1.x <= rect2.x + rect2.width 
 		&& rect2.x <= rect1.x +rect1.width
@@ -14,8 +21,6 @@ testCollisionRectRect = function(rect1,rect2){
 		&& rect2.y <= rect1.y + rect1.height;
 }
 
-var player;
-var gameStarted;
 
 Player = function(param) {
 
@@ -91,6 +96,7 @@ Player = function(param) {
 }
 
 
+// @Sahil: For testing;
 var offsetX = 0;
 var offsetY = 0;
 
@@ -111,11 +117,10 @@ startNewGame = function(){
 	socket.emit('storyMode', {});
 
 	socket.on('initPack', function(data) {
-		console.log(data);
 		player = new Player(data);
 		player.draw();
 		addListener();
-		gameStarted = true;
+		paused = false;
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
 		score = 0;
@@ -142,10 +147,12 @@ function addListener() {
 		else if(event.keyCode === 87) {// w
 			player.up = true;
 		}
-		/*
-		else if(event.keyCode === 80) //p
-		paused = !paused;
-	 	 */
+		
+		else if(event.keyCode === 80) {//p
+			// TODO: Game Menu;
+			paused = !paused;
+		}
+	 	 
 	}
 
 	document.onkeyup = function(event) {
@@ -165,11 +172,13 @@ function addListener() {
 }
 
 setInterval(function() {
-	if (!gameStarted) return;
+	if (paused) return;
 	player.update();
 	player.draw();
 },30);
 
+
+// @Sahil: For testing;
 function clamp(value, min, max){
     if(value < min) return min;
     else if(value > max) return max;
