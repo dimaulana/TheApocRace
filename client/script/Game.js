@@ -8,7 +8,7 @@ Img.player.src = "/client/images/character.png";
 var ctx = document.getElementById("game").getContext("2d");
 
 testCollisionRectRect = function(rect1,rect2){
-	return rect1.x <= rect2.x + rect2.width 
+	return rect1.x <= rect2.x + rect2.width
 		&& rect2.x <= rect1.x +rect1.width
 		&& rect1.y <= rect2.y + rect2.height
 		&& rect2.y <= rect1.y + rect1.height;
@@ -76,14 +76,14 @@ Player = function(param) {
 		else if(self.down)
 			self.speedY = self.speedMax;
 		else
-			self.speedY = 0;		
+			self.speedY = 0;
 	}
 
 	self.draw = function(player) {
 		ctx.clearRect(0, 0, 1280, 720);
 		if(self.x + self.speedMax > 1280){
-			self.setViewPortOnPlayer(self.x, self.y);			
-		}		
+			self.setViewPortOnPlayer(self.x, self.y);
+		}
 		ctx.drawImage(Img.player,self.x,self.y);
 	}
 
@@ -121,10 +121,10 @@ startNewGame = function(){
 		score = 0;
 
 	});
-} 
+}
 
 function addListener() {
-	// Controls WASD works after adding input component 
+	// Controls WASD works after adding input component
 	document.onkeydown = function(event) {
 		if(event.keyCode === 68) {	//d
 			player.right = true;
