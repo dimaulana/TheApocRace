@@ -46,8 +46,6 @@ Player = function(param) {
 		up:  false,
 		down: false,
 		img: 'client/images/character.png',
-
-
 	}
 
 	self.update = function(){
@@ -146,18 +144,12 @@ startNewGame = function(){
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
 		score = 0;
-    backgroundSound = new sound('client/sound/background.mp3');
-	  backgroundSound.play();
-	  timeWhenGameStarted = Date.now();
-	  frameCount = 0;
-	  score = 0;
-	  player.draw();
-	  addListener();
-	  gameStarted = true;
+    	backgroundSound = new sound('client/sound/background.mp3');
+	  	backgroundSound.play();
+	  	gameStarted = true;
+   }); 
+ }
 
-   } 
- });
-}
 
 function addListener() {
 	// Controls WASD works after adding input component
