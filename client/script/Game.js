@@ -21,6 +21,9 @@ testCollisionRectRect = function(rect1,rect2){
 		&& rect2.y <= rect1.y + rect1.height;
 }
 
+var player;
+var gameStarted;
+var backgroundSound;
 
 Player = function(param) {
 
@@ -94,7 +97,26 @@ Player = function(param) {
 
 	return self;
 }
-
+//Sound function that helps play sound
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    
+    this.sound.setAttribute("storyMode", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }    
+}
+	
+	
+	
+	
+	
 
 // @Sahil: For testing;
 var offsetX = 0;
@@ -124,8 +146,17 @@ startNewGame = function(){
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
 		score = 0;
+    backgroundSound = new sound('client/sound/background.mp3');
+	  backgroundSound.play();
+	  timeWhenGameStarted = Date.now();
+	  frameCount = 0;
+	  score = 0;
+	  player.draw();
+	  addListener();
+	  gameStarted = true;
 
-	});
+   } 
+ });
 }
 
 function addListener() {
