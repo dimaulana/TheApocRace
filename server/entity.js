@@ -30,6 +30,7 @@ class Entity{
                 param.prevPos = component.prevPos;
                 param.scale = component.scale;
                 param.speed = component.speed;
+                param.speedMax = component.speedMax;
                 param.angle = component.angle;
             }
             else if (component.ofType("Lifespan")) {
