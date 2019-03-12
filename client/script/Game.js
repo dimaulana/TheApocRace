@@ -10,7 +10,7 @@ var ctx = document.getElementById("game").getContext("2d");
 
 var player;
 
-// When the game has not started, paused is true in order to 
+// When the game has not started, paused is true in order to
 // stop the updates;
 var paused = true;
 
@@ -29,7 +29,6 @@ var backgroundSound;
 var gameArea = {
 	x: 5000
 };
-
 
 var obstacles = [];
 function tile() {
@@ -58,6 +57,7 @@ Player = function(param) {
 		speedX: param.speed.x,
 		speedY: param.speed.y,
 		speedMax: param.speedMax,
+		gravity: param.gravity,
 		hp: param.hp,
 		score: param.score,
 		lives: param.lives,
@@ -74,8 +74,15 @@ Player = function(param) {
 
 	self.update = function(){
 		self.updateSpeed();
-		
-		// Apply gravity;
+
+		self.y += self.speedY;
+
+		// TODO: Collision should do this with the tiles;
+		if (self.y < 500) {
+			self.y -= self.gravity;
+		}
+
+
 		if (self.x === canvas.width/2) {
 			return;
 		}
@@ -87,32 +94,24 @@ Player = function(param) {
 		}
 	}
 
-	self.setViewPortOnPlayer = function(x, y){
-		ctx.save();
-		console.log("out of canvas");
-		ctx.translate(x - ctx.canvas.width/2,0);
-		ctx.restore();
-	}
-
 	self.updateSpeed = function() {
 		if (self.right)
 			self.speedX = self.speedMax;
-
 		else if (self.left && ((self.x - self.speedMax) > 0))
 			self.speedX = -self.speedMax;
-
 		else
 			self.speedX = 0;
 
 		if(self.up)
 			self.speedY = -self.speedMax;
-		else if(self.down)
-			self.speedY = self.speedMax;
+		else if(self.down) {
+			//self.speedY = self.speedMax;
+		}
 		else
 			self.speedY = 0;
 	}
 
-	self.draw = function(player) {		
+	self.draw = function(player) {
 		ctx.drawImage(Img.player,self.x,self.y);
 	}
 
@@ -199,12 +198,12 @@ function addListener() {
 		else if(event.keyCode === 87) {// w
 			player.up = true;
 		}
-		
+
 		else if(event.keyCode === 80) {//p
 			// TODO: Game Menu;
 			paused = !paused;
 		}
-	 	 
+
 	}
 
 	document.onkeyup = function(event) {
@@ -224,9 +223,9 @@ function addListener() {
 }
 
 function update() {
-	if (!gameStarted) return;
+	if (paused) return;
 	player.update();
-}
+
 	// TODO: Update all the other entities based
 	// on the speed of the player
 	// Update Tiles;

@@ -1,6 +1,6 @@
 // Asset class
 // Author: Hussein Parpia
-
+//
 // Requiring fs module in which  
 // readFile function is defined. 
 const fs = require('fs') 

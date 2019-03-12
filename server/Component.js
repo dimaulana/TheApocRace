@@ -25,11 +25,8 @@ class Component{
 				console.log("Type: ", type , " not found");
 				return false;
 		}
-
     }
-
 }
-
 
 class Transform extends Component{
 	
@@ -41,6 +38,7 @@ class Transform extends Component{
 		this.speed = new Vec2(0.0, 0.0);
 		this.speedMax = 10;
 		this.angle = 0;
+		this.gravity = -3.75;
 	}
 }
 
