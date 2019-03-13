@@ -2,12 +2,14 @@ var script = document.createElement('script');
 script.type = 'text/javascript';
 document.getElementsByTagName('head')[0].appendChild(script);
 
-var Img = {};
-Img.player = new Image();
-Img.player.src = "/client/images/character.png";
 var canvas = document.getElementById("game");
 var ctx = document.getElementById("game").getContext("2d");
 
+var Img = {};
+Img.player = new Image();
+Img.player.src = "/client/images/character.png";
+Img.tile = new Image();
+Img.tile.src = "/client/images/roadtile_01.png";
 var player;
 
 // When the game has not started, paused is true in order to
@@ -26,19 +28,16 @@ var player;
 var gameStarted;
 var backgroundSound;
 
-var gameArea = {
-	x: 5000
-};
-
 var obstacles = [];
 function tile() {
 	this.width = 30;
-	this.height = 100;
+	this.height = Img.tile.height;
 	this.x = Math.random() * (2000 - 10) + 10;
 	this.y = canvas.height - this.height;
 
 	this.draw = function() {
-		ctx.fillRect(this.x, this.y, this.width, this.height);
+		ctx.drawImage(Img.tile,this.x, this.y);
+		//ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 
 	this.update = function() {
@@ -173,13 +172,15 @@ startNewGame = function(){
     	backgroundSound = new sound('client/sound/background.mp3');
 	  	backgroundSound.play();
 	  	gameStarted = true;
+
+		// TODO: This is for testing the movements
+		// Replace with tiles from the actual file level;
 		// Adding random tiles;
 		for (var i = 0; i < 10; i++) {
 			obstacles.push(new tile());
 		}
 	});
 }
->>>>>>> Added player movement with respect to other objects
 
 function addListener() {
 	// Controls WASD works after adding input component
