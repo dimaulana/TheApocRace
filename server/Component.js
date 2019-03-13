@@ -25,22 +25,20 @@ class Component{
 				console.log("Type: ", type , " not found");
 				return false;
 		}
-
     }
-
 }
-
 
 class Transform extends Component{
 	
 	constructor(){
 		super();
-		this.pos = new Vec2(50, 500);
+		this.pos = new Vec2(10, 500);
 		this.prevPos = new Vec2(0.0, 0.0);
 		this.scale = new Vec2(1.0, 1.0);
 		this.speed = new Vec2(0.0, 0.0);
-		this.speedMax = 5;
+		this.speedMax = 10;
 		this.angle = 0;
+		this.gravity = -3.75;
 	}
 }
 

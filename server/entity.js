@@ -32,6 +32,7 @@ class Entity{
                 param.speed = component.speed;
                 param.speedMax = component.speedMax;
                 param.angle = component.angle;
+                param.gravity = component.gravity;
             }
             else if (component.ofType("Lifespan")) {
                 param.lifespan = component.lifespan;
