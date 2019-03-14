@@ -42,7 +42,7 @@ $(document).ready(function() {
         else if (currentPage === "buildMenu") {
             switch(menuClicked) {
                 case "New Level":
-                    $('.interface').load("ENTER PAGE URL HERE");
+                    $('.interface').load("client/levelEditor.html");
                     break;
                 case "Load Level": 
                     $('.interface').load("ENTER PAGE URL HERE");
