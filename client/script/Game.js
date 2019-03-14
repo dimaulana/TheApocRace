@@ -154,10 +154,7 @@ Player = function(param) {
 			self.speedY = -self.speedMax*6;
 			self.state = "jump";
 		}
-		else if(self.down) {
-			// self.speedY = self.speedMax;
-		}
-		else {
+		else{
 			self.speedY = 0;
 			self.state = "stand";
 		}
