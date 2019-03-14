@@ -52,9 +52,10 @@ sprite_sheet = {
 	frame_sets:[[0], [1, 2, 3], [4, 5, 6]] // standing, running right, running left;
 };
 
+// TODO: To get from asset manager;
 var Img = {};
 Img.tile = new Image();
-Img.tile.src = path + "roadtile_01.png";
+Img.tile.src = "/client/images/roadtile_01.png";
 
 testCollisionRectRect = function(rect1,rect2){
 	return rect1.x <= rect2.x + rect2.width
