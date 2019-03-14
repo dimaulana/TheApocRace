@@ -1,36 +1,21 @@
 // Game.js starts and sets the game at the front end;
 // Contributors: Hussein Parpia, Sahil Anand
 
-// Loading Asset Manager
-var asset = new Asset();
-asset.loadAssets();
-
-var Img = {};
-Img.player = new Image();
-var ctx = document.getElementById("game").getContext("2d");
-
-var player;
-
-// When the game has not started, paused is true in order to
-// stop the updates;
-var paused = true;
-
-
-
 var canvas = document.getElementById("game");
 var ctx = document.getElementById("game").getContext("2d");
 var display = document.querySelector('#game').getContext("2d");
 
-let path = "/client/images/";
+// Loading Asset Manager
+var asset = new Asset();
+asset.loadAssets();
 
+var player, sprite_sheet, backgroundSound;
+var obstacles = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 
 // Dimensions of the player images;
 const SPRITE_SIZE = 90;
 const SPRITE_HEIGHT = 119;
-
-var player, sprite_sheet, backgroundSound;
-var obstacles = [];
 
 // TODO: Hussein - Move to its own script file
 function Animation(frame_set, delay) {
@@ -77,11 +62,6 @@ testCollisionRectRect = function(rect1,rect2){
 	&& rect1.y <= rect2.y + rect2.height
 	&& rect2.y <= rect1.y + rect1.height;
 }
-
-var player;
-var gameStarted;
-var backgroundSound;
-
 
 function tile() {
 	this.width = 30;
@@ -141,6 +121,9 @@ Player = function(param) {
 		}
 
 		self.x += self.speedX;
+		if (self.x > canvas.width/2) {	
+			self.x = canvas.width/2;	
+		}
 	}
 
 
