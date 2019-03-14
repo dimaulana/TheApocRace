@@ -23,7 +23,7 @@ $(document).ready(function() {
             switch(menuClicked) {
                 case "Play" :
                     generateMenus("playMenu");
-				
+                    startNewGame();
                     break;
                 case "Build":
                     generateMenus("buildMenu");
