@@ -94,6 +94,7 @@ Player = function(param) {
 		height: param.height,
 		alive: param.alive,
 		angle: param.angle,
+		gravity: param.gravity,
 		right: false,
 		left: false,
 		up:  false,
@@ -154,7 +155,7 @@ Player = function(param) {
 			self.state = "jump";
 		}
 		else if(self.down) {
-			//self.speedY = self.speedMax;
+			// self.speedY = self.speedMax;
 		}
 		else {
 			self.speedY = 0;
