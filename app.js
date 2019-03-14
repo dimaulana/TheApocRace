@@ -6,7 +6,6 @@
 
 
 // Files and services needed for game
-require('./server/Assets');
 require('./server/DatabaseManager');
 
 var EntityManager = require('./server/EntityManager');

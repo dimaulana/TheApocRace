@@ -1,21 +1,21 @@
 // Game.js starts and sets the game at the front end;
 // Contributors: Hussein Parpia, Sahil Anand
-//
 
 var canvas = document.getElementById("game");
 var ctx = document.getElementById("game").getContext("2d");
 var display = document.querySelector('#game').getContext("2d");
 
-let path = "/client/images/";
+// Loading Asset Manager
+var asset = new Asset();
+asset.loadAssets();
 
+var player, sprite_sheet, backgroundSound;
+var obstacles = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 
 // Dimensions of the player images;
 const SPRITE_SIZE = 90;
 const SPRITE_HEIGHT = 119;
-
-var player, sprite_sheet, backgroundSound;
-var obstacles = [];
 
 // TODO: Hussein - Move to its own script file
 function Animation(frame_set, delay) {
@@ -52,9 +52,10 @@ sprite_sheet = {
 	frame_sets:[[0], [1, 2, 3], [4, 5, 6]] // standing, running right, running left;
 };
 
+// TODO: To get from asset manager;
 var Img = {};
 Img.tile = new Image();
-Img.tile.src = path + "roadtile_01.png";
+Img.tile.src = "/client/images/roadtile_01.png";
 
 testCollisionRectRect = function(rect1,rect2){
 	return rect1.x <= rect2.x + rect2.width
@@ -86,7 +87,6 @@ Player = function(param) {
 		speedX: param.speed.x,
 		speedY: param.speed.y,
 		speedMax: param.speedMax,
-		gravity: param.gravity,
 		hp: param.hp,
 		score: param.score,
 		lives: param.lives,
@@ -105,9 +105,13 @@ Player = function(param) {
 
 	self.update = function(){
 		self.updateSpeed();
+		/*
+		if(self.pressingAttack){
+			self.shootBullet(self.mouseAngle);
 
+		}*/
+		self.x += self.speedX;
 		self.y += self.speedY;
-
 		// TODO: Collision should do this with the tiles;
 		if (self.y < 500) {
 			self.y -= self.gravity;
@@ -118,11 +122,11 @@ Player = function(param) {
 		}
 
 		self.x += self.speedX;
-
-		if (self.x > canvas.width/2) {
-			self.x = canvas.width/2;
+		if (self.x > canvas.width/2) {	
+			self.x = canvas.width/2;	
 		}
 	}
+
 
 	self.updateSpeed = function() {
 		var delay = 5;
@@ -201,7 +205,7 @@ startNewGame = function(){
 	socket.on('initPack', function(data) {
 		player = new Player(data);
 		// Set player image;
-		player.image.src = path + "player.png";
+		player.image.src = asset.getTexture('Player');
 		player.draw();
 
 		addListener();
@@ -226,14 +230,12 @@ function addListener() {
 	document.onkeydown = function(event) {
 		if(event.keyCode === 68) {	//d
 			player.right = true;
-
 		}
 		else if(event.keyCode === 83) {	//s
 			player.down = true;
 		}
 		else if(event.keyCode === 65) { //a
 			player.left = true;
-
 		}
 		else if(event.keyCode === 87) {// w
 			player.up = true;
@@ -243,7 +245,6 @@ function addListener() {
 			// TODO: Game Menu;
 			paused = !paused;
 		}
-
 	}
 
 	document.onkeyup = function(event) {
@@ -261,6 +262,8 @@ function addListener() {
 		}
 	}
 }
+
+
 
 function update() {
 	if (paused) return;
