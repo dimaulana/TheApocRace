@@ -2,19 +2,18 @@ var script = document.createElement('script');
 script.type = 'text/javascript';
 document.getElementsByTagName('head')[0].appendChild(script);
 
-var canvas = document.getElementById("game");
-var ctx = document.getElementById("game").getContext("2d");
-
 var Img = {};
 Img.player = new Image();
-Img.player.src = "/client/images/character.png";
-Img.tile = new Image();
-Img.tile.src = "/client/images/roadtile_01.png";
+var ctx = document.getElementById("game").getContext("2d");
+
 var player;
 
-// When the game has not started, paused is true in order to
+// When the game has not started, paused is true in order to 
 // stop the updates;
 var paused = true;
+
+var asset = new Asset();
+asset.loadAssets();
 
 
 testCollisionRectRect = function(rect1,rect2){
@@ -28,35 +27,15 @@ var player;
 var gameStarted;
 var backgroundSound;
 
-var obstacles = [];
-function tile() {
-	this.width = 30;
-	this.height = Img.tile.height;
-	this.x = Math.random() * (2000 - 10) + 10;
-	this.y = canvas.height - this.height;
-
-	this.draw = function() {
-		ctx.drawImage(Img.tile,this.x, this.y);
-		//ctx.fillRect(this.x, this.y, this.width, this.height);
-	}
-
-	this.update = function() {
-		if (player.x === canvas.width/2)
-			this.x -= player.speedX;
-	}
-}
-
-
 Player = function(param) {
 
-	var self = {
+	let self = {
 		//socket: param.socket,
 		x: param.pos.x,
 		y: param.pos.y,
 		speedX: param.speed.x,
 		speedY: param.speed.y,
 		speedMax: param.speedMax,
-		gravity: param.gravity,
 		hp: param.hp,
 		score: param.score,
 		lives: param.lives,
@@ -67,55 +46,60 @@ Player = function(param) {
 		right: false,
 		left: false,
 		up:  false,
-		down: false,
-		img: 'client/images/character.png',
+		down: false
 	}
 
 	self.update = function(){
 		self.updateSpeed();
+		/*
+		if(self.pressingAttack){
+			self.shootBullet(self.mouseAngle);
 
+		}*/
+		self.x += self.speedX;
 		self.y += self.speedY;
 
-		// TODO: Collision should do this with the tiles;
-		if (self.y < 500) {
-			self.y -= self.gravity;
-		}
+	}
 
-
-		if (self.x === canvas.width/2) {
-			return;
-		}
-
-		self.x += self.speedX;
-
-		if (self.x > canvas.width/2) {
-			self.x = canvas.width/2;
-		}
+	self.setViewPortOnPlayer = function(x, y){
+		ctx.save();
+		console.log("out of canvas");
+		ctx.translate(x - ctx.canvas.width/2,0);
+		ctx.restore();
 	}
 
 	self.updateSpeed = function() {
 		if (self.right)
 			self.speedX = self.speedMax;
+
 		else if (self.left && ((self.x - self.speedMax) > 0))
 			self.speedX = -self.speedMax;
+
 		else
 			self.speedX = 0;
 
 		if(self.up)
 			self.speedY = -self.speedMax;
-		else if(self.down) {
-			//self.speedY = self.speedMax;
-		}
+		else if(self.down)
+			self.speedY = self.speedMax;
 		else
 			self.speedY = 0;
 	}
 
 	self.draw = function(player) {
+		ctx.clearRect(0, 0, 1280, 720);
+		if(self.x + self.speedMax > 1280){
+			self.setViewPortOnPlayer(self.x, self.y);
+		}
 		ctx.drawImage(Img.player,self.x,self.y);
 	}
 
 	return self;
 }
+
+// Img.player.src = player.img;
+// console.log("player image source", Img.player.src);
+
 //Sound function that helps play sound
 function sound(src) {
     this.sound = document.createElement("audio");
@@ -137,14 +121,10 @@ function sound(src) {
 	
 	
 
-// Redraw canvas according to the updated positons;
-function canvasDraw() {
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	player.draw();
-	obstacles.forEach(function(tile) {
-		tile.draw();
-	});
-}
+// @Sahil: For testing;
+var offsetX = 0;
+var offsetY = 0;
+
 
 function getImage(imageName) {
   	var x = document.createElement("IMG");
@@ -163,6 +143,7 @@ startNewGame = function(){
 
 	socket.on('initPack', function(data) {
 		player = new Player(data);
+		Img.player.src = asset.getTexture('Player');
 		player.draw();
 		addListener();
 		paused = false;
@@ -172,21 +153,16 @@ startNewGame = function(){
     	backgroundSound = new sound('client/sound/background.mp3');
 	  	backgroundSound.play();
 	  	gameStarted = true;
+   }); 
+ }
 
-		// TODO: This is for testing the movements
-		// Replace with tiles from the actual file level;
-		// Adding random tiles;
-		for (var i = 0; i < 10; i++) {
-			obstacles.push(new tile());
-		}
-	});
-}
 
 function addListener() {
 	// Controls WASD works after adding input component
 	document.onkeydown = function(event) {
 		if(event.keyCode === 68) {	//d
 			player.right = true;
+			offsetX++;
 
 		}
 		else if(event.keyCode === 83) {	//s
@@ -194,17 +170,18 @@ function addListener() {
 		}
 		else if(event.keyCode === 65) { //a
 			player.left = true;
+			offsetX--;
 
 		}
 		else if(event.keyCode === 87) {// w
 			player.up = true;
 		}
-
+		
 		else if(event.keyCode === 80) {//p
 			// TODO: Game Menu;
 			paused = !paused;
 		}
-
+	 	 
 	}
 
 	document.onkeyup = function(event) {
@@ -223,18 +200,18 @@ function addListener() {
 	}
 }
 
-function update() {
+
+
+setInterval(function() {
 	if (paused) return;
 	player.update();
+	player.draw();
+},30);
 
-	// TODO: Update all the other entities based
-	// on the speed of the player
-	// Update Tiles;
-	obstacles.forEach(function(tile) {
-		tile.update();
-	});
 
-	canvasDraw();
+// @Sahil: For testing;
+function clamp(value, min, max){
+    if(value < min) return min;
+    else if(value > max) return max;
+    return value;
 }
-
-setInterval(update, 30);
