@@ -1,4 +1,3 @@
-var Asset = require('./Assets');
 var EntityManager = require('./EntityManager');
 
 class GamePlay {

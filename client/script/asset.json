@@ -1,7 +1,7 @@
 [{
 	"type": "Texture",
 	"name": "Player",
-	"path": "client/images/character.png"
+	"path": "client/images/player.png"
 },
 {
 	"type": "Font",
