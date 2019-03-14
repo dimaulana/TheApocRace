@@ -1,0 +1,114 @@
+<!-- Author: Dido Maulana -->
+
+
+
+<style>
+  #canvasEditor {
+    margin-top: 5px;
+  }
+
+    .objects {
+      font-family: 'Star Jedi', arial;
+      font-size: 0.95em;
+    }
+
+
+    .editorMenu img {
+      height: 45px;
+      width: 45px;
+      float: left;
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      width: 100%;
+      display: flex;
+      margin: auto;
+      justify-content: space-between;
+}
+
+a {
+  color: white;
+}
+
+a:hover {
+  text-decoration: none;
+  color: white;
+}
+
+li {
+  flex: 0 0 calc(100%/7);
+  /* any width as long a % times number of items does not exceed 100% */
+  height: 50px;
+  width: 75px;
+  text-align: center;
+  background: #173B0B;
+  color: white;
+  line-height: 50px;
+  border: 1px solid;
+}
+
+li:hover {
+  background: #FF8000;
+  cursor: pointer;
+}
+
+#editor {
+  border: 2px solid;
+}
+
+
+
+</style>
+
+</head>
+<body>
+    <div class="row">
+       <div class="col w-100 justify-content-center">
+           <ul class="objects">
+             <li class="editorMenu" id="back">
+                Back
+             </li>
+             <li class="editorMenu" id="map">
+                <img src="client/images/map.png">
+                Map
+             </li>
+             <li class="editorMenu" id="tiles">
+                <img src="client/images/brickTile_01.png">
+                   Tiles
+              </li>
+             <li class="editorMenu" id="characters">
+                <img src="client/images/character.png">
+                   <a id="char" href="#">Characters</a>
+             </li>
+             <li class="editorMenu" id="background">
+                <img src="client/images/finishedCity1.png">
+                   <a id="background" href="#">Background</a>
+             </li>
+             <li class="editorMenu" id="save">
+                <img src="client/images/save.png">
+                   <a id="load" href="#">Save</a>
+             </li>
+             <li class="editorMenu" id="play">
+                <img src="client/images/play.png">
+                    <a id="save" href="#">Play</a>
+             </li>
+            </ul>
+          </div>
+        </div>
+    
+    <div class="row" id="wrapper">
+    
+    <div class="col-xs-4" id="canvasEditor">
+        <canvas id="editor" width="1280" height="720"> </canvas>
+      </div>
+
+    </div>
+                                    
+</body>
+
+<script>
+      var editor = levelEditor();
+</script>
