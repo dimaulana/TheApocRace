@@ -1,34 +1,68 @@
-var script = document.createElement('script');
-script.type = 'text/javascript';
-document.getElementsByTagName('head')[0].appendChild(script);
+// Game.js starts and sets the game at the front end;
+// Contributors: Hussein Parpia, Sahil Anand
+//
 
 var canvas = document.getElementById("game");
 var ctx = document.getElementById("game").getContext("2d");
+var display = document.querySelector('#game').getContext("2d");
+
+let path = "/client/images/";
+
+var paused = true; // When the game has not started, paused is true in order to stop the updates;
+
+// Dimensions of the player images;
+const SPRITE_SIZE = 90;
+const SPRITE_HEIGHT = 119;
+
+var player, sprite_sheet, backgroundSound;
+var obstacles = [];
+
+// TODO: Hussein - Move to its own script file
+function Animation(frame_set, delay) {
+
+    this.count = 0;
+    this.delay = delay; // The number of game cycles to wait until the next frame change.
+    this.frame = 0;
+    this.frame_index = 0;
+    this.frame_set = frame_set;
+
+    this.change = function(frame_set, delay = 15) {
+    	if (this.frame_set != frame_set) {
+    		this.count = 0;
+    		this.delay = delay;
+    		this.frame_index = 0;
+    		this.frame_set = frame_set;
+    		this.frame = this.frame_set[this.frame_index];
+    	}
+    }
+
+    this.update = function() {
+    	this.count ++;
+
+		if (this.count >= this.delay) { // If enough cycles have passed, we change the frame.
+    		this.count = 0; // Reset count;
+    		this.frame_index = (this.frame_index == this.frame_set.length - 1) ? 0 : this.frame_index + 1;
+    		this.frame = this.frame_set[this.frame_index]; // Update current frame;
+    	}
+    }
+}
+
+// To keep track of the player sprite;
+sprite_sheet = {
+	frame_sets:[[0], [1, 2, 3], [4, 5, 6]] // standing, running right, running left;
+};
 
 var Img = {};
-Img.player = new Image();
-Img.player.src = "/client/images/character.png";
 Img.tile = new Image();
-Img.tile.src = "/client/images/roadtile_01.png";
-var player;
-
-// When the game has not started, paused is true in order to
-// stop the updates;
-var paused = true;
-
+Img.tile.src = path + "roadtile_01.png";
 
 testCollisionRectRect = function(rect1,rect2){
 	return rect1.x <= rect2.x + rect2.width
-		&& rect2.x <= rect1.x +rect1.width
-		&& rect1.y <= rect2.y + rect2.height
-		&& rect2.y <= rect1.y + rect1.height;
+	&& rect2.x <= rect1.x +rect1.width
+	&& rect1.y <= rect2.y + rect2.height
+	&& rect2.y <= rect1.y + rect1.height;
 }
 
-var player;
-var gameStarted;
-var backgroundSound;
-
-var obstacles = [];
 function tile() {
 	this.width = 30;
 	this.height = Img.tile.height;
@@ -37,7 +71,6 @@ function tile() {
 
 	this.draw = function() {
 		ctx.drawImage(Img.tile,this.x, this.y);
-		//ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 
 	this.update = function() {
@@ -46,11 +79,8 @@ function tile() {
 	}
 }
 
-
 Player = function(param) {
-
 	var self = {
-		//socket: param.socket,
 		x: param.pos.x,
 		y: param.pos.y,
 		speedX: param.speed.x,
@@ -68,7 +98,9 @@ Player = function(param) {
 		left: false,
 		up:  false,
 		down: false,
-		img: 'client/images/character.png',
+		state: "stand",
+		animation:new Animation(),
+		image: new Image(),
 	}
 
 	self.update = function(){
@@ -80,7 +112,6 @@ Player = function(param) {
 		if (self.y < 500) {
 			self.y -= self.gravity;
 		}
-
 
 		if (self.x === canvas.width/2) {
 			return;
@@ -94,48 +125,63 @@ Player = function(param) {
 	}
 
 	self.updateSpeed = function() {
-		if (self.right)
-			self.speedX = self.speedMax;
-		else if (self.left && ((self.x - self.speedMax) > 0))
-			self.speedX = -self.speedMax;
-		else
-			self.speedX = 0;
+		var delay = 5;
 
-		if(self.up)
-			self.speedY = -self.speedMax;
+		if (self.right) {
+			self.speedX = self.speedMax;
+			self.animation.change(sprite_sheet.frame_sets[1], delay);
+			self.state = "run";
+		}
+		else if (self.left && ((self.x - self.speedMax) > 0)) {
+			self.speedX = -self.speedMax;
+			self.animation.change(sprite_sheet.frame_sets[2], delay);
+			self.state = "run";
+		}
+		else {
+			self.speedX = 0;
+			self.animation.change(sprite_sheet.frame_sets[0], delay);
+			self.state = "stand";
+		}
+
+		if(self.up && self.state != "jump") {
+			self.up = false;
+			// TODO: Get a better jump speed;
+			self.speedY = -self.speedMax*6;
+			self.state = "jump";
+		}
 		else if(self.down) {
 			//self.speedY = self.speedMax;
 		}
-		else
+		else {
 			self.speedY = 0;
+			self.state = "stand";
+		}
 	}
 
-	self.draw = function(player) {
-		ctx.drawImage(Img.player,self.x,self.y);
+	// Draw the player based on the current frame;
+	self.draw = function() {
+		ctx.drawImage(self.image, self.animation.frame * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_HEIGHT, Math.floor(self.x), Math.floor(self.y), SPRITE_SIZE, SPRITE_HEIGHT);
+		display.drawImage(ctx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height, 0, 0, display.canvas.width, display.canvas.height);
 	}
 
 	return self;
 }
+
 //Sound function that helps play sound
 function sound(src) {
-    this.sound = document.createElement("audio");
-    this.sound.src = src;
-    
-    this.sound.setAttribute("storyMode", "none");
-    this.sound.style.display = "none";
-    document.body.appendChild(this.sound);
-    this.play = function(){
-        this.sound.play();
-    }
-    this.stop = function(){
-        this.sound.pause();
-    }    
+	this.sound = document.createElement("audio");
+	this.sound.src = src;
+
+	this.sound.setAttribute("storyMode", "none");
+	this.sound.style.display = "none";
+	document.body.appendChild(this.sound);
+	this.play = function(){
+		this.sound.play();
+	}
+	this.stop = function(){
+		this.sound.pause();
+	}
 }
-	
-	
-	
-	
-	
 
 // Redraw canvas according to the updated positons;
 function canvasDraw() {
@@ -146,15 +192,6 @@ function canvasDraw() {
 	});
 }
 
-function getImage(imageName) {
-  	var x = document.createElement("IMG");
-  	x.setAttribute("src", imageName);
-  	x.setAttribute("width", "50");
-  	x.setAttribute("height", "50");
-
-  	return x;
-}
-
 startNewGame = function(){
 	$(".star").hide();
 	$('#game').show();
@@ -163,15 +200,17 @@ startNewGame = function(){
 
 	socket.on('initPack', function(data) {
 		player = new Player(data);
+		// Set player image;
+		player.image.src = path + "player.png";
 		player.draw();
+
 		addListener();
 		paused = false;
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
 		score = 0;
-    	backgroundSound = new sound('client/sound/background.mp3');
-	  	backgroundSound.play();
-	  	gameStarted = true;
+		backgroundSound = new sound('client/sound/background.mp3');
+		backgroundSound.play();
 
 		// TODO: This is for testing the movements
 		// Replace with tiles from the actual file level;
@@ -226,6 +265,7 @@ function addListener() {
 function update() {
 	if (paused) return;
 	player.update();
+	player.animation.update();
 
 	// TODO: Update all the other entities based
 	// on the speed of the player
