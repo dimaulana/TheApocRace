@@ -36,6 +36,7 @@ class AssetManager{
 
     addTexture(textureName, path){
         this.textureMap.set(textureName, path);
+        console.log("texture map" + this.textureMap.size);
     }
 
     addAnimation(animationName, path){
