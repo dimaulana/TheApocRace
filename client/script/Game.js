@@ -13,6 +13,8 @@ var player, sprite_sheet, backgroundSound;
 var obstacles = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 
+ctx.font= "40px Verdana";
+
 // Dimensions of the player images;
 const SPRITE_SIZE = 90;
 const SPRITE_HEIGHT = 119;
@@ -197,6 +199,7 @@ function canvasDraw() {
 startNewGame = function(){
 	$(".star").hide();
 	$('#game').show();
+	$('.paused').hide();
 
 	socket.emit('storyMode', {});
 
@@ -260,11 +263,36 @@ function addListener() {
 		}
 	}
 }
+					
+//Function that opens pause canvas
+var isPaused=function(){
+
+	var canvas = document.getElementById("game");
+    var ctx = document.getElementById("game").getContext("2d");
+    
+	// Move draw to the div paused  using ralative
+	ctx.beginPath();
+	ctx.fillStyle= "red";
+	ctx.fillText('GAME PAUSED' ,500,150);
+	//Add buttons
+
+	ctx.strokeStyle = "blue";
+	ctx.fillStyle = "rgba(0,0,0,0.01)";
+	ctx.rect(100, 50, 1080, 600);
+	ctx.stroke();
+	ctx.fill();
+	
+}
 
 
 
 function update() {
-	if (paused) return;
+	if (paused){
+		//generatePaused();
+		isPaused();
+		return;
+	} 
+	
 	player.update();
 	player.animation.update();
 
