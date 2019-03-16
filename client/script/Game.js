@@ -59,10 +59,10 @@ testCollisionRectRect = function(rect1,rect2){
 	&& rect2.y <= rect1.y + rect1.height;
 }
 
-function tile() {
+function tile(locationX) {
 	this.width = 30;
 	this.height = Img.tile.height;
-	this.x = Math.random() * (2000 - 10) + 10;
+	this.x = locationX;
 	this.y = canvas.height - this.height;
 
 	this.draw = function() {
@@ -207,14 +207,19 @@ startNewGame = function(){
 	$('#game').show();
 
 	socket.emit('storyMode', {});
+	
 	socket.on('levelPack', function(data){
 		level = new Level(data);
 		Img.tile = new Image();
 		Img.tile.src = level.tileFile;
-		for (var i = 0; i < 10; i++) {
-			obstacles.push(new tile());
+		tiles = data.levelData;
+		console.log('tiles' + tiles);
+		for (var i = 0; i < tiles.length; i++) {
+			console.log(i);
+			obstacles.push(new tile(tiles[i]['x']));
 		}
 	});
+	
 	socket.on('initPack', function(data) {
 		player = new Player(data);
 		// Set player image;
