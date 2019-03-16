@@ -29,10 +29,3 @@ class GamePlay {
 };
 
 module.exports = GamePlay;
-
-// var game = new GamePlay({
-// 			level:1,
-// 			username:'hp',
-// 			socket: "",
-// 		});
-// console.log(game.player);

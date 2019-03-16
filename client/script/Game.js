@@ -5,9 +5,6 @@ var canvas = document.getElementById("game");
 var ctx = document.getElementById("game").getContext("2d");
 var display = document.querySelector('#game').getContext("2d");
 
-// Loading Asset Manager
-var asset = new Asset();
-asset.loadAssets();
 
 var player, sprite_sheet, backgroundSound;
 var obstacles = [];
@@ -102,6 +99,7 @@ Player = function(param) {
 		state: "stand",
 		animation:new Animation(),
 		image: new Image(),
+		fileLocation: param.fileLocation
 	}
 
 	self.update = function(){
@@ -203,7 +201,7 @@ startNewGame = function(){
 	socket.on('initPack', function(data) {
 		player = new Player(data);
 		// Set player image;
-		player.image.src = asset.getTexture('Player');
+		player.image.src = player.fileLocation;
 		player.draw();
 
 		addListener();
