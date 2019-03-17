@@ -213,9 +213,8 @@ startNewGame = function(){
 		Img.tile = new Image();
 		Img.tile.src = level.tileFile;
 		tiles = data.levelData;
-		console.log('tiles' + tiles);
+		
 		for (var i = 0; i < tiles.length; i++) {
-			console.log(i);
 			obstacles.push(new tile(tiles[i]['x']));
 		}
 	});
