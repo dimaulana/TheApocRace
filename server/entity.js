@@ -1,5 +1,5 @@
 var Component = require('./Component.js');
-
+var AssetManager = require('./AssetManager.js');
 
 class Entity{
 
@@ -23,6 +23,8 @@ class Entity{
     // For now everything is packed into components.
     getInitPack() {
         var param = {};
+        var manager = new AssetManager();
+        manager.loadAssets();
         
         this.components.forEach(function(component) {
             if (component.ofType("Transform")) {
@@ -53,8 +55,8 @@ class Entity{
             else {
                 // Do nothing;
             }
+            param.fileLocation = manager.getTexture("Player");
         });
-
         return param;
     }
 
