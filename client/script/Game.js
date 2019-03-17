@@ -6,7 +6,7 @@ var ctx = document.getElementById("game").getContext("2d");
 var display = document.querySelector('#game').getContext("2d");
 
 
-var player, sprite_sheet, backgroundSound;
+var player, sprite_sheet, backgroundSound, level;
 var obstacles = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 
@@ -51,8 +51,6 @@ sprite_sheet = {
 
 // TODO: To get from asset manager;
 var Img = {};
-Img.tile = new Image();
-Img.tile.src = "/client/images/roadtile_01.png";
 
 testCollisionRectRect = function(rect1,rect2){
 	return rect1.x <= rect2.x + rect2.width
@@ -61,10 +59,10 @@ testCollisionRectRect = function(rect1,rect2){
 	&& rect2.y <= rect1.y + rect1.height;
 }
 
-function tile() {
+function tile(locationX) {
 	this.width = 30;
 	this.height = Img.tile.height;
-	this.x = Math.random() * (2000 - 10) + 10;
+	this.x = locationX;
 	this.y = canvas.height - this.height;
 
 	this.draw = function() {
@@ -167,6 +165,18 @@ Player = function(param) {
 	return self;
 }
 
+Level = function(data){
+	var self = {
+		levelName: data.levelName,
+		fileLocation: data.fileLocation,
+		levelData: data.levelData,
+		tileFile: data.tileFile 
+	}
+	return self;
+
+}
+
+
 //Sound function that helps play sound
 function sound(src) {
 	this.sound = document.createElement("audio");
@@ -197,7 +207,19 @@ startNewGame = function(){
 	$('#game').show();
 
 	socket.emit('storyMode', {});
-
+	
+	socket.on('levelPack', function(data){
+		level = new Level(data);
+		Img.tile = new Image();
+		Img.tile.src = level.tileFile;
+		tiles = data.levelData;
+		console.log('tiles' + tiles);
+		for (var i = 0; i < tiles.length; i++) {
+			console.log(i);
+			obstacles.push(new tile(tiles[i]['x']));
+		}
+	});
+	
 	socket.on('initPack', function(data) {
 		player = new Player(data);
 		// Set player image;
@@ -209,15 +231,13 @@ startNewGame = function(){
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
 		score = 0;
-		backgroundSound = new sound('client/sound/background.mp3');
-		backgroundSound.play();
+		// backgroundSound = new sound('client/sound/background.mp3');
+		// backgroundSound.play();
 
 		// TODO: This is for testing the movements
 		// Replace with tiles from the actual file level;
 		// Adding random tiles;
-		for (var i = 0; i < 10; i++) {
-			obstacles.push(new tile());
-		}
+		
 	});
 }
 
