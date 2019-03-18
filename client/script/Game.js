@@ -279,10 +279,10 @@ var leaderBoard=function (){
 	var rank=0
 	var maxRank=10;// number of player
 	
-	ctx.font= "50px Verdana";
+	ctx.font= "50px arcade";
 	ctx.beginPath();
 	ctx.fillStyle = "white";
-	ctx.fillText('LEADERBOARD:' ,500,150);
+	ctx.fillText('LEADERBOARD:' ,480,150);
 	ctx.fillText('Rank    Player    Score    Level' ,130,240);
 	ctx.fillStyle = "rgba(0,0,0,0.01)";
 	ctx.strokeStyle = "blue";
@@ -336,9 +336,8 @@ function update() {
 	} 
 	player.update();
 	player.animation.update();
-	ctx.fillStyle= "white";
+
 	ctx.fillText('SCORE: ' + score,200,50);
-	ctx.fill();
 
 	// TODO: Update all the other entities based
 	// on the speed of the player
