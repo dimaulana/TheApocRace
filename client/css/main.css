@@ -106,7 +106,7 @@ input[type=password]:focus {
 
   /*Canvas background*/
   #game {
-	background: url(../images/finishedCity1.png) top center;
+	background: url(../images/newyork1.png) top center;
 	height: 720;
 	width: 1280;
   }
