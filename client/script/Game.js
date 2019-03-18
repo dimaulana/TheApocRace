@@ -11,7 +11,7 @@ document.head.appendChild(script);
 
 
 var canvas = document.getElementById("game");
-var ctx = document.getElementById("game").getContext("2d");
+var ctx = canvas.getContext("2d");
 var display = document.querySelector('#game').getContext("2d");
 
 
@@ -91,7 +91,7 @@ Player = function(param) {
 		self.prevY = self.y;
 
 		self.updateSpeed();
-	
+
 		self.x += self.speedX;
 		self.y += self.speedY;
 		// TODO: Collision should do this with the tiles;
@@ -101,8 +101,8 @@ Player = function(param) {
 			return;
 		}
 
-		if (self.x > canvas.width/2) {	
-			self.x = canvas.width/2;	
+		if (self.x > canvas.width/2) {
+			self.x = canvas.width/2;
 		}
 	}
 
@@ -189,12 +189,11 @@ Level = function(data){
 		levelName: data.levelName,
 		fileLocation: data.fileLocation,
 		levelData: data.levelData,
-		tileFile: data.tileFile 
+		tileFile: data.tileFile
 	}
 	return self;
 
 }
-
 
 //Sound function that helps play sound
 function sound(src) {
@@ -221,17 +220,66 @@ function canvasDraw() {
 	});
 }
 
+function keyDownHandler(e) {
+	switch (e.keyCode) {
+		case 68: // d key
+			player.right = true;
+		break;
+
+		case 65: // a key
+			player.left = true;
+		break;
+
+		case 87: // w key
+			player.up = true;
+		break;
+
+		case 83: // s key
+			// TODO: Use this for attack?
+			player.down = true;
+		break;
+
+	}
+}
+
+function keyUpHandler(e) {
+	switch (e.keyCode) {
+		case 68: // d key
+			player.right = false;
+		break;
+
+		case 65: // a key
+			player.left = false;
+		break;
+
+		case 87: // w key
+			player.up = false;
+		break;
+
+		case 83: // s key
+			// TODO: Use this for attack?
+			player.down = false;
+		break;
+
+	}
+}
+
+function addListener() {
+	document.addEventListener("keydown", keyDownHandler, false);
+	document.addEventListener("keyup", keyUpHandler, false);
+}
+
 startNewGame = function(){
 
 	socket.on('levelPack', function(data){
 		level = new Level(data);
 		tiles = data.levelData;
-		
+
 		for (var i = 0; i < tiles.length; i++) {
 			obstacles.push(new Tile(data.tileFile, tiles[i]['x']));
 		}
 	});
-	
+
 	$(".star").hide();
 	$('#game').show();
 	$('.paused').hide();
@@ -242,7 +290,7 @@ startNewGame = function(){
 		// Set player image;
 		player.image.src = player.fileLocation;
 		player.draw();
-		
+
 		addListener();
 		paused = false;
 		timeWhenGameStarted = Date.now();
@@ -254,61 +302,17 @@ startNewGame = function(){
 		// TODO: This is for testing the movements
 		// Replace with tiles from the actual file level;
 		// Adding random tiles;
-		
+
 	});
 }
- var leaderButton=false;
-function addListener() {
-	// Controls WASD works after adding input component
-	document.onkeydown = function(event) {
-		if(event.keyCode === 68) {	//d
-			player.right = true;
-		}
-		else if(event.keyCode === 83) {	//s
-			player.down = true;
-		}
-		else if(event.keyCode === 65) { //a
-			player.left = true;
-		}
-		else if(event.keyCode === 87) {// w
-			player.up = true;
-		}
-
-		else if(event.keyCode === 80) {//p
-			// TODO: Game Menu;
-			paused = !paused;
-		}
-		// Testing leaderBoard
-		else if(event.keyCode === 76) {//l
-		leaderButton=!leaderButton;
-			  
-		}
-	}
-
-	document.onkeyup = function(event) {
-		if(event.keyCode === 68) {	//d
-			player.right = false;
-		}
-		else if(event.keyCode === 83) {	//s
-			player.down = false;
-		}
-		else if(event.keyCode === 65) { //a
-			player.left = false;
-		}
-		else if(event.keyCode === 87) {// w
-			player.up = false;
-		}
-		
-	}
-}
-
+var leaderButton = false;
 //A function that shows the top scorers
-var leaderBoard=function (){
+var leaderBoard = function (){
 	//TODO: loop on all scores and find the highest scrore
 	// Then rank accoring to scores
 	var rank=0
 	var maxRank=10;// number of player
-	
+
 	ctx.font= "50px arcade";
 	ctx.beginPath();
 	ctx.fillStyle = "white";
@@ -319,24 +323,19 @@ var leaderBoard=function (){
 	ctx.rect(70, 50, 1150, 650);
 	ctx.fill();
 	ctx.stroke();
-	
+
 	if(score > topScore){
-		//TODO: Get player name,score,level and rank them 
-		
+		//TODO: Get player name,score,level and rank them
+
 	}
-	
-	
-	
-	
 }
 
-  					
 //Function that opens pause canvas
-var isPaused=function(){
+var isPaused = function(){
 
 	var canvas = document.getElementById("game");
     var ctx = document.getElementById("game").getContext("2d");
-    
+
 	// Move draw to the div paused  using ralative
 	ctx.beginPath();
 	ctx.fillStyle= "red";
@@ -348,26 +347,26 @@ var isPaused=function(){
 	ctx.rect(100, 50, 1080, 600);
 	ctx.stroke();
 	ctx.fill();
-	
+
 }
-
-
 
 function update() {
 	if (paused){
 		//generatePaused();
 		isPaused();
 		return;
-	} 
-	
+	}
+
 	if(leaderButton){
 	  leaderBoard();
 		return;
-	} 
+	}
+
 	ctx.fillText('SCORE: ' + score,200,50);
 	player.update();
 	player.testCollisions();
 	player.animation.update();
+
 	// TODO: Update all the other entities based
 	// on the speed of the player
 	// Update Tiles;
