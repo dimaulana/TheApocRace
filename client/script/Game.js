@@ -6,7 +6,7 @@ var ctx = document.getElementById("game").getContext("2d");
 var display = document.querySelector('#game').getContext("2d");
 
 
-var player, sprite_sheet, backgroundSound, level;
+var player, sprite_sheet, backgroundSound, level, boolCheck;
 var obstacles = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 
@@ -59,14 +59,16 @@ testCollisionRectRect = function(rect1,rect2){
 	&& rect2.y <= rect1.y + rect1.height;
 }
 
-function tile(locationX) {
+function Tile(src, locationX) {
+	this.tileImage = new Image();
+	this.tileImage.src = src;
 	this.width = 30;
-	this.height = Img.tile.height;
+	this.height = 41;
 	this.x = locationX;
 	this.y = canvas.height - this.height;
 
 	this.draw = function() {
-		ctx.drawImage(Img.tile,this.x, this.y);
+		ctx.drawImage(this.tileImage, this.x, this.y);
 	}
 
 	this.update = function() {
@@ -206,12 +208,10 @@ startNewGame = function(){
 
 	socket.on('levelPack', function(data){
 		level = new Level(data);
-		Img.tile = new Image();
-		Img.tile.src = level.tileFile;
 		tiles = data.levelData;
 		
 		for (var i = 0; i < tiles.length; i++) {
-			obstacles.push(new tile(tiles[i]['x']));
+			obstacles.push(new Tile(level.tileFile, tiles[i]['x']));
 		}
 	});
 	
