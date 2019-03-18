@@ -59,14 +59,16 @@ testCollisionRectRect = function(rect1,rect2){
 	&& rect2.y <= rect1.y + rect1.height;
 }
 
-function tile(locationX) {
+function Tile(src, locationX) {
 	this.width = 30;
-	this.height = Img.tile.height;
+	this.height = 41;
+	this.imageFile = new Image();
+	this.imageFile.src = src;
 	this.x = locationX;
 	this.y = canvas.height - this.height;
 
 	this.draw = function() {
-		ctx.drawImage(Img.tile,this.x, this.y);
+		ctx.drawImage(this.imageFile,this.x, this.y);
 	}
 
 	this.update = function() {
@@ -211,7 +213,7 @@ startNewGame = function(){
 		tiles = data.levelData;
 		
 		for (var i = 0; i < tiles.length; i++) {
-			obstacles.push(new tile(tiles[i]['x']));
+			obstacles.push(new Tile(data.tileFile, tiles[i]['x']));
 		}
 	});
 	
