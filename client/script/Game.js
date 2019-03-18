@@ -202,18 +202,19 @@ function canvasDraw() {
 	});
 }
 
-socket.on('levelPack', function(data){
-	level = new Level(data);
-	Img.tile = new Image();
-	Img.tile.src = level.tileFile;
-	tiles = data.levelData;
-	
-	for (var i = 0; i < tiles.length; i++) {
-		obstacles.push(new tile(tiles[i]['x']));
-	}
-});
-
 startNewGame = function(){
+
+	socket.on('levelPack', function(data){
+		level = new Level(data);
+		Img.tile = new Image();
+		Img.tile.src = level.tileFile;
+		tiles = data.levelData;
+		
+		for (var i = 0; i < tiles.length; i++) {
+			obstacles.push(new tile(tiles[i]['x']));
+		}
+	});
+	
 	$(".star").hide();
 	$('#game').show();
 
