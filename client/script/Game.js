@@ -1,5 +1,14 @@
-// Game.js starts and sets the game at the front end;
-// Contributors: Hussein Parpia, Sahil Anand
+/* Game.js starts and sets the game at the front end;
+
+   Contributors: Hussein Parpia, Sahil Anand
+*/
+
+
+// Add Animation class
+var script = document.createElement('script');
+script.src = 'client/script/Animation.js';
+document.head.appendChild(script);
+
 
 var canvas = document.getElementById("game");
 var ctx = document.getElementById("game").getContext("2d");
@@ -15,42 +24,11 @@ var topScore=0; // Later to come from the database taken compared to other playe
 ctx.font= "40px arcade";
 
 // Dimensions of the player images;
-const SPRITE_SIZE = 90;
-const SPRITE_HEIGHT = 119;
-
-// TODO: Hussein - Move to its own script file
-function Animation(frame_set, delay) {
-
-    this.count = 0;
-    this.delay = delay; // The number of game cycles to wait until the next frame change.
-    this.frame = 0;
-    this.frame_index = 0;
-    this.frame_set = frame_set;
-
-    this.change = function(frame_set, delay = 15) {
-    	if (this.frame_set != frame_set) {
-    		this.count = 0;
-    		this.delay = delay;
-    		this.frame_index = 0;
-    		this.frame_set = frame_set;
-    		this.frame = this.frame_set[this.frame_index];
-    	}
-    }
-
-    this.update = function() {
-    	this.count ++;
-
-		if (this.count >= this.delay) { // If enough cycles have passed, we change the frame.
-    		this.count = 0; // Reset count;
-    		this.frame_index = (this.frame_index == this.frame_set.length - 1) ? 0 : this.frame_index + 1;
-    		this.frame = this.frame_set[this.frame_index]; // Update current frame;
-    	}
-    }
-}
+const SPRITE_SIZE = 40;
 
 // To keep track of the player sprite;
 sprite_sheet = {
-	frame_sets:[[0], [1, 2, 3], [4, 5, 6]] // standing, running right, running left;
+	frame_sets:[[0], [1], [2, 3, 4], [5, 6, 7]] // standing, running right, running left;
 };
 
 // TODO: To get from asset manager;
@@ -66,13 +44,13 @@ testCollisionRectRect = function(rect1,rect2){
 function Tile(src, locationX) {
 	this.width = 30;
 	this.height = 41;
-	this.imageFile = new Image();
-	this.imageFile.src = src;
+	this.tileImage = new Image();
+	this.tileImage.src = imageSource;
 	this.x = locationX;
 	this.y = canvas.height - this.height;
 
 	this.draw = function() {
-		ctx.drawImage(this.imageFile,this.x, this.y);
+		ctx.drawImage(this.tileImage,this.x, this.y);
 	}
 
 	this.update = function() {
@@ -85,6 +63,8 @@ Player = function(param) {
 	var self = {
 		x: param.pos.x,
 		y: param.pos.y,
+		prevX: param.prevPos.x,
+		prevY: param.prevPos.y,
 		speedX: param.speed.x,
 		speedY: param.speed.y,
 		speedMax: param.speedMax,
@@ -101,30 +81,26 @@ Player = function(param) {
 		up:  false,
 		down: false,
 		state: "stand",
-		animation:new Animation(),
+		animation: new Animation(),
 		image: new Image(),
 		fileLocation: param.fileLocation
 	}
 
-	self.update = function(){
-		self.updateSpeed();
-		/*
-		if(self.pressingAttack){
-			self.shootBullet(self.mouseAngle);
+	self.update = function() {
+		self.prevX = self.x;
+		self.prevY = self.y;
 
-		}*/
+		self.updateSpeed();
+	
 		self.x += self.speedX;
 		self.y += self.speedY;
 		// TODO: Collision should do this with the tiles;
-		if (self.y < 500) {
-			self.y -= self.gravity;
-		}
+		self.y -= self.gravity;
 
 		if (self.x === canvas.width/2) {
 			return;
 		}
 
-		self.x += self.speedX;
 		if (self.x > canvas.width/2) {	
 			self.x = canvas.width/2;	
 		}
@@ -136,12 +112,12 @@ Player = function(param) {
 
 		if (self.right) {
 			self.speedX = self.speedMax;
-			self.animation.change(sprite_sheet.frame_sets[1], delay);
+			self.animation.change(sprite_sheet.frame_sets[2], delay);
 			self.state = "run";
 		}
 		else if (self.left && ((self.x - self.speedMax) > 0)) {
 			self.speedX = -self.speedMax;
-			self.animation.change(sprite_sheet.frame_sets[2], delay);
+			self.animation.change(sprite_sheet.frame_sets[3], delay);
 			self.state = "run";
 		}
 		else {
@@ -162,9 +138,46 @@ Player = function(param) {
 		}
 	}
 
+	self.testCollisions = function () {
+
+		obstacles.forEach(function(entity) {
+
+			var playerCX = self.x + self.width * 0.5;
+			var entityCX = entity.x + entity.width * 0.5;
+
+			var playerCY = self.y + self.height * 0.5;
+			var entityCY = entity.y + entity.height * 0.5;
+
+			var dx =  playerCX - entityCX; // x difference between centers
+			var dy = playerCY - entityCY; // y difference between centers
+			var aw = (self.width + entity.width) * 0.5;// average width
+			var ah = (self.height + entity.height) * 0.5;// average height
+
+			// If either distance is greater than the average dimension there is no collision. //
+			if (Math.abs(dx) > aw || Math.abs(dy) > ah) return false;
+
+        	// To determine which region of this rectangle the rect's center
+        	// point is in, we have to account for the scale of the this rectangle.
+        	// To do that, we divide dx and dy by it's width and height respectively. //
+        	if (Math.abs(dx / entity.width) > Math.abs(dy / entity.height)) {
+        		if (dx < 0) self.x = entity.x - self.width;// left
+        		else self.x = entity.x + self.width; // right
+
+        	} else {
+
+	        	if (dy < 0) self.y = entity.y - self.height; // top
+        		else self.y = entity.y + self.height; // bottom
+        	}
+
+        	return true;
+		});
+	}
+
+
 	// Draw the player based on the current frame;
 	self.draw = function() {
-		ctx.drawImage(self.image, self.animation.frame * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_HEIGHT, Math.floor(self.x), Math.floor(self.y), SPRITE_SIZE, SPRITE_HEIGHT);
+		ctx.drawImage(self.image, self.animation.frame * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE*2,
+						Math.floor(self.x), Math.floor(self.y), SPRITE_SIZE, SPRITE_SIZE*2);
 		display.drawImage(ctx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height, 0, 0, display.canvas.width, display.canvas.height);
 	}
 
@@ -212,8 +225,6 @@ startNewGame = function(){
 
 	socket.on('levelPack', function(data){
 		level = new Level(data);
-		Img.tile = new Image();
-		Img.tile.src = level.tileFile;
 		tiles = data.levelData;
 		
 		for (var i = 0; i < tiles.length; i++) {
@@ -355,6 +366,7 @@ function update() {
 	} 
 	ctx.fillText('SCORE: ' + score,200,50);
 	player.update();
+	player.testCollisions();
 	player.animation.update();
 	// TODO: Update all the other entities based
 	// on the speed of the player
@@ -366,4 +378,4 @@ function update() {
 	canvasDraw();
 }
 
-setInterval(update, 30);
+setInterval(update, 1000/30);

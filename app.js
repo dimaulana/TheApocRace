@@ -208,4 +208,4 @@ io.sockets.on('connection',function(socket) {
 
 // Update player and bullet
 setInterval(function() {
-},1000/25);
+},1000/30);
