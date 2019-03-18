@@ -15,7 +15,7 @@ var paused = true; // When the game has not started, paused is true in order to 
 
 var topScore=0; // Later to come from the database taken compared to other players
 
-ctx.font= "40px Verdana";
+ctx.font= "40px arcade";
 
 // Dimensions of the player images;
 const SPRITE_SIZE = 90;
@@ -334,11 +334,9 @@ function update() {
 	  leaderBoard();
 		return;
 	} 
+	ctx.fillText('SCORE: ' + score,200,50);
 	player.update();
 	player.animation.update();
-
-	ctx.fillText('SCORE: ' + score,200,50);
-
 	// TODO: Update all the other entities based
 	// on the speed of the player
 	// Update Tiles;
