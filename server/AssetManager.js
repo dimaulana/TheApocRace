@@ -9,7 +9,7 @@ class AssetManager{
     }
 
     loadAssets(){
-        let rawdata = fs.readFileSync('server/asset.json');  
+        let rawdata = fs.readFileSync('server/bin/asset.json');  
         let json = JSON.parse(rawdata); 
 
         for (const item of Object.keys(json)) {
