@@ -30,15 +30,17 @@ sprite_sheet = {
 	frame_sets:[[0], [1], [2, 3, 4], [5, 6, 7]] // standing, running right, running left;
 };
 
-function Tile(imageSource, locationX) {
+// Tile object takes the tile image source and location {x: , y: } of the tile;
+function Tile(imageSource, location) {
 	this.tileImage = new Image();
 	this.tileImage.src = imageSource;
+
 	this.width = 30;
 	this.height = 41;
-	this.tileImage = new Image();
-	this.tileImage.src = imageSource;
-	this.x = locationX;
-	this.y = canvas.height - this.height;
+
+	this.x = location.x;
+	this.y = location.y;
+
 	this.prevX = 0;
 	this.prevY = this.y;
 
@@ -123,7 +125,7 @@ Player = function(param) {
 
 			self.speedX = 0;
 			// If scale is -1 choose the opposite facing sprite;
-			self.animation.change(sprite_sheet.frame_sets[(self.stateX == -1.0) ? 1 : 0], delay);
+			self.animation.change(sprite_sheet.frame_sets[(self.scaleX == -1.0) ? 1 : 0], delay);
 			self.state = "stand";
 		}
 
@@ -177,41 +179,6 @@ function getPrevOverlap(a, b) {
 }
 
 var testCollisions = function () {
-
-/* DEPRACATED
-	obstacles.forEach(function(entity) {
-
-		var playerCX = player.x + player.width * 0.5;
-		var entityCX = entity.x + entity.width * 0.5;
-
-		var playerCY = player.y + player.height * 0.5;
-		var entityCY = entity.y + entity.height * 0.5;
-
-		var dx =  playerCX - entityCX; // x difference between centers
-		var dy = playerCY - entityCY; // y difference between centers
-		var aw = (player.width + entity.width) * 0.5;// average width
-		var ah = (player.height + entity.height) * 0.5;// average height
-
-		// If either distance is greater than the average dimension there is no collision. //
-		if (Math.abs(dx) > aw || Math.abs(dy) > ah) return false;
-
-    	// To determine which region of this rectangle the rect's center
-    	// point is in, we have to account for the scale of the this rectangle.
-    	// To do that, we divide dx and dy by it's width and height respectively. //
-    	if (Math.abs(dx / entity.width) > Math.abs(dy / entity.height)) {
-    		if (dx < 0) player.x = entity.x - player.width;// left
-    		else player.x = entity.x + player.width; // right
-
-    	} else {
-
-        	if (dy < 0) self.y = entity.y - self.height; // top
-    		else self.y = entity.y + self.height; // bottom
-    	}
-
-    	return true;
-    });
-*/
-
 
  	obstacles.forEach(function(entity) {
 
@@ -282,6 +249,8 @@ function sound(src) {
 // Redraw canvas according to the updated positons;
 function canvasDraw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	// Updating the score;
+	ctx.fillText('SCORE: ' + score, 200, 50);
 	player.draw();
 	obstacles.forEach(function(tile) {
 		tile.draw();
@@ -347,7 +316,7 @@ startNewGame = function(){
 		tiles = data.levelData;
 
 		for (var i = 0; i < tiles.length; i++) {
-			obstacles.push(new Tile(data.tileFile, tiles[i]['x']));
+			obstacles.push(new Tile(data.tileFile, { x: tiles[i]['x'], y: tiles[i]['y'] } ));
 		}
 	});
 
@@ -428,9 +397,6 @@ function update() {
 	  leaderBoard();
 		return;
 	}
-
-	// Updating the score;
-	ctx.fillText('SCORE: ' + score, 200, 50);
 
 	player.update();
 
