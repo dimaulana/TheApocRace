@@ -1,5 +1,6 @@
 var Component = require('./Component.js');
 var AssetManager = require('./AssetManager.js');
+const components = require('./ComponentEnum.js');
 
 class Entity{
 
@@ -9,14 +10,16 @@ class Entity{
         this.components = new Array();
     }
 
+    /* Not being used at all;
     update(){
         self.updatePosition();
     }
-    
+
     updatePosition(spdX, spdY){
         this.x += spdX;
         this.y += spdY;
     }
+    */
 
 
     // Init Pack for Entities.
@@ -25,9 +28,10 @@ class Entity{
         var param = {};
         var manager = new AssetManager();
         manager.loadAssets();
-        
+
         this.components.forEach(function(component) {
-            if (component.ofType("Transform")) {
+
+            if (component.ofType(components.TRANSFORM)) {
                 param.pos = component.pos;
                 param.prevPos = component.prevPos;
                 param.scale = component.scale;
@@ -36,20 +40,20 @@ class Entity{
                 param.angle = component.angle;
                 param.gravity = component.gravity;
             }
-            else if (component.ofType("Lifespan")) {
+            else if (component.ofType(components.LIFESPAN)) {
                 param.lifespan = component.lifespan;
             }
-            else if (component.ofType("Stats")) {
+            else if (component.ofType(components.STATS)) {
                 param.score = component.score;
                 param.hp = component.hp;
                 param.lives = component.lives;
                 param.alive = component.alive;
             }
-            else if (component.ofType("Dimension")) {
+            else if (component.ofType(components.DIMENSION)) {
                 param.width = component.width;
                 param.height = component.height;
             }
-            else if (component.ofType("Input")) {
+            else if (component.ofType(components.INPUT)) {
                 // Not needed now!
             }
             else {
@@ -57,6 +61,31 @@ class Entity{
             }
             param.fileLocation = manager.getTexture("Player");
         });
+        return param;
+    }
+
+    getUpdatePack() {
+        var param = {};
+
+        this.components.forEach(function(component) {
+            if (component.ofType(components.TRANSFORM)) {
+                param.pos = component.pos;
+                param.scale = component.scale;
+                param.speed = component.speed;
+                param.angle = component.angle;
+                //param.gravity = component.gravity;
+            }
+            else if (component.ofType(components.STATS)) {
+                param.score = component.score;
+                param.hp = component.hp;
+                param.lives = component.lives;
+                param.alive = component.alive;
+            }
+            else {
+                // Do nothing;
+            }
+        });
+
         return param;
     }
 
@@ -76,19 +105,19 @@ class Entity{
         var c;
 
         switch (type) {
-            case "Transform":
+            case components.TRANSFORM:
                 c = new Component.Transform(); break;
 
-            case "Lifespan":
+            case components.LIFESPAN:
                 c = new Component.Lifespan(); break;
 
-            case "Stats":
+            case components.STATS:
                 c = new Component.Stats(); break;
 
-            case "Input":
+            case components.INPUT:
                 c = new Component.Input(); break;
 
-            case "Dimension":
+            case components.DIMENSION:
                 c = new Component.Dimension(); break;
 
             default:

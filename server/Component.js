@@ -1,4 +1,5 @@
-var Vec2 = require('./Vec2')
+var Vec2 = require('./Vec2');
+const components = require('./ComponentEnum.js');
 
 class Component{
 	
@@ -6,19 +7,19 @@ class Component{
 
 	ofType(type) {
 		switch(type) {
-			case "Transform":
+			case components.TRANSFORM:
 				return (this instanceof Transform);
 
-			case "Lifespan":
+			case components.LIFESPAN:
 				return (this instanceof Lifespan);
 
-			case "Stats":
+			case components.STATS:
 				return (this instanceof Stats);
 
-			case "Input":
+			case components.INPUT:
 				return (this instanceof Input);
 
-			case "Dimension":
+			case components.DIMENSION:
 				return (this instanceof Dimension);
 
 			default:
@@ -45,8 +46,8 @@ class Transform extends Component{
 class Dimension extends Component {
 	constructor() {
 		super();
-		this.width = 95;
-		this.height = 130;
+		this.width = 90;
+		this.height = 119;
 	}
 }
 
