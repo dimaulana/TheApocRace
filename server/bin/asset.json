@@ -1,16 +1,5 @@
-[{
-	"type": "Texture",
-	"name": "Player",
-	"path": "client/images/player.png"
-},
-{
-	"type": "Font",
-	"name": "helvetica",
-	"path": "client/fonts/helvetica.ttf"
-},
-{
-	"type": "Texture",
-	"name": "Tile",
-	"path": "/client/images/roadtile_01.png"
-}
+[
+	{"type": "Texture", "name": "Player", "path": "client/images/playerrun.png"},
+	{"type": "Font", "name": "helvetica", "path": "client/fonts/helvetica.ttf"},
+	{"type": "Texture", "name": "Tile","path": "/client/images/roadtile_01.png"}
 ]
