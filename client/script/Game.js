@@ -13,6 +13,8 @@ var player, sprite_sheet, backgroundSound;
 var obstacles = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 
+var topScore=0; // Later to come from the database taken compared to other players
+
 ctx.font= "40px Verdana";
 
 // Dimensions of the player images;
@@ -208,7 +210,7 @@ startNewGame = function(){
 		// Set player image;
 		player.image.src = asset.getTexture('Player');
 		player.draw();
-
+		
 		addListener();
 		paused = false;
 		timeWhenGameStarted = Date.now();
@@ -225,7 +227,7 @@ startNewGame = function(){
 		}
 	});
 }
-
+ var leaderButton=false;
 function addListener() {
 	// Controls WASD works after adding input component
 	document.onkeydown = function(event) {
@@ -246,6 +248,11 @@ function addListener() {
 			// TODO: Game Menu;
 			paused = !paused;
 		}
+		// Testing leaderBoard
+		else if(event.keyCode === 76) {//l
+		leaderButton=!leaderButton;
+			  
+		}
 	}
 
 	document.onkeyup = function(event) {
@@ -261,9 +268,39 @@ function addListener() {
 		else if(event.keyCode === 87) {// w
 			player.up = false;
 		}
+		
 	}
 }
-					
+
+//A function that shows the top scorers
+var leaderBoard=function (){
+	//TODO: loop on all scores and find the highest scrore
+	// Then rank accoring to scores
+	var rank=0
+	var maxRank=10;// number of player
+	
+	ctx.font= "50px Verdana";
+	ctx.beginPath();
+	ctx.fillStyle = "white";
+	ctx.fillText('LEADERBOARD:' ,500,150);
+	ctx.fillText('Rank    Player    Score    Level' ,130,240);
+	ctx.fillStyle = "rgba(0,0,0,0.01)";
+	ctx.strokeStyle = "blue";
+	ctx.rect(70, 50, 1150, 650);
+	ctx.fill();
+	ctx.stroke();
+	
+	if(score > topScore){
+		//TODO: Get player name,score,level and rank them 
+		
+	}
+	
+	
+	
+	
+}
+
+  					
 //Function that opens pause canvas
 var isPaused=function(){
 
@@ -293,8 +330,15 @@ function update() {
 		return;
 	} 
 	
+	if(leaderButton){
+	  leaderBoard();
+		return;
+	} 
 	player.update();
 	player.animation.update();
+	ctx.fillStyle= "white";
+	ctx.fillText('SCORE: ' + score,200,50);
+	ctx.fill();
 
 	// TODO: Update all the other entities based
 	// on the speed of the player
