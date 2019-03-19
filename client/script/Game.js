@@ -3,13 +3,12 @@
    Contributors: Hussein Parpia, Sahil Anand
 */
 
-
-// Add Animation class
+// Load Animation class
 var script = document.createElement('script');
 script.src = 'client/script/Animation.js';
 document.head.appendChild(script);
 
-
+// Get canvas element
 var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 var display = document.querySelector('#game').getContext("2d");
@@ -19,13 +18,15 @@ ctx.font= "40px arcade";
 // Dimensions of the player images;
 const SPRITE_SIZE = 40;
 
-var player, sprite_sheet, backgroundSound, level;
+var player, sprite_sheet, backgroundSound, level, viewport;
 var obstacles = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 
 var topScore = 0; // Later to come from the database taken compared to other players
 
-// To keep track of the player sprite;
+viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
+
+// TODO: Add it to player object, To keep track of the player sprite;
 sprite_sheet = {
 	frame_sets:[[0], [1], [2, 3, 4], [5, 6, 7]] // standing, running right, running left;
 };
@@ -35,23 +36,17 @@ function Tile(imageSource, location) {
 	this.tileImage = new Image();
 	this.tileImage.src = imageSource;
 
-	this.width = 30;
-	this.height = 41;
+	this.width = 40;
+	this.height = 40;
 
 	this.x = location.x;
 	this.y = location.y;
 
-	this.prevX = 0;
-	this.prevY = this.y;
+	this.prev_x = this.x;
+	this.prev_y = this.y;
 
 	this.draw = function() {
-		ctx.drawImage(this.tileImage,this.x, this.y);
-	}
-
-	this.update = function() {
-		this.prevX = this.x;
-		if (player.x === canvas.width/2)
-			this.x -= player.speedX;
+		ctx.drawImage(this.tileImage, this.x - viewport.x, this.y - viewport.y);
 	}
 }
 
@@ -59,8 +54,8 @@ Player = function(param) {
 	var self = {
 		x: param.pos.x,
 		y: param.pos.y,
-		prevX: param.prevPos.x,
-		prevY: param.prevPos.y,
+		prev_x: param.prevPos.x,
+		prev_y: param.prevPos.y,
 		speedX: param.speed.x,
 		speedY: param.speed.y,
 		speedMax: param.speedMax,
@@ -86,23 +81,15 @@ Player = function(param) {
 	}
 
 	self.update = function() {
-		self.prevX = self.x;
-		self.prevY = self.y;
+		self.prev_x = self.x;
+		self.prev_y = self.y;
 
 		self.updateSpeed();
 
 		self.x += self.speedX;
 		self.y += self.speedY;
-		// TODO: Collision should do this with the tiles;
+
 		self.y -= self.gravity;
-
-		// if (self.x === canvas.width/2) {
-		// 	return;
-		// }
-
-		if (self.x > canvas.width/2) {
-			self.x = canvas.width/2;
-		}
 	}
 
 
@@ -143,13 +130,14 @@ Player = function(param) {
 	// Draw the player based on the current frame;
 	self.draw = function() {
 		ctx.drawImage(self.image, self.animation.frame * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE*2,
-						Math.floor(self.x), Math.floor(self.y), SPRITE_SIZE, SPRITE_SIZE*2);
+						Math.floor(self.x - viewport.x), Math.floor(self.y - viewport.y), SPRITE_SIZE, SPRITE_SIZE*2);
 		display.drawImage(ctx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height, 0, 0, display.canvas.width, display.canvas.height);
 	}
 
 	return self;
 }
 
+// Function to handle collisions;
 function getOverlap(a, b) {
 	var delta = { x: Math.abs(a.x - b.x),
 				  y: Math.abs(a.y - b.y)
@@ -165,8 +153,8 @@ function getOverlap(a, b) {
 }
 
 function getPrevOverlap(a, b) {
-	var delta = { x: Math.abs(a.prevX - b.prevX),
-				  y: Math.abs(a.prevY - b.prevY)
+	var delta = { x: Math.abs(a.prev_x - b.prev_x),
+				  y: Math.abs(a.prev_y - b.prev_y)
 				}
 
 	var halfSizeA = { x: a.width / 2, y: a.height / 2 };
@@ -180,22 +168,22 @@ function getPrevOverlap(a, b) {
 
 var testCollisions = function () {
 
+	// Collison of player with tiles;
  	obstacles.forEach(function(entity) {
 
   		var currentOverlap = getOverlap(player, entity);
   		var prevOverlap = getPrevOverlap(player, entity);
 
   		if (currentOverlap.x > 0 && currentOverlap.y > 0) {
-
   			if (prevOverlap.x > 0) {
   				// Collision from top or bottom;
-  				if ((player.y - player.prevY) > 0) {
+  				if ((player.y - player.prev_y) > 0) {
   					// Collision came from top;
   					player.state = "stand";
   					player.speedY = 0;
   					player.y -= currentOverlap.y;
   				}
-  				else if (((player.y - player.prevY) > 0)) {
+  				else if (((player.y - player.prev_y) > 0)) {
   					// Collision came from bottom of tile;
   					player.speedY = 0;
   					player.y += currentOverlap.y;
@@ -204,12 +192,12 @@ var testCollisions = function () {
 
   			if (prevOverlap.y > 0) {
   				// Collision from right or left;
-  				if ((player.x - player.prevX) > 0) {
+  				if ((player.x - player.prev_x) > 0) {
   					// Collision from right;
   					player.speedX = 0;
   					player.x += currentOverlap.x;
   				}
-  				else if ((player.x - player.prevX) < 0) {
+  				else if ((player.x - player.prev_x) < 0) {
   					// Collision from left;
   					player.speedX = 0;
   					player.x -= currentOverlap.x;
@@ -217,6 +205,12 @@ var testCollisions = function () {
   			}
   		}
     });
+
+    // Collision of player with the canvas
+    // (Taking the x and y of canvas to be 0, 0);
+    if (player.x < 0) player.x = 0;
+
+    if (player.y < 0) player.y = 0;
 }
 
 Level = function(data){
@@ -399,16 +393,11 @@ function update() {
 	}
 
 	player.update();
-
-	// TODO: Update all the other entities based
-	// on the speed of the player
-	// Update Tiles;
-	obstacles.forEach(function(tile) {
-		tile.update();
-	});
+	player.animation.update();
 
 	testCollisions();
-	player.animation.update();
+
+	viewport.update("Player", player); // Update the viewport before drawing on canvas;
 
 	canvasDraw();
 }
