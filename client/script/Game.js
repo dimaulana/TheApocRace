@@ -36,8 +36,8 @@ function Tile(imageSource, location) {
 	this.tileImage = new Image();
 	this.tileImage.src = imageSource;
 
-	this.width = 30;
-	this.height = 41;
+	this.width = 40;
+	this.height = 40;
 
 	this.x = location.x;
 	this.y = location.y;
