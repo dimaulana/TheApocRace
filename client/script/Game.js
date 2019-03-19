@@ -19,8 +19,9 @@ ctx.font= "40px arcade";
 // Dimensions of the player images;
 const SPRITE_SIZE = 40;
 
-var player, sprite_sheet, backgroundSound, level, boolCheck;
+var player, sprite_sheet, backgroundSound, level;
 var obstacles = [];
+var stars = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 
 var topScore = 0; // Later to come from the database taken compared to other players
@@ -262,7 +263,7 @@ startNewGame = function(){
 
 	socket.on('levelPack', function(data){
 		level = new Level(data);
-		level.loadLevel();
+		level.loadLevel(data);
 	});
 
 	$(".star").hide();
@@ -281,8 +282,8 @@ startNewGame = function(){
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
 		score = 0;
-		backgroundSound = new sound('client/sound/background.mp3');
-		backgroundSound.play();
+		// backgroundSound = new sound('client/sound/background.mp3');
+		//backgroundSound.play();
 
 		// TODO: This is for testing the movements
 		// Replace with tiles from the actual file level;
