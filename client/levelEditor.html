@@ -1,10 +1,14 @@
 <!-- Author: Dido Maulana -->
 
 
+<script>
+  var editor = levelEditor();
+</script>
 
 <style>
   #canvasEditor {
     margin-top: 5px;
+   border: 2px red;
   }
 
     .objects {
@@ -59,6 +63,10 @@ li:hover {
   border: 2px solid;
 }
 
+#editor2 {
+  border: 2px solid;
+}
+
 
 
 </style>
@@ -72,27 +80,27 @@ li:hover {
                 Back
              </li>
              <li class="editorMenu" id="map">
-                <img src="client/images/map.png">
+                <img id="map" src="client/images/map.png">
                 Map
              </li>
              <li class="editorMenu" id="tiles">
-                <img src="client/images/brickTile_01.png">
+                <img id="brickTile" src="client/images/brickTile1.png">
                    Tiles
               </li>
              <li class="editorMenu" id="characters">
-                <img src="client/images/character.png">
+                <img id="character1" src="client/images/character.png">
                    <a id="char" href="#">Characters</a>
              </li>
              <li class="editorMenu" id="background">
-                <img src="client/images/finishedCity1.png">
+                <img id="finishedCity1" src="client/images/finishedCity1.png">
                    <a id="background" href="#">Background</a>
              </li>
              <li class="editorMenu" id="save">
-                <img src="client/images/save.png">
+                <img id="save" src="client/images/save.png">
                    <a id="load" href="#">Save</a>
              </li>
              <li class="editorMenu" id="play">
-                <img src="client/images/play.png">
+                <img id="play" src="client/images/play.png">
                     <a id="save" href="#">Play</a>
              </li>
             </ul>
@@ -102,13 +110,14 @@ li:hover {
     <div class="row" id="wrapper">
     
     <div class="col-xs-4" id="canvasEditor">
-        <canvas id="editor" width="1280" height="720"> </canvas>
+      <button id="previous" disabled><</button>
+        <canvas id="editor" height=720 width=1280> </canvas>
+      <button id="next">></button>
+      <canvas id="editor2" height=720 width=1280> </canvas>
+
       </div>
 
-    </div>
+
                                     
 </body>
 
-<script>
-      var editor = levelEditor();
-</script>
