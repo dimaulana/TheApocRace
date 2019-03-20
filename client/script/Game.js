@@ -262,8 +262,10 @@ function addListener() {
 startNewGame = function(){
 
 	socket.on('levelPack', function(data){
+		console.log(data);
 		level = new Level(data);
 		level.loadLevel(data);
+
 	});
 
 	$(".star").hide();

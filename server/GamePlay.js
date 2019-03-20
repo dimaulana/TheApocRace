@@ -1,14 +1,14 @@
 var EntityManager = require('./EntityManager');
 var fs = require('fs');
-var AssetManager = require('./AssetManager')
+//var AssetManager = require('./AssetManager')
 
 class GamePlay {
 	constructor(param) {
+		this.assetManager = param.assetManager;
 		this.name = param.level;
 		this.file = 'level' + param.level + '.json';
-		this.data = this.getLevelData();
-		// console.log(this.data);
-		this.assetLocation = this.getMemoryLocationForAsset(this.data);
+		//this.data = this.getLevelData();
+		//this.assetLocation = 
 		this.username = param.user;
 		this.socket = param.socket;
 		this.entityManager = new EntityManager();
@@ -19,12 +19,20 @@ class GamePlay {
 
 	init() {
 		this.spawnPlayer();
+
 		this.socket.emit('initPack', this.player.getInitPack());
-		var pack = {
-			name: this.name,
-			file: this.file,
-			data: this.data,
-			assetLocation: this.assetLocation
+		// var pack = {
+		// 	name: this.name,
+		// 	file: this.file,
+		// 	data: this.getLevelData(),
+		// 	assetLocation: this.getMemoryLocationForAsset(this.getLevelData())
+		// }
+		var pack = {};
+		pack.name = this.name;
+		pack.file = this.file;
+		pack.data = this.getLevelData();
+		if (pack.data !== undefined || pack.data.length > 0) {
+			pack.assetLocation = this.getMemoryLocationForAsset(pack.data);
 		}
 		this.socket.emit('levelPack', pack);
 	}
@@ -46,29 +54,28 @@ class GamePlay {
 	}
 
 	getMemoryLocationForAsset(levelData){
+		var locationsMap = {}
 		var loc;
 		var type;
-		var manager = new AssetManager();
-		manager.loadAssets();
+		//var manager = new AssetManager();
+		assetManager.loadAssets();
 		for(var i = 0; i < levelData.length; i++){
 			type = levelData[i]["type"];
-			// console.log(levelData[31]);
-			// console.log(levelData.length);
-			// console.log(type);
 			switch(type){
 				case "Tile":
 					loc = manager.getTexture("Tile");
+					locationsMap.Tile = loc;
 					break;
 				case "Sound":
-					console.log("here");
 					loc = manager.getSound("StoryMode");
-					break;
+					locationsMap.Sound = loc;
+ 					break;
 				default:
 					console.log("Could not find the asset type: " + type);
 					break;		
 			}
 		}
-		return loc;
+		return locationsMap;
 	}
 };
 

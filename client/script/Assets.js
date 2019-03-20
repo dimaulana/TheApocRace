@@ -23,7 +23,6 @@ function Tile(imageSource, location) {
 
 	this.prevX = 0;
     this.prevY = this.y;
-    console.log(this.tileImage);
 
 	this.draw = function() {
 		ctx.drawImage(this.tileImage,this.x, this.y);
@@ -44,6 +43,8 @@ Level = function(data){
 		levelData: data.data,
 		assetLocation: data.assetLocation
     }
+
+    console.log(self.assetLocation);
     
     self.loadLevel = function(data){
         var levelData = data.data;
@@ -51,11 +52,10 @@ Level = function(data){
             var type = levelData[i]["type"];
             switch(type){
                 case "Tile":
-                    obstacles.push(new Tile(data.assetLocation, { x: levelData[i]['x'], y: levelData[i]['y'] }));
+                    obstacles.push(new Tile(data.assetLocation.Tile, { x: levelData[i]['x'], y: levelData[i]['y'] }));
                     break;
                 case "Sound":
-                    var sound = new Sound(data.assetLocation);
-                    console.log(sound);
+                    var sound = new Sound(data.assetLocation.Sound);
                     sound.play();
                     break; 
                 default:
@@ -71,8 +71,6 @@ Level = function(data){
 
 //Sound function that helps play sound
 function Sound(src) {
-    console.log(src);
-    
 	this.sound = document.createElement("audio");
 	this.sound.src = src;
 

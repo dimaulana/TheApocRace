@@ -1,7 +1,7 @@
 var fs = require('fs');
 
 class AssetManager{
-    constructor(){
+    constructor(db){
         this.textureMap = new Map();
         this.animationMap =  new Map();
         this.fontMap = new Map();
