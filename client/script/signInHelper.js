@@ -67,6 +67,7 @@
 	socket.on('signInResponse', function(data) {
 		if (data.success) {
 			$('#account').hide();
+			$('.paused').hide();
 			generateMenus("mainMenu");
 		}
 		else
