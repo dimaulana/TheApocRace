@@ -1,4 +1,3 @@
-
 var newyork2 = new Image();
 newyork2.src = "client/images/newyork2.png";
 
@@ -13,6 +12,9 @@ losAngeles3.src = "client/images/losAngeles3.png";
 
 var brickTile = new Image();
 brickTile.src = "client/images/brickTile1.png";
+brickTile.height = 40;
+brickTile.width = 40;
+brickTile.type = "tile";
 
 var natureTile = new Image();
 natureTile.src = "client/images/natureTile2.png";
@@ -20,6 +22,11 @@ natureTile.src = "client/images/natureTile2.png";
 var tile = new Image();
 tile.src = "client/images/nTile.png";
 
+var character = new Image();
+character.src = "client/images/running.png"
+character.height = 80;
+character.width = 40;
+character.type = "character"
 
 levelEditor = function () {
     console.log("Creating level editor.");
@@ -47,19 +54,28 @@ levelEditor = function () {
     buffer.height = self.canvasHeight;
 
 /* initiate tile map for each screen */
-    self.tileGrid = new Array(columns * rows);
-    self.screenArray = new Array();
+    self.tileMap = new Array(columns * rows);
+    self.screenArray = {};
+
+    self.tile = brickTile;
     
-    self.tileMap = [];
+    self.tileMap = {};
     self.xOffset = 0;
     self.yOffset = 0;
     self.background = newyork2;
     self.currentScreen = 0;
 
+    self.mouseDown = false;
+
+
     initiate();
 }
 
     function initiate() {        
+        self.canvas.addEventListener('click', mouseClick, false);
+        self.canvas.addEventListener('mousedown', rightClick, false);
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
         for (var  i = 0; i < numberOfScreens; i++) {
             var destination = document.createElement('canvas');
             destination.width = self.gameWidth;
@@ -68,26 +84,16 @@ levelEditor = function () {
             dCtx.drawImage(background, 0, 0, gameWidth, canvasHeight);
             screenArray[i] = dCtx.getImageData(0, 0, gameWidth, canvasHeight);
         }
-        self.ctx.drawImage(background, 0, 0, gameWidth, canvas.height, 0,0,gameWidth, canvas.height);
-        drawToCanvas();
+        self.canvas.style.background = "url('"+newyork1.src+"')";
+        updateData();
 
-        self.canvas.addEventListener('click', mouseClick);
-/*         self.canvas.addEventListener('mousemove', mouseMove);
- */           
     }
 
-    function drawToCanvas() {
+    function updateData() {
         var offset = 1280 * currentScreen;
-
-        self.bCtx.putImageData(screenArray[currentScreen], offset, 0);
         screenArray[currentScreen] = self.ctx.getImageData(0,0,gameWidth, canvasHeight);
-
         displayGrid();
-        var c2 = document.getElementById("editor2");
-        c2ctx = c2.getContext("2d");
-        console.log(c2);
-        var imageData = bCtx.getImageData(offset, 0, canvasWidth, canvasHeight);
-        c2ctx.putImageData(imageData, 0, 0);
+        var imageData = screenArray[currentScreen];
     }
 
     function transition() {
@@ -115,20 +121,17 @@ levelEditor = function () {
 
 
 function setBackground() {
-    self.ctx.clearRect(0, 0, self.canvasHeight, self.gameWidth);
-    self.ctx.drawImage(losAngeles1, 0, 0, background.width, background.height);
-    drawToCanvas();
+    self.canvas.style.background = "url('client/images/losAngeles1.png')";
+    updateData();
 }
 
 function pickTile() {
     let x = e.clientX;
 }
 
-function drawTile() {
-    var tile = brickTile;
-    for (var i = 0; i < self.tile; i++) {
-        self.ctx.drawImage(tile, )
-    }
+function drawTile(e) {
+    
+
     /* each time a tile is drawn, push to array + offset */
 }
 
@@ -142,6 +145,18 @@ function drawCharacter() {
 
 function saveLevel() {
 
+}
+
+function mousePosition(canvas, evt) {
+        var rect = canvas.getBoundingClientRect(), // abs. size of element
+            scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for X
+            scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for Y
+      
+        return {
+          x: (evt.clientX - rect.left) * scaleX,   // scale mouse coordinates after they have
+          y: (evt.clientY - rect.top) * scaleY     // been adjusted to be relative to element
+        }
+      
 }
 
 $(document).on("click", "#canvasEditor button", function (e) {
@@ -174,20 +189,70 @@ $(document).on("click", "#canvasEditor button", function (e) {
 } */
 
 function mouseClick(e) {
-    let x = e.clientX;
-    let y = e.clientY;
-    let gridX = Math.floor(x / tileSize) * tileSize;
-    let gridY = Math.floor(y / tileSize) * tileSize;
+    var mouse = mousePosition(self.canvas, e);
+    let gridX = Math.floor(mouse.x / tileSize) * tileSize;
+    let gridY = Math.floor(mouse.y / tileSize) * tileSize;
+        if (mouse.y < canvasHeight && mouse.x < gameWidth) {
+            self.ctx.clearRect(gridX, gridY, tile.width, tile.height);
+            self.ctx.drawImage(tile, gridX, gridY, tile.width , tile.height)
+            let tileX = Math.floor(mouse.x / tile.width);
+            let tileY = Math.floor(mouse.y / tile.height);
+            let targetTile = tileY * columns + tileX;
+            var item = {
+                "img" : tile.src,
+                "type" : tile.type,
+                "x" : gridX,
+                "y" : gridY,
+                "height" : tile.height,
+                "width" : tile.width
+            }
 
-    if (y < self.canvasHeight && x < self.canvasWidth) {
-        self.ctx.clearRect(gridX, gridY, tileSize, tileSize);
-        self.ctx.drawImage(tile, gridX, gridY, tileSize, tileSize);
-        let tileX = Math.floor(x / tileSize);
-        let tileY = Math.floor(y / tileSize);
-        let targetTile = tileY * self.columns * tileX;
-/*         tiles[targetTile] = sourceTile; */
-    }
+            if (tile.type === "character") {
+                tileMap[targetTile] = item;
+                tileMap[targetTile + self.columns] = item;
+
+            }
+            else if (tile.type === "tile") {
+                tileMap[targetTile] = item;
+            }
+
+
+            console.log(tileMap);     
+        }
 }
+
+function rightClick(e) {
+
+    self.mouseDown = true;
+    var mouse = mousePosition(self.canvas, e);
+
+    let tileX = Math.floor(mouse.x / tile.width);
+    let tileY = Math.floor(mouse.y / tile.height);
+    let targetTile = tileY * columns + tileX;
+  
+    if (tileMap[targetTile]) {
+        var topX = tileMap[targetTile].x;
+        var topY = tileMap[targetTile].y;
+        var height = tileMap[targetTile].height;
+        var width = tileMap[targetTile].width;
+    
+ 
+    
+        if (mouse.y < canvasHeight && mouse.x < gameWidth) {
+            self.ctx.clearRect(topX, topY, width, height);
+            if (tile.type === "character") {
+                delete tileMap[targetTile];
+                delete tileMap[targetTile + columns];
+
+            }
+            else if (tile.type === "tile") {
+                delete tileMap[targetTile];
+            }
+        }
+    }
+
+}
+
 
 /* function mouseMove(e) {
     let x = e.clientX;
@@ -226,6 +291,7 @@ $(document).on("click", ".objects li", function (e) {
             break;
         case "background":
             setBackground();
+            self.tile = character;
             break;
         case "save":
             saveLevel();
