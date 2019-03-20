@@ -216,8 +216,6 @@ function mouseClick(e) {
                 tileMap[targetTile] = item;
             }
 
-
-            console.log(tileMap);     
         }
 }
 
