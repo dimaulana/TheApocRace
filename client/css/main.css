@@ -106,7 +106,23 @@ input[type=password]:focus {
 
   /*Canvas background*/
   #game {
-	background: url(../images/finishedCity1.png) top center;
+	background: url(../images/newyork1.png) top center;
 	height: 720;
 	width: 1280;
   }
+/*Bottom controls*/
+    .editorMenu img {
+      height: 45px;
+      width: 45px;
+      float: left;
+    }
+    .objects {
+      font-family: 'Star Jedi', arial;
+      font-size: 0.95em;
+    }
+	.controls{
+		position: fixed;
+		right: 0;
+		bottom: 0;
+		
+	}

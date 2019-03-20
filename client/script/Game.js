@@ -1,5 +1,5 @@
 // Game.js starts and sets the game at the front end;
-// Contributors: Hussein Parpia, Sahil Anand
+// Contributors: Hussein Parpia, Sahil Anand,Victor Mutandwa
 
 var canvas = document.getElementById("game");
 var ctx = document.getElementById("game").getContext("2d");
