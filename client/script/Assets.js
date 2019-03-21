@@ -21,8 +21,8 @@ function Tile(imageSource, location) {
 	this.x = location.x;
 	this.y = location.y;
 
-	this.prevX = 0;
-    this.prevY = this.y;
+    this.prev_x = this.x;
+	this.prev_y = this.y;
 
 	this.draw = function() {
 		ctx.drawImage(this.tileImage,this.x, this.y);
