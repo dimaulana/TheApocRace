@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 
+	<script type="text/javascript" src="client/script/Asset.js"></script>
 	<!-- Internal script import -->
 	<script src="client/script/menuBuilder.js"></script>
 	<link rel="stylesheet" type="text/css" href="client/css/main.css" />
@@ -55,7 +56,54 @@
 					
 					<!--Extras Container-->
 					<div class="extras" style="display:none;">
-					<h1 style="font-family:arcade;">Extras</h1>
+										
+					
+								
+					
+					
+					</div>
+					<!--For controls Container-->
+					<div class="gameControls" style="display:none;">
+										
+					<div class="col w-100 justify-content-center">
+                    <ul class="controlObjects">
+                    <ul class="extrasMenu" id="up">
+					<img src="client/images/W.png">
+					UP/JUMP
+					</ul>
+					<ul class="extrasMenu" id="left">
+					<img src="client/images/A.png">
+					LEFT
+					</ul>
+					
+					<ul class="extrasMenu" id="right">
+					<img src="client/images/D.png">
+					RIGHT
+					</ul>
+				
+					<ul class="extrasMenu" id="spacebar">
+					<img src="client/images/spacebar.png">
+					SHOOT
+					</ul>
+					<ul class="extrasMenu" id="leaderboard">
+					<img src="client/images/L-key.png">
+					LEADERBOARD
+					</ul>
+					
+                    <ul class="extrasMenu" id="pause">
+					<img src="client/images/pause.png">
+					PAUSE
+					</ul>
+					<ul class="extrasMenu" id="grid">
+					<img src="client/images/grid.png">
+					Show Grid
+					</ul>
+					</ul>
+					
+					
+					
+					
+					
 					
 					</div>
 					
@@ -63,9 +111,9 @@
 					<div class="controls">
 					<div class="col w-100 justify-content-center">
                     <ul class="objects">
-                    <ul class="editorMenu" id="mute">
+                    <ul class="muteButton" id="mute">
 					<img src="client/images/mute.png">
-					<a id="mute" href="#">Mute</a>
+					<a id="mute" onclick="#Add method here">MUTE</a>
 					</ul>
 					</ul>
                    					

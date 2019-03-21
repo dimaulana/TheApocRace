@@ -110,19 +110,26 @@ input[type=password]:focus {
 	height: 720;
 	width: 1280;
   }
-/*Bottom controls*/
-    .editorMenu img {
-      height: 45px;
-      width: 45px;
-      float: left;
+
+    .controlObjects {
+      font-family: 'arcade', arial;
+      font-size: 2.3em;
+	  padding: 15px 35px 45px;
+	  box-shadow: inset 0 1.5px 3px rgb(190, 190, 190),  5px #f5f7f8;
+	  background-color: #4d3f3fa8;
+	  font-weight:bold;
+	  color:white;
     }
-    .objects {
-      font-family: 'Star Jedi', arial;
-      font-size: 0.95em;
-    }
-	.controls{
+	/*Bottom controls*/
+   	.controls{
 		position: fixed;
 		right: 0;
 		bottom: 0;
-		
-	}
+		font-family: 'arcade', arial;
+		font-size: 2.5em;
+	} 
+	.extrasMenu img {
+      height: 45px;
+      width: 45px;
+     /*  float: left; */
+    }

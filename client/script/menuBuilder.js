@@ -72,7 +72,7 @@ $(document).ready(function() {
 		else if (currentPage === "optionsMenu") {
             switch(menuClicked) {
                 case "Controls":
-                    $('.interface').load("# Add div container here");
+                    $('.gameControls').show();
                     break;
 				case "Sound":
                     $('.interface').load("# Add div container here");

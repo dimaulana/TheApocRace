@@ -11,7 +11,8 @@ var obstacles = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 
 var topScore=0; // Later to come from the database taken compared to other players
-
+var scoreX=500;
+var ScoreY= 20;
 ctx.font= "40px arcade";
 
 // Dimensions of the player images;
@@ -351,7 +352,7 @@ function update() {
 	  leaderBoard();
 		return;
 	} 
-	ctx.fillText('SCORE: ' + score,200,50);
+	
 	player.update();
 	player.animation.update();
 	// TODO: Update all the other entities based
@@ -360,6 +361,8 @@ function update() {
 	obstacles.forEach(function(tile) {
 		tile.update();
 	});
+	ctx.fillText('SCORE: ' + score,scoreX,ScoreY);
+	//ctx.fillText('SCORE: ' + score,scoreX + viewport.x,ScoreY + viewport.y); with viewport;
 
 	canvasDraw();
 }
