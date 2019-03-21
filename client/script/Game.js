@@ -21,8 +21,9 @@ const SPRITE_SIZE = 40;
 
 var player, sprite_sheet, backgroundSound, level, viewport;
 var obstacles = [];
+var stars = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
-
+var spriteBox = false;
 var topScore = 0; // Later to come from the database taken compared to other players
 
 viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
@@ -32,32 +33,13 @@ sprite_sheet = {
 	frame_sets:[[0], [1], [2, 3, 4], [5, 6, 7]] // standing, running right, running left;
 };
 
-// Tile object takes the tile image source and location {x: , y: } of the tile;
-function Tile(imageSource, location) {
-	this.tileImage = new Image();
-	this.tileImage.src = imageSource;
-
-	this.width = 40;
-	this.height = 40;
-
-	this.x = location.x;
-	this.y = location.y;
-
-	this.prev_x = this.x;
-	this.prev_y = this.y;
-
-	this.draw = function() {
-		ctx.drawImage(this.tileImage, this.x - viewport.x, this.y - viewport.y);
-	}
-}
-
 Bullet = function(param){
 	var self = {
+		x: param.x,
+		y: param.y,
 		id: Math.random(),
-		angle: param.angle,
 		speedX: 10,
 		speedY: 10,
-		parent: param.parent,
 		timer: 0,
 		toRemove: false
 	}
@@ -65,24 +47,8 @@ Bullet = function(param){
 	self.update = function(){
 		if(self.timer++ > 100)
 			self.toRemove = true;
-		super_update();
-		
-		for(var i in Player.list){
-			var p = Player.list[i];
-			if(self.map === p.map && self.getDistance(p) < 32 && self.parent !== p.id){
-				p.hp -= 1;
-								
-				if(p.hp <= 0){
-					var shooter = Player.list[self.parent];
-					if(shooter)
-						shooter.score += 1;
-					p.hp = p.hpMax;
-					p.x = Math.random() * 500;
-					p.y = Math.random() * 500;					
-				}
-				self.toRemove = true;
-			}
-		}
+
+		self.x += self.speedX;
 	}
 	self.getInitPack = function(){
 		return {
@@ -99,38 +65,14 @@ Bullet = function(param){
 			y:self.y,		
 		};
 	}
+	self.draw = function() {
+		ctx.strokeRect(120, 500, 20, 20);
+	}
 	
-	Bullet.list[self.id] = self;
-	initPack.bullet.push(self.getInitPack());
+	//Bullet.list[self.id] = self;
+	//initPack.bullet.push(self.getInitPack());
 	return self;
 }
-Bullet.list = {};
-
-Bullet.update = function(){
-	var pack = [];
-	for(var i in Bullet.list){
-		var bullet = Bullet.list[i];
-		bullet.update();
-		if(bullet.toRemove){
-			delete Bullet.list[i];
-			removePack.bullet.push(bullet.id);
-		} else
-			pack.push(bullet.getUpdatePack());		
-	}
-	return pack;
-}
-
-Bullet.draw = function(){
-	ctx.fillRect(120,500,20,20);
-}
-
-Bullet.getAllInitPack = function(){
-	var bullets = [];
-	for(var i in Bullet.list)
-		bullets.push(Bullet.list[i].getInitPack());
-	return bullets;
-}
-
 
 Player = function(param) {
 	var self = {
@@ -164,10 +106,10 @@ Player = function(param) {
 	}
 
 	self.update = function() {
+		self.updateSpeed();
+
 		self.prev_x = self.x;
 		self.prev_y = self.y;
-
-		self.updateSpeed();
 
 		self.x += self.speedX;
 		self.y += self.speedY;
@@ -216,21 +158,22 @@ Player = function(param) {
 	}
 	// Draw the player based on the current frame;
 	self.draw = function() {
-		ctx.drawImage(self.image, self.animation.frame * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE*2,
+		ctx.drawImage(self.image, self.animation.frame * SPRITE_SIZE, 0, this.width, this.height,
 						Math.floor(self.x - viewport.x), Math.floor(self.y - viewport.y), SPRITE_SIZE, SPRITE_SIZE*2);
+		if (spriteBox)
+			ctx.strokeRect(Math.floor(self.x - viewport.x), Math.floor(self.y - viewport.y), SPRITE_SIZE, SPRITE_SIZE*2);
+
 		display.drawImage(ctx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height, 0, 0, display.canvas.width, display.canvas.height);
 	}
 
 	self.shootBullet = function(angle){
-		if(Math.random() < 0.1)
-		Bullet({
-			parent:self.id,
-			angle:angle,
-			x:self.x,
-			y:self.y,
-			map:self.map,
+		var bullet = new Bullet({
+			angle:0,
+			x:100,
+			y:200,
 		});
-		Bullet.draw();
+		obstacles.push(bullet);
+		bullet.draw();
 	}
 
 	return self;
@@ -238,8 +181,8 @@ Player = function(param) {
 
 // Function to handle collisions;
 function getOverlap(a, b) {
-	var delta = { x: Math.abs(a.x - b.x),
-				  y: Math.abs(a.y - b.y)
+	var delta = { x: Math.abs((a.x + a.width/2) - (b.x + b.width/2)),
+				  y: Math.abs((a.y + a.height/2) - (b.y + b.height/2))
 				}
 
 	var halfSizeA = { x: a.width / 2, y: a.height / 2 };
@@ -252,8 +195,9 @@ function getOverlap(a, b) {
 }
 
 function getPrevOverlap(a, b) {
-	var delta = { x: Math.abs(a.prev_x - b.prev_x),
-				  y: Math.abs(a.prev_y - b.prev_y)
+
+	var delta = { x: Math.abs((a.prev_x + a.width/2) - (b.prev_x + b.width/2)),
+				  y: Math.abs((a.prev_y + a.height/2) - (b.prev_y + b.height/2))
 				}
 
 	var halfSizeA = { x: a.width / 2, y: a.height / 2 };
@@ -282,7 +226,7 @@ var testCollisions = function () {
   					player.speedY = 0;
   					player.y -= currentOverlap.y;
   				}
-  				else if (((player.y - player.prev_y) > 0)) {
+  				else if (((player.y - player.prev_y) < 0)) {
   					// Collision came from bottom of tile;
   					player.speedY = 0;
   					player.y += currentOverlap.y;
@@ -312,32 +256,6 @@ var testCollisions = function () {
     if (player.y < 0) player.y = 0;
 }
 
-Level = function(data){
-	var self = {
-		levelName: data.levelName,
-		fileLocation: data.fileLocation,
-		levelData: data.levelData,
-		tileFile: data.tileFile
-	}
-	return self;
-
-}
-
-//Sound function that helps play sound
-function sound(src) {
-	this.sound = document.createElement("audio");
-	this.sound.src = src;
-
-	this.sound.setAttribute("storyMode", "none");
-	this.sound.style.display = "none";
-	document.body.appendChild(this.sound);
-	this.play = function(){
-		this.sound.play();
-	}
-	this.stop = function(){
-		this.sound.pause();
-	}
-}
 
 // Redraw canvas according to the updated positons;
 function canvasDraw() {
@@ -376,6 +294,11 @@ function keyDownHandler(e) {
 		case 66: // b key
 			player.pressingAttack = true;
 		break;
+
+		case 73: // i key for spriteBox which can be used for collisions
+			spriteBox = !spriteBox;
+		break;
+
 	}
 }
 
@@ -413,11 +336,8 @@ startNewGame = function(){
 
 	socket.on('levelPack', function(data){
 		level = new Level(data);
-		tiles = data.levelData;
+		level.loadLevel(data);
 
-		for (var i = 0; i < tiles.length; i++) {
-			obstacles.push(new Tile(data.tileFile, { x: tiles[i]['x'], y: tiles[i]['y'] } ));
-		}
 	});
 
 	$(".star").hide();
@@ -437,7 +357,7 @@ startNewGame = function(){
 		frameCount = 0;
 		score = 0;
 		// backgroundSound = new sound('client/sound/background.mp3');
-		// backgroundSound.play();
+		//backgroundSound.play();
 
 		// TODO: This is for testing the movements
 		// Replace with tiles from the actual file level;
@@ -502,6 +422,10 @@ function update() {
 	player.animation.update();
 
 	testCollisions();
+	//resolveCollision();
+	obstacles.forEach(function(tile) {
+		tile.update();
+	});
 
 	viewport.update("Player", player); // Update the viewport before drawing on canvas;
 

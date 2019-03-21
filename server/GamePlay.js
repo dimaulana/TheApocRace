@@ -4,12 +4,10 @@ var AssetManager = require('./AssetManager')
 
 class GamePlay {
 	constructor(param) {
-		this.level = {
-			levelName: param.level, 
-			fileLocation: 'level' + param.level + '.json',
-			levelData: this.getLevelData(),
-			tileFile: this.getMemoryLocationForTile() 
-		};
+		this.name = param.level;
+		this.file = 'level' + param.level + '.json';
+		//this.data = this.getLevelData();
+		//this.assetLocation = 
 		this.username = param.user;
 		this.socket = param.socket;
 		this.entityManager = new EntityManager();
@@ -20,8 +18,22 @@ class GamePlay {
 
 	init() {
 		this.spawnPlayer();
+
 		this.socket.emit('initPack', this.player.getInitPack());
-		this.socket.emit('levelPack', this.level);
+		// var pack = {
+		// 	name: this.name,
+		// 	file: this.file,
+		// 	data: this.getLevelData(),
+		// 	assetLocation: this.getMemoryLocationForAsset(this.getLevelData())
+		// }
+		var pack = {};
+		pack.name = this.name;
+		pack.file = this.file;
+		pack.data = this.getLevelData();
+		if (pack.data !== undefined || pack.data.length > 0) {
+			pack.assetLocation = this.getMemoryLocationForAsset(pack.data);
+		}
+		this.socket.emit('levelPack', pack);
 	}
 
 	spawnPlayer() {
@@ -40,10 +52,29 @@ class GamePlay {
 		return json;
 	}
 
-	getMemoryLocationForTile(){
-		var manager = new AssetManager();
-		manager.loadAssets();
-		return manager.getTexture("Tile");
+	getMemoryLocationForAsset(levelData){
+		var locationsMap = {}
+		var loc;
+		var type;
+		var assetManager = new AssetManager();
+		assetManager.loadAssets();
+		for(var i = 0; i < levelData.length; i++){
+			type = levelData[i]["type"];
+			switch(type){
+				case "Tile":
+					loc = assetManager.getTexture("Tile");
+					locationsMap.Tile = loc;
+					break;
+				case "Sound":
+					loc = assetManager.getSound("StoryMode");
+					locationsMap.Sound = loc;
+ 					break;
+				default:
+					console.log("Could not find the asset type: " + type);
+					break;		
+			}
+		}
+		return locationsMap;
 	}
 };
 
