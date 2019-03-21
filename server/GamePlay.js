@@ -1,10 +1,9 @@
 var EntityManager = require('./EntityManager');
 var fs = require('fs');
-//var AssetManager = require('./AssetManager')
+var AssetManager = require('./AssetManager')
 
 class GamePlay {
 	constructor(param) {
-		this.assetManager = param.assetManager;
 		this.name = param.level;
 		this.file = 'level' + param.level + '.json';
 		//this.data = this.getLevelData();
@@ -57,17 +56,17 @@ class GamePlay {
 		var locationsMap = {}
 		var loc;
 		var type;
-		//var manager = new AssetManager();
+		var assetManager = new AssetManager();
 		assetManager.loadAssets();
 		for(var i = 0; i < levelData.length; i++){
 			type = levelData[i]["type"];
 			switch(type){
 				case "Tile":
-					loc = manager.getTexture("Tile");
+					loc = assetManager.getTexture("Tile");
 					locationsMap.Tile = loc;
 					break;
 				case "Sound":
-					loc = manager.getSound("StoryMode");
+					loc = assetManager.getSound("StoryMode");
 					locationsMap.Sound = loc;
  					break;
 				default:

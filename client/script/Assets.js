@@ -44,8 +44,6 @@ Level = function(data){
 		assetLocation: data.assetLocation
     }
 
-    console.log(self.assetLocation);
-    
     self.loadLevel = function(data){
         var levelData = data.data;
 		for (var i = 0; i < levelData.length; i++) {
