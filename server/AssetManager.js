@@ -1,7 +1,7 @@
 var fs = require('fs');
 
 class AssetManager{
-    constructor(){
+    constructor(db){
         this.textureMap = new Map();
         this.animationMap =  new Map();
         this.fontMap = new Map();
@@ -55,15 +55,15 @@ class AssetManager{
     }
 
     getSound(soundName){
-        this.soundMap.get(soundName);
+        return this.soundMap.get(soundName);
     }
 
     getFont(fontName){
-        this.fontMap.get(fontName);
+        return this.fontMap.get(fontName);
     }
 
     getAnimation(animationName){
-        this.animationMap.get(animationName);
+        return this.animationMap.get(animationName);
     }
 }
 

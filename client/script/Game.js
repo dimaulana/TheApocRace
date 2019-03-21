@@ -20,6 +20,7 @@ const SPRITE_SIZE = 40;
 
 var player, sprite_sheet, backgroundSound, level, viewport;
 var obstacles = [];
+var stars = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 var spriteBox = false;
 var topScore = 0; // Later to come from the database taken compared to other players
@@ -30,28 +31,6 @@ viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
 sprite_sheet = {
 	frame_sets:[[0], [1], [2, 3, 4], [5, 6, 7]] // standing, running right, running left;
 };
-
-// Tile object takes the tile image source and location {x: , y: } of the tile;
-function Tile(imageSource, location) {
-	this.tileImage = new Image();
-	this.tileImage.src = imageSource;
-
-	this.width = 40;
-	this.height = 40;
-
-	this.x = location.x;
-	this.y = location.y;
-
-	this.prev_x = this.x;
-	this.prev_y = this.y;
-
-	this.draw = function() {
-		ctx.drawImage(this.tileImage, this.x - viewport.x, this.y - viewport.y);
-
-		if (spriteBox)
-			ctx.strokeRect(this.x - viewport.x, this.y - viewport.y, this.width, this.height);
-	}
-}
 
 Player = function(param) {
 	var self = {
@@ -220,32 +199,6 @@ var testCollisions = function () {
     if (player.y < 0) player.y = 0;
 }
 
-Level = function(data){
-	var self = {
-		levelName: data.levelName,
-		fileLocation: data.fileLocation,
-		levelData: data.levelData,
-		tileFile: data.tileFile
-	}
-	return self;
-
-}
-
-//Sound function that helps play sound
-function sound(src) {
-	this.sound = document.createElement("audio");
-	this.sound.src = src;
-
-	this.sound.setAttribute("storyMode", "none");
-	this.sound.style.display = "none";
-	document.body.appendChild(this.sound);
-	this.play = function(){
-		this.sound.play();
-	}
-	this.stop = function(){
-		this.sound.pause();
-	}
-}
 
 // Redraw canvas according to the updated positons;
 function canvasDraw() {
@@ -318,11 +271,8 @@ startNewGame = function(){
 
 	socket.on('levelPack', function(data){
 		level = new Level(data);
-		tiles = data.levelData;
+		level.loadLevel(data);
 
-		for (var i = 0; i < tiles.length; i++) {
-			obstacles.push(new Tile(data.tileFile, { x: tiles[i]['x'], y: tiles[i]['y'] } ));
-		}
 	});
 
 	$(".star").hide();
@@ -342,7 +292,7 @@ startNewGame = function(){
 		frameCount = 0;
 		score = 0;
 		// backgroundSound = new sound('client/sound/background.mp3');
-		// backgroundSound.play();
+		//backgroundSound.play();
 
 		// TODO: This is for testing the movements
 		// Replace with tiles from the actual file level;
