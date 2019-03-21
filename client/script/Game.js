@@ -8,6 +8,7 @@ var script = document.createElement('script');
 script.src = 'client/script/Animation.js';
 document.head.appendChild(script);
 
+var initPack = {bullet:[]};
 // Get canvas element
 var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
@@ -18,11 +19,7 @@ ctx.font= "40px arcade";
 // Dimensions of the player images;
 const SPRITE_SIZE = 40;
 
-<<<<<<< HEAD
-var player, sprite_sheet, backgroundSound, level, boolCheck;
-=======
 var player, sprite_sheet, backgroundSound, level, viewport;
->>>>>>> 450e3d733eb8a4d2925098afdcc241604efe268c
 var obstacles = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 
@@ -54,6 +51,87 @@ function Tile(imageSource, location) {
 	}
 }
 
+Bullet = function(param){
+	var self = {
+		id: Math.random(),
+		angle: param.angle,
+		speedX: 10,
+		speedY: 10,
+		parent: param.parent,
+		timer: 0,
+		toRemove: false
+	}
+
+	self.update = function(){
+		if(self.timer++ > 100)
+			self.toRemove = true;
+		super_update();
+		
+		for(var i in Player.list){
+			var p = Player.list[i];
+			if(self.map === p.map && self.getDistance(p) < 32 && self.parent !== p.id){
+				p.hp -= 1;
+								
+				if(p.hp <= 0){
+					var shooter = Player.list[self.parent];
+					if(shooter)
+						shooter.score += 1;
+					p.hp = p.hpMax;
+					p.x = Math.random() * 500;
+					p.y = Math.random() * 500;					
+				}
+				self.toRemove = true;
+			}
+		}
+	}
+	self.getInitPack = function(){
+		return {
+			id:1,
+			x:120,
+			y:32,
+			map:self.map,
+		};
+	}
+	self.getUpdatePack = function(){
+		return {
+			id:self.id,
+			x:self.x,
+			y:self.y,		
+		};
+	}
+	
+	Bullet.list[self.id] = self;
+	initPack.bullet.push(self.getInitPack());
+	return self;
+}
+Bullet.list = {};
+
+Bullet.update = function(){
+	var pack = [];
+	for(var i in Bullet.list){
+		var bullet = Bullet.list[i];
+		bullet.update();
+		if(bullet.toRemove){
+			delete Bullet.list[i];
+			removePack.bullet.push(bullet.id);
+		} else
+			pack.push(bullet.getUpdatePack());		
+	}
+	return pack;
+}
+
+Bullet.draw = function(){
+	ctx.fillRect(120,500,20,20);
+}
+
+Bullet.getAllInitPack = function(){
+	var bullets = [];
+	for(var i in Bullet.list)
+		bullets.push(Bullet.list[i].getInitPack());
+	return bullets;
+}
+
+
 Player = function(param) {
 	var self = {
 		x: param.pos.x,
@@ -78,6 +156,7 @@ Player = function(param) {
 		up:  false,
 		down: false,
 		jump: false,
+		pressingAttack:false,
 		state: "stand",
 		animation: new Animation(),
 		image: new Image(),
@@ -94,6 +173,10 @@ Player = function(param) {
 		self.y += self.speedY;
 
 		self.y -= self.gravity;
+
+		if(self.pressingAttack){
+			self.shootBullet(self.mouseAngle);
+		}
 	}
 
 
@@ -136,6 +219,18 @@ Player = function(param) {
 		ctx.drawImage(self.image, self.animation.frame * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE*2,
 						Math.floor(self.x - viewport.x), Math.floor(self.y - viewport.y), SPRITE_SIZE, SPRITE_SIZE*2);
 		display.drawImage(ctx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height, 0, 0, display.canvas.width, display.canvas.height);
+	}
+
+	self.shootBullet = function(angle){
+		if(Math.random() < 0.1)
+		Bullet({
+			parent:self.id,
+			angle:angle,
+			x:self.x,
+			y:self.y,
+			map:self.map,
+		});
+		Bullet.draw();
 	}
 
 	return self;
@@ -275,9 +370,12 @@ function keyDownHandler(e) {
 		break;
 
 		case 80: // p key
-			paused = !paused;
+			paused = !paused;	
 		break;
 
+		case 66: // b key
+			player.pressingAttack = true;
+		break;
 	}
 }
 
@@ -298,6 +396,10 @@ function keyUpHandler(e) {
 		case 83: // s key
 			// TODO: Use this for attack?
 			player.down = false;
+		break;
+
+		case 66: // b key
+			player.pressingAttack = false;
 		break;
 	}
 }
