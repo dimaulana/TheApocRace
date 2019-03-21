@@ -8,7 +8,6 @@
 // Files and services needed for game
 require('./server/DatabaseManager');
 
-var EntityManager = require('./server/EntityManager');
 var GamePlay = require('./server/GamePlay');
 
 var mongojs = require("mongojs");
@@ -19,12 +18,13 @@ var serv = require('http').Server(app);
 // Set up the database;
 DatabaseManager();
 
-let entityManager;
+
 
 
 // db handles the read and write to database using mongojs
 var collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
 var db = mongojs('localhost:27017/apoRun', collections);
+
 
 app.get('/', function(req,res) {
 	res.sendFile(__dirname + '/client/index.html');
