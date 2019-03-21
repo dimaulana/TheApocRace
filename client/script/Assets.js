@@ -8,8 +8,6 @@ const AssetEnum ={
     STAR: "Star"
 }
 
-
-
 // Tile object takes the tile image source and location {x: , y: } of the tile;
 function Tile(imageSource, location) {
 	this.tileImage = new Image();
