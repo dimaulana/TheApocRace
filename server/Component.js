@@ -46,8 +46,8 @@ class Transform extends Component{
 class Dimension extends Component {
 	constructor() {
 		super();
-		this.width = 90;
-		this.height = 119;
+		this.width = 40;
+		this.height = 80;
 	}
 }
 

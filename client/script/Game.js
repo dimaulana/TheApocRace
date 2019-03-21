@@ -22,7 +22,7 @@ var player, sprite_sheet, backgroundSound, level, viewport;
 var obstacles = [];
 var stars = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
-
+var spriteBox = false;
 var topScore = 0; // Later to come from the database taken compared to other players
 
 viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
@@ -63,10 +63,10 @@ Player = function(param) {
 	}
 
 	self.update = function() {
+		self.updateSpeed();
+
 		self.prev_x = self.x;
 		self.prev_y = self.y;
-
-		self.updateSpeed();
 
 		self.x += self.speedX;
 		self.y += self.speedY;
@@ -111,8 +111,11 @@ Player = function(param) {
 	}
 	// Draw the player based on the current frame;
 	self.draw = function() {
-		ctx.drawImage(self.image, self.animation.frame * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE*2,
+		ctx.drawImage(self.image, self.animation.frame * SPRITE_SIZE, 0, this.width, this.height,
 						Math.floor(self.x - viewport.x), Math.floor(self.y - viewport.y), SPRITE_SIZE, SPRITE_SIZE*2);
+		if (spriteBox)
+			ctx.strokeRect(Math.floor(self.x - viewport.x), Math.floor(self.y - viewport.y), SPRITE_SIZE, SPRITE_SIZE*2);
+
 		display.drawImage(ctx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height, 0, 0, display.canvas.width, display.canvas.height);
 	}
 
@@ -121,8 +124,8 @@ Player = function(param) {
 
 // Function to handle collisions;
 function getOverlap(a, b) {
-	var delta = { x: Math.abs(a.x - b.x),
-				  y: Math.abs(a.y - b.y)
+	var delta = { x: Math.abs((a.x + a.width/2) - (b.x + b.width/2)),
+				  y: Math.abs((a.y + a.height/2) - (b.y + b.height/2))
 				}
 
 	var halfSizeA = { x: a.width / 2, y: a.height / 2 };
@@ -135,8 +138,9 @@ function getOverlap(a, b) {
 }
 
 function getPrevOverlap(a, b) {
-	var delta = { x: Math.abs(a.prev_x - b.prev_x),
-				  y: Math.abs(a.prev_y - b.prev_y)
+
+	var delta = { x: Math.abs((a.prev_x + a.width/2) - (b.prev_x + b.width/2)),
+				  y: Math.abs((a.prev_y + a.height/2) - (b.prev_y + b.height/2))
 				}
 
 	var halfSizeA = { x: a.width / 2, y: a.height / 2 };
@@ -165,7 +169,7 @@ var testCollisions = function () {
   					player.speedY = 0;
   					player.y -= currentOverlap.y;
   				}
-  				else if (((player.y - player.prev_y) > 0)) {
+  				else if (((player.y - player.prev_y) < 0)) {
   					// Collision came from bottom of tile;
   					player.speedY = 0;
   					player.y += currentOverlap.y;
@@ -228,6 +232,10 @@ function keyDownHandler(e) {
 
 		case 80: // p key
 			paused = !paused;
+		break;
+
+		case 73: // i key for spriteBox which can be used for collisions
+			spriteBox = !spriteBox;
 		break;
 
 	}
@@ -349,6 +357,7 @@ function update() {
 	player.animation.update();
 
 	testCollisions();
+	//resolveCollision();
 
 	viewport.update("Player", player); // Update the viewport before drawing on canvas;
 
