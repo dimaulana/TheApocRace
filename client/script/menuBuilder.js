@@ -5,6 +5,8 @@ document.getElementsByTagName('head')[0].appendChild(script);
 var mainMenu = ["Play", "Build", "Options", "Extras", "Sign Out"];
 var buildMenu = ["New Level", "Load Level", "Back"]; 
 var playMenu = ["Story Mode", "Custom", "Back"];
+var extraMenu = ["Credits", "Profile", "Back"];
+var optionsMenu = ["Controls","Sound", "Back"];
 var currentPage;
 
 var MenuBuilder = function(socket){
@@ -28,17 +30,33 @@ $(document).ready(function() {
                     generateMenus("buildMenu");
                     break;
                 case "Options":
-                    $('.interface').load('client/interface/LevelEditor.html');
+                    generateMenus("optionsMenu");
                     break;            
                 case "Extras":
-                    $('.interface').load("ENTER PAGE URL HERE");
+                    generateMenus("extraMenu");
+					// TODO::Fix here
+					//$('.interface').load('.extras');
+					//$('.extras').show();
                     break;
                 case "Sign Out":
                     /* Add account signed out function here. */ 
                     $('#account').show();   
             }
         }
-        else if (currentPage === "buildMenu") {
+        else if (currentPage === "extraMenu") {
+            switch(menuClicked) {
+                case "Credits":
+                    $('.interface').load("ENTER DIV ID HERE");
+                    break;
+                case "Profile": 
+                    $('.interface').load("ENTER PAGE URL HERE");
+                    break;          
+                case "Back":
+                    generateMenus("mainMenu");
+                    break;
+            }
+        }
+		else if (currentPage === "buildMenu") {
             switch(menuClicked) {
                 case "New Level":
                     $('.interface').load("client/levelEditor.html");
@@ -46,6 +64,19 @@ $(document).ready(function() {
                 case "Load Level": 
                     $('.interface').load("ENTER PAGE URL HERE");
                     break;          
+                case "Back":
+                    generateMenus("mainMenu");
+                    break;
+            }
+        }
+		else if (currentPage === "optionsMenu") {
+            switch(menuClicked) {
+                case "Controls":
+                    $('.gameControls').show();
+                    break;
+				case "Sound":
+                    $('.interface').load("# Add div container here");
+                    break;
                 case "Back":
                     generateMenus("mainMenu");
                     break;
@@ -82,6 +113,20 @@ function generateMenus(k) {
         currentPage = k;
         $.each(buildMenu, function(i) {
             items.push("<button id='playMenu-"+buildMenu[i]+"' class='btn btn-primary btn-lg ml-2 type='submit'>"+buildMenu[i]+"</button>")
+        });
+        $(items.join('')).appendTo(".btn-group-vertical");
+        }
+	else if (k === "optionsMenu") {
+        currentPage = k;
+        $.each(buildMenu, function(i) {
+            items.push("<button id='playMenu-"+optionsMenu[i]+"' class='btn btn-primary btn-lg ml-2 type='submit'>"+optionsMenu[i]+"</button>")
+        });
+        $(items.join('')).appendTo(".btn-group-vertical");
+        }
+	else if (k === "extraMenu") {
+        currentPage = k;
+        $.each(extraMenu, function(i) {
+            items.push("<button id='playMenu-"+extraMenu[i]+"' class='btn btn-primary btn-lg ml-2 type='submit'>"+extraMenu[i]+"</button>")
         });
         $(items.join('')).appendTo(".btn-group-vertical");
         }

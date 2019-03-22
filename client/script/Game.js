@@ -1,3 +1,6 @@
+
+// Game.js starts and sets the game at the front end;
+// Contributors: Hussein Parpia, Sahil Anand,Victor Mutandwa
 /* Game.js starts and sets the game at the front end;
 
    Contributors: Hussein Parpia, Sahil Anand
@@ -13,7 +16,7 @@ var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 var display = document.querySelector('#game').getContext("2d");
 
-ctx.font= "40px arcade";
+ctx.font= "50px arcade";
 
 // Dimensions of the player images;
 const SPRITE_SIZE = 40;
@@ -24,6 +27,40 @@ var stars = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 var spriteBox = false;
 var topScore = 0; // Later to come from the database taken compared to other players
+var scoreX=1000;
+var ScoreY= 40;
+
+const SPRITE_HEIGHT = 119;
+
+// TODO: Hussein - Move to its own script file
+function Animation(frame_set, delay) {
+
+    this.count = 0;
+    this.delay = delay; // The number of game cycles to wait until the next frame change.
+    this.frame = 0;
+    this.frame_index = 0;
+    this.frame_set = frame_set;
+
+    this.change = function(frame_set, delay = 15) {
+    	if (this.frame_set != frame_set) {
+    		this.count = 0;
+    		this.delay = delay;
+    		this.frame_index = 0;
+    		this.frame_set = frame_set;
+    		this.frame = this.frame_set[this.frame_index];
+    	}
+    }
+
+    this.update = function() {
+    	this.count ++;
+
+		if (this.count >= this.delay) { // If enough cycles have passed, we change the frame.
+    		this.count = 0; // Reset count;
+    		this.frame_index = (this.frame_index == this.frame_set.length - 1) ? 0 : this.frame_index + 1;
+    		this.frame = this.frame_set[this.frame_index]; // Update current frame;
+    	}
+    }
+}
 
 viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
 
@@ -204,7 +241,8 @@ var testCollisions = function () {
 function canvasDraw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	// Updating the score;
-	ctx.fillText('SCORE: ' + score, 200, 50);
+	ctx.fillStyle= "white";
+	ctx.fillText('SCORE: ' + score,scoreX,ScoreY);
 	player.draw();
 	obstacles.forEach(function(tile) {
 		tile.draw();
@@ -351,17 +389,30 @@ function update() {
 	if(leaderButton){
 	  leaderBoard();
 		return;
-	}
-
+	} 
+	
 	player.update();
 	player.animation.update();
+	// TODO: Update all the other entities based
+	// on the speed of the player
 
+	// Update Tiles;
 	testCollisions();
-	//resolveCollision();
+
+	obstacles.forEach(function(tile) {
+		tile.update();
+	});
 
 	viewport.update("Player", player); // Update the viewport before drawing on canvas;
 
 	canvasDraw();
 }
+
+	
+
+	//resolveCollision();
+
+	
+
 
 setInterval(update, 1000/30);
