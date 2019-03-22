@@ -16,7 +16,7 @@ var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 var display = document.querySelector('#game').getContext("2d");
 
-ctx.font= "40px arcade";
+ctx.font= "50px arcade";
 
 // Dimensions of the player images;
 const SPRITE_SIZE = 40;
@@ -27,10 +27,8 @@ var stars = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 var spriteBox = false;
 var topScore = 0; // Later to come from the database taken compared to other players
-
-var topScore=0; // Later to come from the database taken compared to other players
 var scoreX=1000;
-var ScoreY= 20;
+var ScoreY= 40;
 
 const SPRITE_HEIGHT = 119;
 
@@ -243,7 +241,8 @@ var testCollisions = function () {
 function canvasDraw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	// Updating the score;
-	ctx.fillText('SCORE: ' + score, 200, 50);
+	ctx.fillStyle= "white";
+	ctx.fillText('SCORE: ' + score,scoreX,ScoreY);
 	player.draw();
 	obstacles.forEach(function(tile) {
 		tile.draw();
@@ -403,11 +402,7 @@ function update() {
 	obstacles.forEach(function(tile) {
 		tile.update();
 	});
-	ctx.fillStyle= "white";
 
-	//ctx.fillText('SCORE: ' + score,scoreX,ScoreY);
-	ctx.fillText('SCORE: ' + score,scoreX + viewport.x,ScoreY + viewport.y);
-	
 	viewport.update("Player", player); // Update the viewport before drawing on canvas;
 
 	canvasDraw();
