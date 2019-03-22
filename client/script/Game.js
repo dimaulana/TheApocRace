@@ -16,7 +16,7 @@ var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 var display = document.querySelector('#game').getContext("2d");
 
-ctx.font= "50px arcade";
+ctx.font= "30px arcade";
 
 // Dimensions of the player images;
 const SPRITE_SIZE = 40;
@@ -26,9 +26,12 @@ var obstacles = [];
 var stars = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 var spriteBox = false;
-var topScore = 0; // Later to come from the database taken compared to other players
-var scoreX=1000;
-var ScoreY= 40;
+
+var score = {
+	x: canvas.width - 200, y: 40,
+	text: "SCORE: ", int: 0,
+	topScore: 0 // Later to come from the database taken compared to other players
+}
 
 const SPRITE_HEIGHT = 119;
 
@@ -120,6 +123,7 @@ Player = function(param) {
 			self.animation.change(sprite_sheet.frame_sets[2], delay);
 			self.state = "run";
 			self.scaleX = 1.0;
+			score.int++;
 		}
 		else if (self.left) {
 			self.speedX = -self.speedMax;
@@ -242,7 +246,8 @@ function canvasDraw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	// Updating the score;
 	ctx.fillStyle= "white";
-	ctx.fillText('SCORE: ' + score,scoreX,ScoreY);
+	//ctx.fillText('SCORE: ' + score,scoreX,ScoreY);
+	ctx.fillText(score.text + score.int, score.x, score.y);
 	player.draw();
 	obstacles.forEach(function(tile) {
 		tile.draw();
@@ -328,7 +333,6 @@ startNewGame = function(){
 		paused = false;
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
-		score = 0;
 		// backgroundSound = new sound('client/sound/background.mp3');
 		//backgroundSound.play();
 
@@ -353,7 +357,7 @@ var leaderBoard = function (){
 	ctx.fill();
 	ctx.stroke();
 
-	if(score > topScore){
+	if(score.int > score.topScore){
 		//TODO: Get player name,score,level and rank them
 
 	}
