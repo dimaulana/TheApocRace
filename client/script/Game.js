@@ -1,22 +1,37 @@
+
 // Game.js starts and sets the game at the front end;
 // Contributors: Hussein Parpia, Sahil Anand,Victor Mutandwa
+/* Game.js starts and sets the game at the front end;
 
+   Contributors: Hussein Parpia, Sahil Anand
+*/
+
+// Load Animation class
+var script = document.createElement('script');
+script.src = 'client/script/Animation.js';
+document.head.appendChild(script);
+
+// Get canvas element
 var canvas = document.getElementById("game");
-var ctx = document.getElementById("game").getContext("2d");
+var ctx = canvas.getContext("2d");
 var display = document.querySelector('#game').getContext("2d");
 
+ctx.font= "40px arcade";
 
-var player, sprite_sheet, backgroundSound, level;
+// Dimensions of the player images;
+const SPRITE_SIZE = 40;
+
+var player, sprite_sheet, backgroundSound, level, viewport;
 var obstacles = [];
+var stars = [];
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
+var spriteBox = false;
+var topScore = 0; // Later to come from the database taken compared to other players
 
 var topScore=0; // Later to come from the database taken compared to other players
 var scoreX=1000;
 var ScoreY= 20;
-ctx.font= "40px arcade";
 
-// Dimensions of the player images;
-const SPRITE_SIZE = 90;
 const SPRITE_HEIGHT = 119;
 
 // TODO: Hussein - Move to its own script file
@@ -49,44 +64,24 @@ function Animation(frame_set, delay) {
     }
 }
 
-// To keep track of the player sprite;
+viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
+
+// TODO: Add it to player object, To keep track of the player sprite;
 sprite_sheet = {
-	frame_sets:[[0], [1, 2, 3], [4, 5, 6]] // standing, running right, running left;
+	frame_sets:[[0], [1], [2, 3, 4], [5, 6, 7]] // standing, running right, running left;
 };
-
-// TODO: To get from asset manager;
-var Img = {};
-
-testCollisionRectRect = function(rect1,rect2){
-	return rect1.x <= rect2.x + rect2.width
-	&& rect2.x <= rect1.x +rect1.width
-	&& rect1.y <= rect2.y + rect2.height
-	&& rect2.y <= rect1.y + rect1.height;
-}
-
-function tile(locationX) {
-	this.width = 30;
-	this.height = Img.tile.height;
-	this.x = locationX;
-	this.y = canvas.height - this.height;
-
-	this.draw = function() {
-		ctx.drawImage(Img.tile,this.x, this.y);
-	}
-
-	this.update = function() {
-		if (player.x === canvas.width/2)
-			this.x -= player.speedX;
-	}
-}
 
 Player = function(param) {
 	var self = {
 		x: param.pos.x,
 		y: param.pos.y,
+		prev_x: param.prevPos.x,
+		prev_y: param.prevPos.y,
 		speedX: param.speed.x,
 		speedY: param.speed.y,
 		speedMax: param.speedMax,
+		scaleX: param.scale.x,
+		scaleY: param.scale.y,
 		hp: param.hp,
 		score: param.score,
 		lives: param.lives,
@@ -99,34 +94,23 @@ Player = function(param) {
 		left: false,
 		up:  false,
 		down: false,
+		jump: false,
 		state: "stand",
-		animation:new Animation(),
+		animation: new Animation(),
 		image: new Image(),
 		fileLocation: param.fileLocation
 	}
 
-	self.update = function(){
+	self.update = function() {
 		self.updateSpeed();
-		/*
-		if(self.pressingAttack){
-			self.shootBullet(self.mouseAngle);
 
-		}*/
+		self.prev_x = self.x;
+		self.prev_y = self.y;
+
 		self.x += self.speedX;
 		self.y += self.speedY;
-		// TODO: Collision should do this with the tiles;
-		if (self.y < 500) {
-			self.y -= self.gravity;
-		}
 
-		if (self.x === canvas.width/2) {
-			return;
-		}
-
-		self.x += self.speedX;
-		if (self.x > canvas.width/2) {	
-			self.x = canvas.width/2;	
-		}
+		self.y -= self.gravity;
 	}
 
 
@@ -135,22 +119,26 @@ Player = function(param) {
 
 		if (self.right) {
 			self.speedX = self.speedMax;
-			self.animation.change(sprite_sheet.frame_sets[1], delay);
-			self.state = "run";
-		}
-		else if (self.left && ((self.x - self.speedMax) > 0)) {
-			self.speedX = -self.speedMax;
 			self.animation.change(sprite_sheet.frame_sets[2], delay);
 			self.state = "run";
+			self.scaleX = 1.0;
+		}
+		else if (self.left) {
+			self.speedX = -self.speedMax;
+			self.animation.change(sprite_sheet.frame_sets[3], delay);
+			self.state = "run";
+			self.scaleX = -1.0;
 		}
 		else {
+
 			self.speedX = 0;
-			self.animation.change(sprite_sheet.frame_sets[0], delay);
+			// If scale is -1 choose the opposite facing sprite;
+			self.animation.change(sprite_sheet.frame_sets[(self.scaleX == -1.0) ? 1 : 0], delay);
 			self.state = "stand";
 		}
 
-		if(self.up && self.state != "jump") {
-			self.up = false;
+		if(self.jump && self.state != "jump") {
+			// self.up = false;
 			// TODO: Get a better jump speed;
 			self.speedY = -self.speedMax*6;
 			self.state = "jump";
@@ -160,66 +148,172 @@ Player = function(param) {
 			self.state = "stand";
 		}
 	}
-
 	// Draw the player based on the current frame;
 	self.draw = function() {
-		ctx.drawImage(self.image, self.animation.frame * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_HEIGHT, Math.floor(self.x), Math.floor(self.y), SPRITE_SIZE, SPRITE_HEIGHT);
+		ctx.drawImage(self.image, self.animation.frame * SPRITE_SIZE, 0, this.width, this.height,
+						Math.floor(self.x - viewport.x), Math.floor(self.y - viewport.y), SPRITE_SIZE, SPRITE_SIZE*2);
+		if (spriteBox)
+			ctx.strokeRect(Math.floor(self.x - viewport.x), Math.floor(self.y - viewport.y), SPRITE_SIZE, SPRITE_SIZE*2);
+
 		display.drawImage(ctx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height, 0, 0, display.canvas.width, display.canvas.height);
 	}
 
 	return self;
 }
 
-Level = function(data){
-	var self = {
-		levelName: data.levelName,
-		fileLocation: data.fileLocation,
-		levelData: data.levelData,
-		tileFile: data.tileFile 
-	}
-	return self;
+// Function to handle collisions;
+function getOverlap(a, b) {
+	var delta = { x: Math.abs((a.x + a.width/2) - (b.x + b.width/2)),
+				  y: Math.abs((a.y + a.height/2) - (b.y + b.height/2))
+				}
 
+	var halfSizeA = { x: a.width / 2, y: a.height / 2 };
+	var halfSizeB = { x: b.width / 2, y: b.height / 2 };
+
+	var overlapX = halfSizeA.x + halfSizeB.x - delta.x;
+	var overlapY = halfSizeA.y + halfSizeB.y - delta.y;
+
+	return {x: overlapX, y: overlapY};
 }
 
+function getPrevOverlap(a, b) {
 
-//Sound function that helps play sound
-function sound(src) {
-	this.sound = document.createElement("audio");
-	this.sound.src = src;
+	var delta = { x: Math.abs((a.prev_x + a.width/2) - (b.prev_x + b.width/2)),
+				  y: Math.abs((a.prev_y + a.height/2) - (b.prev_y + b.height/2))
+				}
 
-	this.sound.setAttribute("storyMode", "none");
-	this.sound.style.display = "none";
-	document.body.appendChild(this.sound);
-	this.play = function(){
-		this.sound.play();
-	}
-	this.stop = function(){
-		this.sound.pause();
-	}
+	var halfSizeA = { x: a.width / 2, y: a.height / 2 };
+	var halfSizeB = { x: b.width / 2, y: b.height / 2 };
+
+	var overlapX = halfSizeA.x + halfSizeB.x - delta.x;
+	var overlapY = halfSizeA.y + halfSizeB.y - delta.y;
+
+	return {x: overlapX, y: overlapY};
 }
+
+var testCollisions = function () {
+
+	// Collison of player with tiles;
+ 	obstacles.forEach(function(entity) {
+
+  		var currentOverlap = getOverlap(player, entity);
+  		var prevOverlap = getPrevOverlap(player, entity);
+
+  		if (currentOverlap.x > 0 && currentOverlap.y > 0) {
+  			if (prevOverlap.x > 0) {
+  				// Collision from top or bottom;
+  				if ((player.y - player.prev_y) > 0) {
+  					// Collision came from top;
+  					player.state = "stand";
+  					player.speedY = 0;
+  					player.y -= currentOverlap.y;
+  				}
+  				else if (((player.y - player.prev_y) < 0)) {
+  					// Collision came from bottom of tile;
+  					player.speedY = 0;
+  					player.y += currentOverlap.y;
+  				}
+  			}
+
+  			if (prevOverlap.y > 0) {
+  				// Collision from right or left;
+  				if ((player.x - player.prev_x) > 0) {
+  					// Collision from right;
+  					player.speedX = 0;
+  					player.x += currentOverlap.x;
+  				}
+  				else if ((player.x - player.prev_x) < 0) {
+  					// Collision from left;
+  					player.speedX = 0;
+  					player.x -= currentOverlap.x;
+  				}
+  			}
+  		}
+    });
+
+    // Collision of player with the canvas
+    // (Taking the x and y of canvas to be 0, 0);
+    if (player.x < 0) player.x = 0;
+
+    if (player.y < 0) player.y = 0;
+}
+
 
 // Redraw canvas according to the updated positons;
 function canvasDraw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	// Updating the score;
+	ctx.fillText('SCORE: ' + score, 200, 50);
 	player.draw();
 	obstacles.forEach(function(tile) {
 		tile.draw();
 	});
 }
 
+function keyDownHandler(e) {
+	switch (e.keyCode) {
+		case 68: // d key
+			player.right = true;
+		break;
+
+		case 65: // a key
+			player.left = true;
+		break;
+
+		case 87: // w key
+			player.jump = true;
+		break;
+
+		case 83: // s key
+			// TODO: Use this for attack?
+			player.down = true;
+		break;
+
+		case 80: // p key
+			paused = !paused;
+		break;
+
+		case 73: // i key for spriteBox which can be used for collisions
+			spriteBox = !spriteBox;
+		break;
+
+	}
+}
+
+function keyUpHandler(e) {
+	switch (e.keyCode) {
+		case 68: // d key
+			player.right = false;
+		break;
+
+		case 65: // a key
+			player.left = false;
+		break;
+
+		case 87: // w key
+			player.jump = false;
+		break;
+
+		case 83: // s key
+			// TODO: Use this for attack?
+			player.down = false;
+		break;
+	}
+}
+
+function addListener() {
+	document.addEventListener("keydown", keyDownHandler, false);
+	document.addEventListener("keyup", keyUpHandler, false);
+}
+
 startNewGame = function(){
 
 	socket.on('levelPack', function(data){
 		level = new Level(data);
-		Img.tile = new Image();
-		Img.tile.src = level.tileFile;
-		tiles = data.levelData;
-		
-		for (var i = 0; i < tiles.length; i++) {
-			obstacles.push(new tile(tiles[i]['x']));
-		}
+		level.loadLevel(data);
+
 	});
-	
+
 	$(".star").hide();
 	$('#game').show();
 	$('.paused').hide();
@@ -230,73 +324,29 @@ startNewGame = function(){
 		// Set player image;
 		player.image.src = player.fileLocation;
 		player.draw();
-		
+
 		addListener();
 		paused = false;
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
 		score = 0;
 		// backgroundSound = new sound('client/sound/background.mp3');
-		// backgroundSound.play();
+		//backgroundSound.play();
 
 		// TODO: This is for testing the movements
 		// Replace with tiles from the actual file level;
 		// Adding random tiles;
-		
+
 	});
 }
- var leaderButton=false;
-function addListener() {
-	// Controls WASD works after adding input component
-	document.onkeydown = function(event) {
-		if(event.keyCode === 68) {	//d
-			player.right = true;
-		}
-		else if(event.keyCode === 83) {	//s
-			player.down = true;
-		}
-		else if(event.keyCode === 65) { //a
-			player.left = true;
-		}
-		else if(event.keyCode === 87) {// w
-			player.up = true;
-		}
-
-		else if(event.keyCode === 80) {//p
-			// TODO: Game Menu;
-			paused = !paused;
-		}
-		// Testing leaderBoard
-		else if(event.keyCode === 76) {//l
-		leaderButton=!leaderButton;
-			  
-		}
-	}
-
-	document.onkeyup = function(event) {
-		if(event.keyCode === 68) {	//d
-			player.right = false;
-		}
-		else if(event.keyCode === 83) {	//s
-			player.down = false;
-		}
-		else if(event.keyCode === 65) { //a
-			player.left = false;
-		}
-		else if(event.keyCode === 87) {// w
-			player.up = false;
-		}
-		
-	}
-}
-
+var leaderButton = false;
 //A function that shows the top scorers
-var leaderBoard=function (){
+var leaderBoard = function (){
 	//TODO: loop on all scores and find the highest scrore
 	// Then rank accoring to scores
 	var rank=0
 	var maxRank=10;// number of player
-	
+
 	ctx.font= "50px arcade";
 	ctx.beginPath();
 	ctx.fillStyle = "white";
@@ -307,28 +357,19 @@ var leaderBoard=function (){
 	ctx.rect(70, 50, 1150, 650);
 	ctx.fill();
 	ctx.stroke();
-	
+
 	if(score > topScore){
-		//TODO: Get player name,score,level and rank them 
-		
+		//TODO: Get player name,score,level and rank them
+
 	}
-	
-	
-	
-	
 }
 
-  					
 //Function that opens pause canvas
-var isPaused=function(){
-
-	var canvas = document.getElementById("game");
-    var ctx = document.getElementById("game").getContext("2d");
-    
+var isPaused = function(){
 	// Move draw to the div paused  using ralative
 	ctx.beginPath();
-	ctx.fillStyle= "red";
-	ctx.fillText('GAME PAUSED' ,500,150);
+	ctx.fillStyle = "red";
+	ctx.fillText('GAME PAUSED' ,500, 150);
 	//Add buttons
 
 	ctx.strokeStyle = "blue";
@@ -336,18 +377,16 @@ var isPaused=function(){
 	ctx.rect(100, 50, 1080, 600);
 	ctx.stroke();
 	ctx.fill();
-	
+
 }
 
-
-
 function update() {
-	if (paused){
+	if (paused) {
 		//generatePaused();
 		isPaused();
 		return;
-	} 
-	
+	}
+
 	if(leaderButton){
 	  leaderBoard();
 		return;
@@ -357,16 +396,28 @@ function update() {
 	player.animation.update();
 	// TODO: Update all the other entities based
 	// on the speed of the player
+
 	// Update Tiles;
+	testCollisions();
+
 	obstacles.forEach(function(tile) {
 		tile.update();
 	});
 	ctx.fillStyle= "white";
 
-	ctx.fillText('SCORE: ' + score,scoreX,ScoreY);
-	//ctx.fillText('SCORE: ' + score,scoreX + viewport.x,ScoreY + viewport.y); with viewport;
+	//ctx.fillText('SCORE: ' + score,scoreX,ScoreY);
+	ctx.fillText('SCORE: ' + score,scoreX + viewport.x,ScoreY + viewport.y);
+	
+	viewport.update("Player", player); // Update the viewport before drawing on canvas;
 
 	canvasDraw();
 }
 
-setInterval(update, 30);
+	
+
+	//resolveCollision();
+
+	
+
+
+setInterval(update, 1000/30);
