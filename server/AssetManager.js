@@ -8,7 +8,7 @@ const Assets = {
     FONT: "Font"
 }
 
-AssetManager = function() {
+var AssetManager = function() {
 
     var self = {
         textureMap: new Map(),
@@ -46,7 +46,7 @@ AssetManager = function() {
     */
 
     // Should load assets immediately;
-    self.loadAssets = function(cb) {
+    self.loadAssets = function() {
         Database.getAllAssets(function(assetDict) {
             if (!assetDict) {
                 console.log("No assets found");

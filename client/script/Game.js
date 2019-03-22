@@ -332,10 +332,6 @@ startNewGame = function(){
 		// backgroundSound = new sound('client/sound/background.mp3');
 		//backgroundSound.play();
 
-		// TODO: This is for testing the movements
-		// Replace with tiles from the actual file level;
-		// Adding random tiles;
-
 	});
 }
 var leaderButton = false;

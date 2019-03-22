@@ -28,7 +28,7 @@ function Tile(imageSource, location) {
 	}
 }
 
-// Level function that helps in creating 
+// Level class that loads the level assets;
 Level = function(data){
 	var self = {
 		levelName: data.name,
@@ -42,8 +42,10 @@ Level = function(data){
 		for (var i = 0; i < levelData.length; i++) {
             var type = levelData[i]["type"];
             switch(type){
-                case "Tile":
-                    obstacles.push(new Tile(data.assetLocation.Tile, { x: levelData[i]['x'], y: levelData[i]['y'] }));
+                case "Tile1":
+                case "Tile2":
+                case "Tile3":
+                    obstacles.push(new Tile(data.assetLocation[type], { x: levelData[i]['x'], y: levelData[i]['y'] }));
                     break;
                 case "Sound":
                     var sound = new Sound(data.assetLocation.Sound);

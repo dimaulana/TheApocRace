@@ -1,13 +1,14 @@
-// Game Engine class
-// Starts the game server and sets up the necessary files
-// and services
-//
-// Author: Hussein Parpia
+/* 	Game Engine class
+	Starts the game server and sets up the necessary files
+	and services
+
+	Author: Hussein Parpia
+*/
 
 
 // Files and services needed for game
 require('./server/DatabaseManager');
-
+var AssetManager = require('./server/AssetManager.js');
 var GamePlay = require('./server/GamePlay');
 
 var express = require('express');

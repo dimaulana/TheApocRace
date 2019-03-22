@@ -1,15 +1,12 @@
 var fs = require('fs');
 
 var EntityManager = require('./EntityManager');
-var AssetManager = require('./AssetManager.js');
 const components = require('./ComponentEnum.js');
 
 class GamePlay {
 	constructor(param) {
 		this.name = param.level;
 		this.file = 'level' + param.level + '.json';
-		//this.data = this.getLevelData();
-		//this.assetLocation = 
 		this.username = param.user;
 		this.socket = param.socket;
 		this.entityManager = new EntityManager();
@@ -67,13 +64,17 @@ class GamePlay {
 			// Get all the types checked;
 			switch(type) {
 				case "Player":
-					loc = this.assetManager.getTexture("Player");
-					locationsMap.Player = loc;
-				break;
-
-				case "Tile":
-					loc = this.assetManager.getTexture("Tile2");
-					locationsMap.Tile = loc;
+				case "Tile1":
+				case "Tile2":
+				case "Tile3":
+				case "NY1":
+				case "NY2":
+				case "NY3":
+				case "LA1":
+				case "LA2":
+				case "LA3":
+					loc = this.assetManager.getTexture(type);
+					locationsMap[type] = loc;
 				break;
 
 				case "Sound":
