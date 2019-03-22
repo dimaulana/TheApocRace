@@ -3,11 +3,6 @@
     inside Game.js
 */
 
-const AssetEnum ={
-    TILE: "Tile",
-    STAR: "Star"
-}
-
 // Tile object takes the tile image source and location {x: , y: } of the tile;
 function Tile(imageSource, location) {
 	this.tileImage = new Image();
@@ -23,13 +18,13 @@ function Tile(imageSource, location) {
 	this.prev_y = this.y;
 
 	this.draw = function() {
-		ctx.drawImage(this.tileImage,this.x, this.y);
+		ctx.drawImage(this.tileImage,this.x - viewport.x, this.y - viewport.y);
 	}
 
 	this.update = function() {
-		this.prevX = this.x;
-		if (player.x === canvas.width/2)
-			this.x -= player.speedX;
+		// this.prevX = this.x;
+		// if (player.x === canvas.width/2)
+		// 	this.x -= player.speedX;
 	}
 }
 
