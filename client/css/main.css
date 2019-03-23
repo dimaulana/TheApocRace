@@ -86,7 +86,7 @@ input[type=password]:focus {
 /* Star background*/
 
   .star {
-	background: url(../images/flames1.0.png) repeat top center;
+	background: url(../images/comet.png) repeat top center;
 	height: 100%;
 	width: 100%;
 	top: 0;
