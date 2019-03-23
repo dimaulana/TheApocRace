@@ -82,9 +82,7 @@ Bullet = function(param){
 	self.draw = function() {
 			ctx.drawImage(self.img ,self.x, self.y, 10, 10);
 	}
-	
-	//Bullet.list[self.id] = self;
-	//initPack.bullet.push(self.getInitPack());
+
 	return self;
 }
 
@@ -189,7 +187,6 @@ Player = function(param) {
 			img: 'client/images/bullet.png',
 			timer: 0
 		});
-		console.log(bullet.id);
 		bulletList.push(bullet);
 	}
 
@@ -305,16 +302,11 @@ function keyDownHandler(e) {
 		break;
 
 		case 83: // s key
-			// TODO: Use this for attack?
-			player.down = true;
+			player.pressingAttack = true;
 		break;
 
 		case 80: // p key
 			paused = !paused;	
-		break;
-
-		case 66: // b key
-			player.pressingAttack = true;
 		break;
 
 		case 73: // i key for spriteBox which can be used for collisions
@@ -339,11 +331,6 @@ function keyUpHandler(e) {
 		break;
 
 		case 83: // s key
-			// TODO: Use this for attack?
-			player.down = false;
-		break;
-
-		case 66: // b key
 			player.pressingAttack = false;
 		break;
 	}
