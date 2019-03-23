@@ -8,7 +8,7 @@ var script = document.createElement('script');
 script.src = 'client/script/Animation.js';
 document.head.appendChild(script);
 
-var initPack = {bullet:[]};
+var bulletList = []
 // Get canvas element
 var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
@@ -37,17 +37,31 @@ Bullet = function(param){
 	var self = {
 		x: param.x,
 		y: param.y,
-		id: Math.random(),
+		id: Math.floor(Math.random() * (100000 - 0)) + 0,
 		speedX: 10,
 		speedY: 10,
-		timer: 0,
-		toRemove: false
+		lifespan: param.lifespan,
+		toRemove: false,
+		img: new Image(),
+		fileLocation: param.img,
+		tag: param.tag,
+		timer: param.timer
 	}
 
+	self.img.src = self.fileLocation;
+
 	self.update = function(){
-		if(self.timer++ > 100)
+		if(self.timer++ > 20)
 			self.toRemove = true;
 
+		for (var i in bulletList)
+		{
+				var bullet = bulletList[i];
+				if(bullet.toRemove && bullet.tag === "bullet")
+				{
+						delete bulletList[i];
+				}
+		}	
 		self.x += self.speedX;
 	}
 	self.getInitPack = function(){
@@ -66,7 +80,7 @@ Bullet = function(param){
 		};
 	}
 	self.draw = function() {
-		ctx.strokeRect(120, 500, 20, 20);
+			ctx.drawImage(self.img ,self.x, self.y, 10, 10);
 	}
 	
 	//Bullet.list[self.id] = self;
@@ -168,12 +182,15 @@ Player = function(param) {
 
 	self.shootBullet = function(angle){
 		var bullet = new Bullet({
-			angle:0,
-			x:100,
-			y:200,
+			tag: "bullet",
+			angle: 0,
+			x: player.x + 25,
+			y: player.y + 18,
+			img: 'client/images/bullet.png',
+			timer: 0
 		});
-		obstacles.push(bullet);
-		bullet.draw();
+		console.log(bullet.id);
+		bulletList.push(bullet);
 	}
 
 	return self;
@@ -263,6 +280,11 @@ function canvasDraw() {
 	// Updating the score;
 	ctx.fillText('SCORE: ' + score, 200, 50);
 	player.draw();
+
+	bulletList.forEach(function(bullet){
+		bullet.draw();
+	});
+
 	obstacles.forEach(function(tile) {
 		tile.draw();
 	});
@@ -347,7 +369,6 @@ startNewGame = function(){
 	socket.emit('storyMode', {});
 	socket.on('initPack', function(data) {
 		player = new Player(data);
-		// Set player image;
 		player.image.src = player.fileLocation;
 		player.draw();
 
@@ -356,13 +377,6 @@ startNewGame = function(){
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
 		score = 0;
-		// backgroundSound = new sound('client/sound/background.mp3');
-		//backgroundSound.play();
-
-		// TODO: This is for testing the movements
-		// Replace with tiles from the actual file level;
-		// Adding random tiles;
-
 	});
 }
 var leaderButton = false;
@@ -422,9 +436,13 @@ function update() {
 	player.animation.update();
 
 	testCollisions();
-	//resolveCollision();
+
 	obstacles.forEach(function(tile) {
 		tile.update();
+	});
+
+	bulletList.forEach(function(bullet){
+		bullet.update();
 	});
 
 	viewport.update("Player", player); // Update the viewport before drawing on canvas;
