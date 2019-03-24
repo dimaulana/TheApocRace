@@ -224,6 +224,9 @@ Player = function(param) {
 			img: 'client/images/bullet.png',
 			timer: 0
 		});
+
+		var sound = new Sound('client/sound/gun_shot.wav');
+    sound.play();
 		bulletList.push(bullet);
 	}
 
