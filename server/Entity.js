@@ -1,5 +1,4 @@
 var Component = require('./Component.js');
-var AssetManager = require('./AssetManager.js');
 const components = require('./ComponentEnum.js');
 
 class Entity{
@@ -10,24 +9,10 @@ class Entity{
         this.components = new Array();
     }
 
-    /* Not being used at all;
-    update(){
-        self.updatePosition();
-    }
-
-    updatePosition(spdX, spdY){
-        this.x += spdX;
-        this.y += spdY;
-    }
-    */
-
-
     // Init Pack for Entities.
     // For now everything is packed into components.
     getInitPack() {
         var param = {};
-        var manager = new AssetManager();
-        manager.loadAssets();
 
         this.components.forEach(function(component) {
 
@@ -59,7 +44,6 @@ class Entity{
             else {
                 // Do nothing;
             }
-            param.fileLocation = manager.getTexture("Player");
         });
         return param;
     }
@@ -157,21 +141,3 @@ class Entity{
 }
 
 module.exports = Entity;
-
-
-// Example of using Entity Class;
-//
-// var e = new Entity("nothing");
-// e.addComponent("Transform");
-// e.addComponent("Lifespan");
-// e.addComponent("Input");
-// e.addComponent("Stats");
-// //console.log(e);
-// var c = e.getComponent("Transform");
-// var d = e.getComponent("Lifespan");
-// console.log(c.pos.x);
-// console.log(d);
-// var pack = e.getInitPack();
-// console.log(pack);
-
-

@@ -1,53 +1,55 @@
-var EntityManager = require('./EntityManager');
 var fs = require('fs');
-var AssetManager = require('./AssetManager')
+
+var EntityManager = require('./EntityManager');
+const components = require('./ComponentEnum.js');
 
 class GamePlay {
 	constructor(param) {
 		this.name = param.level;
 		this.file = 'level' + param.level + '.json';
-		//this.data = this.getLevelData();
-		//this.assetLocation = 
 		this.username = param.user;
 		this.socket = param.socket;
 		this.entityManager = new EntityManager();
 		this.player = "";
+
+		this.assetManager = param.assetManager;
 
 		this.init();
 	}
 
 	init() {
 		this.spawnPlayer();
+		var playerPack = this.player.getInitPack();
 
-		this.socket.emit('initPack', this.player.getInitPack());
-		// var pack = {
-		// 	name: this.name,
-		// 	file: this.file,
-		// 	data: this.getLevelData(),
-		// 	assetLocation: this.getMemoryLocationForAsset(this.getLevelData())
-		// }
-		var pack = {};
-		pack.name = this.name;
-		pack.file = this.file;
-		pack.data = this.getLevelData();
-		if (pack.data !== undefined || pack.data.length > 0) {
-			pack.assetLocation = this.getMemoryLocationForAsset(pack.data);
+		// Get the player image location;
+		playerPack.fileLocation = this.getMemoryLocationForAsset([{"type": "Player"}]).Player;
+
+		this.socket.emit('initPack', playerPack);
+
+		var levelPack = {};
+		levelPack.name = this.name;
+		levelPack.file = this.file;
+		levelPack.data = this.getLevelData();
+
+		if (levelPack.data !== undefined || levelPack.data.length > 0) {
+			levelPack.assetLocation = this.getMemoryLocationForAsset(levelPack.data);
 		}
-		this.socket.emit('levelPack', pack);
+
+		this.socket.emit('levelPack', levelPack);
 	}
 
 	spawnPlayer() {
 		this.player = this.entityManager.addEntity("player");
-		this.player.addComponent("Transform");
-		this.player.addComponent("Input");
-		this.player.addComponent("Stats");
-		this.player.addComponent("Dimension");
+		this.player.addComponent(components.TRANSFORM);
+		this.player.addComponent(components.INPUT);
+		this.player.addComponent(components.STATS);
+		this.player.addComponent(components.DIMENSION);
 
 		// All the components;
 	}
 
 	getLevelData(){
-		let rawdata = fs.readFileSync('server/bin/level1.json');  
+		let rawdata = fs.readFileSync('server/bin/' + this.file);  
 		let json = JSON.parse(rawdata); 
 		return json;
 	}
@@ -56,19 +58,30 @@ class GamePlay {
 		var locationsMap = {}
 		var loc;
 		var type;
-		var assetManager = new AssetManager();
-		assetManager.loadAssets();
+
 		for(var i = 0; i < levelData.length; i++){
 			type = levelData[i]["type"];
-			switch(type){
-				case "Tile":
-					loc = assetManager.getTexture("Tile");
-					locationsMap.Tile = loc;
-					break;
+			// Get all the types checked;
+			switch(type) {
+				case "Player":
+				case "Tile1":
+				case "Tile2":
+				case "Tile3":
+				case "NY1":
+				case "NY2":
+				case "NY3":
+				case "LA1":
+				case "LA2":
+				case "LA3":
+					loc = this.assetManager.getTexture(type);
+					locationsMap[type] = loc;
+				break;
+
 				case "Sound":
-					loc = assetManager.getSound("StoryMode");
+					loc = this.assetManager.getSound("StoryMode");
 					locationsMap.Sound = loc;
- 					break;
+ 				break;
+
 				default:
 					console.log("Could not find the asset type: " + type);
 					break;		

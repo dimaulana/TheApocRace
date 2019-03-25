@@ -3,11 +3,6 @@
     inside Game.js
 */
 
-const AssetEnum ={
-    TILE: "Tile",
-    STAR: "Star"
-}
-
 // Tile object takes the tile image source and location {x: , y: } of the tile;
 function Tile(imageSource, location) {
 	this.tileImage = new Image();
@@ -23,7 +18,7 @@ function Tile(imageSource, location) {
 	this.prev_y = this.y;
 
 	this.draw = function() {
-		ctx.drawImage(this.tileImage,this.x, this.y);
+		ctx.drawImage(this.tileImage,this.x - viewport.x, this.y - viewport.y);
 	}
 
 	this.update = function() {
@@ -33,7 +28,7 @@ function Tile(imageSource, location) {
 	}
 }
 
-// Level function that helps in creating 
+// Level class that loads the level assets;
 Level = function(data){
 	var self = {
 		levelName: data.name,
@@ -47,8 +42,10 @@ Level = function(data){
 		for (var i = 0; i < levelData.length; i++) {
             var type = levelData[i]["type"];
             switch(type){
-                case "Tile":
-                    obstacles.push(new Tile(data.assetLocation.Tile, { x: levelData[i]['x'], y: levelData[i]['y'] }));
+                case "Tile1":
+                case "Tile2":
+                case "Tile3":
+                    obstacles.push(new Tile(data.assetLocation[type], { x: levelData[i]['x'], y: levelData[i]['y'] }));
                     break;
                 case "Sound":
                     var sound = new Sound(data.assetLocation.Sound);

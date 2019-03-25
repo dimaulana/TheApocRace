@@ -1,36 +1,28 @@
-// Game Engine class
-// Starts the game server and sets up the necessary files
-// and services
-//
-// Author: Hussein Parpia
+/* 	Game Engine class
+	Starts the game server and sets up the necessary files
+	and services
+
+	Author: Hussein Parpia
+*/
 
 
 // Files and services needed for game
 require('./server/DatabaseManager');
-
+var AssetManager = require('./server/AssetManager.js');
 var GamePlay = require('./server/GamePlay');
 
-var mongojs = require("mongojs");
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
-
-// Set up the database;
-DatabaseManager();
-
-
-
-
-// db handles the read and write to database using mongojs
-var collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
-var db = mongojs('localhost:27017/apoRun', collections);
-
 
 app.get('/', function(req,res) {
 	res.sendFile(__dirname + '/client/index.html');
 });
 
 app.use('/client',express.static(__dirname + '/client'));
+
+// Initialize the database;
+DatabaseManager();
 
 //PORT from the server host 
 serv.listen(process.env.PORT || 8080);
@@ -40,48 +32,11 @@ var DEBUG = true;
 
 var SOCKET_LIST = {};
 
-
-//------ User login functions
-var isValidPassword = function(data, cb) {
-	db.user.find({username:data.username, password:data.password}, function(err, res) {
-		if (res.length > 0)
-			cb(true);
-		else
-			cb(false);
-
-	});
-}
-
-var isUsernameTaken = function(data, cb) {
-	db.user.find({username:data.username}, function(err, res) {
-		if (res.length > 0)
-			cb(true);
-		else
-			cb(false);
-
-	});
-}
-
-var addUser = function(data, cb) {
-	db.user.insert({username:data.username, password:data.password}, function(err) {
-		cb();
-	});
-}
-
-var updatePassword = function(data, cb) {
-
-	db.user.findAndModify({
-		query: { username: data.username},
-		update: { $set: {password: data.password }},
-		new: true
-	}, function(err, res) {
-		// check if the password has been updated;
-		if (res.password === data.password)
-			cb(true);
-		else
-			cb(false);
-	});
-}
+// Set up asset manager and load assets from the database;
+// Doing this here in order to avoid waiting for the database call
+// to load the data;
+var assetManager = new AssetManager();
+assetManager.loadAssets();
 
 // Saves the user information to be used throughout the game engine
 var User = function(data) {
@@ -103,6 +58,7 @@ var startGame = function(data) {
 			level: data.level,
 			username: currentUser.name,
 			socket: data.socket,
+			assetManager: assetManager
 		});
 }
 
@@ -112,7 +68,7 @@ io.sockets.on('connection',function(socket) {
 	SOCKET_LIST[socket.id] = socket;
 
 	socket.on('signIn',function(data) {
-		isValidPassword(data, function(res) {
+		Database.isValidPassword(data, function(res) {
 			if (res) {
 				socket.emit('signInResponse', {success:true});
 
@@ -129,12 +85,12 @@ io.sockets.on('connection',function(socket) {
 	});
 
 	socket.on('signUp',function(data) {
-		isUsernameTaken(data, function(res) {
+		Database.isUsernameTaken(data, function(res) {
 			if(res){
 				socket.emit('signUpResponse', {success:false});
 			}
 			else {
-				addUser(data, function() {
+				Database.addUser(data, function() {
 					socket.emit('signUpResponse', {success:true}); 
 				});
 			}		
@@ -143,9 +99,9 @@ io.sockets.on('connection',function(socket) {
 
 	socket.on('resetPassword', function(data) {
 		// Check if username is valid;
-		isUsernameTaken(data, function(res) {
+		Database.isUsernameTaken(data, function(res) {
 			if (res) {
-				updatePassword(data, function(res) {
+				Database.updatePassword(data, function(res) {
 					if (res) {
 						socket.emit('resetPassResponse', {success:true});
 					}
