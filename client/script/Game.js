@@ -1,6 +1,6 @@
 
 // Game.js starts and sets the game at the front end;
-// Contributors: Hussein Parpia, Sahil Anand,Victor Mutandwa
+// Contributors: Hussein Parpia, Sahil Anand, Victor Mutandwa
 /* Game.js starts and sets the game at the front end;
 
    Contributors: Hussein Parpia, Sahil Anand
@@ -180,14 +180,14 @@ Player = function(param) {
 		if (self.right) {
 			self.speedX = self.speedMax;
 			self.animation.change(sprite_sheet.frame_sets[2], delay);
-			self.state = "run";
+			//self.state = "run";
 			self.scaleX = 1.0;
 			score.int++;
 		}
 		else if (self.left) {
 			self.speedX = -self.speedMax;
 			self.animation.change(sprite_sheet.frame_sets[3], delay);
-			self.state = "run";
+			//self.state = "run";
 			self.scaleX = -1.0;
 		}
 		else {
@@ -195,7 +195,7 @@ Player = function(param) {
 			self.speedX = 0;
 			// If scale is -1 choose the opposite facing sprite;
 			self.animation.change(sprite_sheet.frame_sets[(self.scaleX == -1.0) ? 1 : 0], delay);
-			self.state = "stand";
+			//self.state = "stand";
 		}
 
 		if(self.jump && self.state != "jump") {
@@ -206,7 +206,7 @@ Player = function(param) {
 		}
 		else{
 			self.speedY = 0;
-			self.state = "stand";
+			//self.state = "stand";
 		}
 	}
 	// Draw the player based on the current frame;
@@ -279,10 +279,10 @@ var testCollisions = function () {
   			if (prevOverlap.x > 0) {
   				// Collision from top or bottom;
   				if ((player.y - player.prev_y) > 0) {
-  					// Collision came from top;
-  					player.state = "stand";
+  					// Collision came from top of tile;
   					player.speedY = 0;
   					player.y -= currentOverlap.y;
+  					player.state = "stand"; // Jumping ends as he is now on the tile;
   				}
   				else if (((player.y - player.prev_y) < 0)) {
   					// Collision came from bottom of tile;
@@ -466,8 +466,8 @@ function update() {
 	if(leaderButton){
 	  leaderBoard();
 		return;
-	} 
-	
+	}
+
 	player.update();
 	player.animation.update();
 	// TODO: Update all the other entities based
@@ -488,12 +488,5 @@ function update() {
 
 	canvasDraw();
 }
-
-	
-
-	//resolveCollision();
-
-	
-
 
 setInterval(update, 1000/30);
