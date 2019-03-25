@@ -1,13 +1,23 @@
 var fs = require('fs');
+require('./DatabaseManager.js');
 
-class AssetManager{
-    constructor(db){
-        this.textureMap = new Map();
-        this.animationMap =  new Map();
-        this.fontMap = new Map();
-        this.soundMap = new Map();   
+const Assets = {
+    TEXTURE: "Texture",
+    SOUND: "Sound",
+    ANIMATION: "Animation",
+    FONT: "Font"
+}
+
+var AssetManager = function() {
+
+    var self = {
+        textureMap: new Map(),
+        animationMap: new Map(),
+        fontMap: new Map(),
+        soundMap: new Map(),   
     }
 
+    /*  ---- DEPRACATED -----
     loadAssets(){
         let rawdata = fs.readFileSync('server/bin/asset.json');  
         let json = JSON.parse(rawdata); 
@@ -16,16 +26,16 @@ class AssetManager{
             var type = json[item]['type'];
     		switch(type){
     			case "Texture":
-    				this.addTexture(json[item]['name'], json[item]['path']);
+    				self.addTexture(json[item]['name'], json[item]['path']);
     				break;
     			case "Font":
-    				this.addFont(json[item]['name'], json[item]['path']);
+    				self.addFont(json[item]['name'], json[item]['path']);
     				break;
     			case "Sound":
-    				this.addSound(json[item]['name'], json[item]['path']);
+    				self.addSound(json[item]['name'], json[item]['path']);
     				break;
     			case "Animation":
-    				this.addAnimation(json[item]['name'], json[item]['path']);
+    				self.addAnimation(json[item]['name'], json[item]['path']);
     				break;		
     			default:
     				console.log(json[i]['name'] + 'does not exist');
@@ -33,38 +43,73 @@ class AssetManager{
     		}
 		}
     }
+    */
 
-    addTexture(textureName, path){
-        this.textureMap.set(textureName, path);
+    // Should load assets immediately;
+    self.loadAssets = function() {
+        Database.getAllAssets(function(assetDict) {
+            if (!assetDict) {
+                console.log("No assets found");
+                return;
+            }
+
+            assetDict.forEach(function(asset) {
+                switch(asset.type) {
+                    case Assets.TEXTURE:
+                        self.addTexture(asset.name, asset.path);
+                    break;
+
+                    case Assets.SOUND:
+                        self.addSound(asset.name, asset.path);
+                    break;
+
+                    case Assets.ANIMATION:
+                        self.addAnimation(asset.name, asset.path);
+                    break;
+
+                    case Assets.FONT:
+                        self.addFont(asset.name, asset.path);
+                    break;
+                }
+            });
+            console.log("Assets loaded");
+        });
     }
 
-    addAnimation(animationName, path){
-        this.animationMap.set(animationName, path);
+    self.addTexture = function(textureName, path) {
+        self.textureMap.set(textureName, path);
     }
 
-    addSound(soundName, path){
-        this.soundMap.set(soundName, path);
+    self.addAnimation = function(animationName, path) {
+        self.animationMap.set(animationName, path);
     }
 
-    addFont(fontName, path){
-        this.fontMap.set(fontName, path);
+    self.addSound = function(soundName, path) {
+        self.soundMap.set(soundName, path);
     }
 
-    getTexture(textureName){
-       return this.textureMap.get(textureName);
+    self.addFont = function(fontName, path) {
+        self.fontMap.set(fontName, path);
     }
 
-    getSound(soundName){
-        return this.soundMap.get(soundName);
+    self.getTexture = function(textureName) {
+       return self.textureMap.get(textureName);
     }
 
-    getFont(fontName){
-        return this.fontMap.get(fontName);
+    self.getSound = function(soundName) {
+        return self.soundMap.get(soundName);
     }
 
-    getAnimation(animationName){
-        return this.animationMap.get(animationName);
+    self.getFont = function(fontName) {
+        return self.fontMap.get(fontName);
     }
-}
+
+    self.getAnimation = function(animationName) {
+        return self.animationMap.get(animationName);
+    }
+
+    return self;
+};
 
 module.exports = AssetManager;
+
