@@ -10,6 +10,9 @@ class Component{
 			case components.TRANSFORM:
 				return (this instanceof Transform);
 
+			case components.GRAVITY:
+				return (this instanceof Gravity);
+
 			case components.LIFESPAN:
 				return (this instanceof Lifespan);
 
@@ -22,6 +25,15 @@ class Component{
 			case components.DIMENSION:
 				return (this instanceof Dimension);
 
+			case components.FOLLOWPLAYER:
+				return (this instanceof FollowPlayer);
+
+			case components.PATROL:
+				return (this instanceof Patrol);
+
+			case components.SPRITE:
+				return (this instanceof Sprite);
+
 			default:
 				console.log("Type: ", type , " not found");
 				return false;
@@ -31,23 +43,29 @@ class Component{
 
 class Transform extends Component{
 	
-	constructor(){
+	constructor(param){
 		super();
-		this.pos = new Vec2(10, 500);
+		this.pos = new Vec2(param.x, param.y);
 		this.prevPos = new Vec2(0.0, 0.0);
 		this.scale = new Vec2(1.0, 1.0);
 		this.speed = new Vec2(0.0, 0.0);
-		this.speedMax = 10;
+		this.speedMax = param.speedMax;
 		this.angle = 0;
+	}
+}
+
+class Gravity extends Component {
+	constructor() {
+		super();
 		this.gravity = -3.75;
 	}
 }
 
 class Dimension extends Component {
-	constructor() {
+	constructor(param) {
 		super();
-		this.width = 40;
-		this.height = 80;
+		this.width = param.w;
+		this.height = param.h;
 	}
 }
 
@@ -75,13 +93,39 @@ class Input extends Component{
 
 	constructor(){
 		super();
-		this.up = false;
-		this.down = false;
+		//this.up = false;
+		//this.down = false;
 		this.left = false;
 		this.right = false;
 		this.shoot = false;
 		this.jump = false;
 		this.canShoot = true;
+	}
+} 
+
+class FollowPlayer extends Component {
+	constructor(s) {
+		super();
+		this.followSpeed = s;
+	}
+}
+
+class Patrol extends Component {
+	constructor(param) {
+		super();
+		this.patrolSpeed = param.speed;
+		this.positions = param.pos;
+	}
+}
+
+// To keep the file location of the entity;
+class Sprite extends Component {
+	constructor(param) {
+		super();
+		this.location = param.loc;
+		
+		if (!param.frame_set)
+			this.frame_set = param.frame_set;
 	}
 }
 
@@ -91,5 +135,9 @@ module.exports = {
 	Lifespan: Lifespan,
 	Stats: Stats,
 	Input: Input,
-	Dimension: Dimension
+	Dimension: Dimension,
+	FollowPlayer: FollowPlayer,
+	Patrol: Patrol,
+	Sprite: Sprite,
+	Gravity: Gravity
 }

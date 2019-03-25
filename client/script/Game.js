@@ -109,7 +109,7 @@ Bullet = function(param){
 				{
 						delete bulletList[i];
 				}
-		}	
+		}
 		self.x += self.speedX;
 	}
 	self.getInitPack = function(){
@@ -124,7 +124,7 @@ Bullet = function(param){
 		return {
 			id:self.id,
 			x:self.x,
-			y:self.y,		
+			y:self.y,
 		};
 	}
 	self.draw = function() {
@@ -360,7 +360,7 @@ function keyDownHandler(e) {
 		break;
 
 		case 80: // p key
-			paused = !paused;	
+			paused = !paused;
 		break;
 
 		case 73: // i key for spriteBox which can be used for collisions

@@ -34,23 +34,31 @@ Level = function(data){
 		levelName: data.name,
 		levelFile: data.file,
 		levelData: data.data,
-		assetLocation: data.assetLocation
+		//assetLocation: data.assetLocation
     }
 
     self.loadLevel = function(data){
+    	console.log(data);
+    	return;
         var levelData = data.data;
 		for (var i = 0; i < levelData.length; i++) {
             var type = levelData[i]["type"];
-            switch(type){
+            switch(type) {
                 case "Tile1":
                 case "Tile2":
                 case "Tile3":
                     obstacles.push(new Tile(data.assetLocation[type], { x: levelData[i]['x'], y: levelData[i]['y'] }));
-                    break;
+                break;
+
+                case "Enemy":
+
+                break;
+
                 case "Sound":
                     var sound = new Sound(data.assetLocation.Sound);
                     sound.play();
-                    break; 
+                break; 
+                
                 default:
                     console.log("could not find the type: " + type);
                     break;       
