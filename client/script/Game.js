@@ -11,6 +11,7 @@ var script = document.createElement('script');
 script.src = 'client/script/Animation.js';
 document.head.appendChild(script);
 
+var bulletList = []
 // Get canvas element
 var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
@@ -72,6 +73,59 @@ sprite_sheet = {
 	frame_sets:[[0], [1], [2, 3, 4], [5, 6, 7]] // standing, running right, running left;
 };
 
+Bullet = function(param){
+	var self = {
+		x: param.x,
+		y: param.y,
+		id: Math.floor(Math.random() * (100000 - 0)) + 0,
+		speedX: 10,
+		speedY: 10,
+		lifespan: param.lifespan,
+		toRemove: false,
+		img: new Image(),
+		fileLocation: param.img,
+		tag: param.tag,
+		timer: param.timer
+	}
+
+	self.img.src = self.fileLocation;
+
+	self.update = function(){
+		if(self.timer++ > 20)
+			self.toRemove = true;
+
+		for (var i in bulletList)
+		{
+				var bullet = bulletList[i];
+				if(bullet.toRemove && bullet.tag === "bullet")
+				{
+						delete bulletList[i];
+				}
+		}	
+		self.x += self.speedX;
+	}
+	self.getInitPack = function(){
+		return {
+			id:1,
+			x:120,
+			y:32,
+			map:self.map,
+		};
+	}
+	self.getUpdatePack = function(){
+		return {
+			id:self.id,
+			x:self.x,
+			y:self.y,		
+		};
+	}
+	self.draw = function() {
+			ctx.drawImage(self.img ,self.x, self.y, 10, 10);
+	}
+
+	return self;
+}
+
 Player = function(param) {
 	var self = {
 		x: param.pos.x,
@@ -96,6 +150,7 @@ Player = function(param) {
 		up:  false,
 		down: false,
 		jump: false,
+		pressingAttack:false,
 		state: "stand",
 		animation: new Animation(),
 		image: new Image(),
@@ -112,6 +167,10 @@ Player = function(param) {
 		self.y += self.speedY;
 
 		self.y -= self.gravity;
+
+		if(self.pressingAttack){
+			self.shootBullet(self.mouseAngle);
+		}
 	}
 
 
@@ -158,6 +217,21 @@ Player = function(param) {
 			ctx.strokeRect(Math.floor(self.x - viewport.x), Math.floor(self.y - viewport.y), SPRITE_SIZE, SPRITE_SIZE*2);
 
 		display.drawImage(ctx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height, 0, 0, display.canvas.width, display.canvas.height);
+	}
+
+	self.shootBullet = function(angle){
+		var bullet = new Bullet({
+			tag: "bullet",
+			angle: 0,
+			x: self.x + 25 - viewport.x,
+			y: self.y + 18 - viewport.y,
+			img: 'client/images/bullet.png',
+			timer: 0
+		});
+
+		var sound = new Sound('client/sound/gun_shot.wav');
+    sound.play();
+		bulletList.push(bullet);
 	}
 
 	return self;
@@ -249,6 +323,11 @@ function canvasDraw() {
 	//ctx.fillText('SCORE: ' + score,scoreX,ScoreY);
 	ctx.fillText(score.text + score.int, score.x, score.y);
 	player.draw();
+
+	bulletList.forEach(function(bullet){
+		bullet.draw();
+	});
+
 	obstacles.forEach(function(tile) {
 		tile.draw();
 	});
@@ -269,12 +348,11 @@ function keyDownHandler(e) {
 		break;
 
 		case 83: // s key
-			// TODO: Use this for attack?
-			player.down = true;
+			player.pressingAttack = true;
 		break;
 
 		case 80: // p key
-			paused = !paused;
+			paused = !paused;	
 		break;
 
 		case 73: // i key for spriteBox which can be used for collisions
@@ -299,8 +377,7 @@ function keyUpHandler(e) {
 		break;
 
 		case 83: // s key
-			// TODO: Use this for attack?
-			player.down = false;
+			player.pressingAttack = false;
 		break;
 	}
 }
@@ -325,7 +402,6 @@ startNewGame = function(){
 	socket.emit('storyMode', {});
 	socket.on('initPack', function(data) {
 		player = new Player(data);
-		// Set player image;
 		player.image.src = player.fileLocation;
 		player.draw();
 
@@ -333,6 +409,7 @@ startNewGame = function(){
 		paused = false;
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
+		score = 0;
 		// backgroundSound = new sound('client/sound/background.mp3');
 		//backgroundSound.play();
 
@@ -401,6 +478,10 @@ function update() {
 
 	obstacles.forEach(function(tile) {
 		tile.update();
+	});
+
+	bulletList.forEach(function(bullet){
+		bullet.update();
 	});
 
 	viewport.update("Player", player); // Update the viewport before drawing on canvas;
