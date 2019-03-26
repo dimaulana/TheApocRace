@@ -3,28 +3,57 @@
 /* Background images */
 var newyork1 = new Image();
 newyork1.src = "client/images/newyork1.png";
+newyork1.name = "New York 1";
 var newyork2 = new Image();
 newyork2.src = "client/images/newyork2.png";
+newyork2.name = "New York 2";
 var newyork3 = new Image();
 newyork3.src = "client/images/newyork3.png";
+newyork3.name = "New York 3";
+
 var losAngeles1 = new Image();
 losAngeles1.src = "client/images/losAngeles1.png";
+losAngeles1.name = "Los Angeles 1";
+
 var losAngeles2 = new Image();
 losAngeles2.src = "client/images/losAngeles1.png";
+losAngeles2.name = "Los Angeles 2";
+
 var losAngeles3 = new Image();
 losAngeles3.src = "client/images/losAngeles3.png";
+losAngeles3.name = "Los Angeles 3";
+
+var backgroundList = [newyork1, newyork2, newyork3, losAngeles1, losAngeles2, losAngeles3];
+backgroundList.name = "backgrounds";
 
 /* Tiles */
 var tile1 = new Image();
 tile1.src = "client/images/tile1.png";
+tile1.name = "Tile 1";
+
 var tile2 = new Image();
-tile1.src = "client/images/tile2.png";
+tile2.src = "client/images/tile2.png";
+tile2.name = "Tile 2";
+
 var tile3 = new Image();
 tile3.src = "client/images/tile3.png";
+tile3.name = "Tile 3";
 
+var tileList = [tile1, tile2, tile3];
+tileList.name = "tiles";
 
+/* Characters */
 var character = new Image();
-character.src = "client/images/playerrun.png"
+character.src = "client/images/charThumbnail.png";
+character.name = "Player 1";
+
+var enemy = new Image();
+enemy.src = "client/images/enemyThumbnail.png";
+enemy.name = "Enemy 1"
+
+var characterList = [character, enemy];
+characterList.name = "characters";
+
 
 
 levelEditor = function () {
@@ -62,13 +91,16 @@ levelEditor = function () {
     self.tileType = "";
     self.tileMap = [];
     self.currentScreen = 0;
+    self.selectedOption = "tiles";
     self.itemId = 0;
     self.mouseDown = false;
 
     initiate();
 }
 
-    function initiate() {        
+/* Initiates the first empty canvas */
+    function initiate() {  
+        populateDropdown();      
         self.canvas.addEventListener('mousedown', clicked, false);
         document.addEventListener('contextmenu', event => event.preventDefault());
 
@@ -89,6 +121,7 @@ levelEditor = function () {
  */        updateData();
     }
 
+/* Saves the data into the main array */    
     function updateData() {
         screenArray[currentScreen].imageData = self.ctx.getImageData(0,0,gameWidth, canvasHeight);
         screenArray[currentScreen].tileMap = self.tileMap;
@@ -97,6 +130,7 @@ levelEditor = function () {
         displayGrid();
     }
 
+/* Function to change the screen */
     function transition() {
         var destination = screenArray[currentScreen].imageData;
         self.tileMap = [];
@@ -108,6 +142,7 @@ levelEditor = function () {
 /*         updateData();
  */    }
 
+/* Shows the grid */
     function displayGrid() {
         /* Draw the grids */
         for (var i = 0; i <= self.columns; i++) {
@@ -128,16 +163,6 @@ function setBackground() {
     self.backgroundLoc = "client/images/losAngeles1.png";
     updateData();
 }
-
-function pickCharacter() {
-    self.tile = character;
-}
-
-function drawCharacter() {
-
-}
-
-
 
 function mousePosition(canvas, evt) {
         var rect = canvas.getBoundingClientRect(), // abs. size of element
@@ -186,6 +211,7 @@ function clicked(e) {
     }
 }
 
+/* Draws asset into current canvas */
 function drawItem(e) {
     var mouse = mousePosition(self.canvas, e);
     let gridX = Math.floor(mouse.x / tileSize) * tileSize;
@@ -226,6 +252,8 @@ function drawItem(e) {
         updateData();
 }
 
+
+/* Delete drawn asset item */
 function removeItem(e) {
     self.mouseDown = true;
     var mouse = mousePosition(self.canvas, e);
@@ -263,55 +291,69 @@ function removeItem(e) {
         updateData();
     }
 
-    function showModal() {
-
-    }
-
 
     function saveLevel() {
 
     }
 
-
-$(document).on("click", ".objects li", function (e) {
-    $('li').css({
-        "background-color": "#173B0B"
-    })
-    $(this).css({
-        "background-color": "#FF8000"
-    });
-    var selectedOption = $(this).attr('id');
-    var imageSrc = $("img", this).attr("src");
-    console.log(selectedOption);
-    console.log(imageSrc);
-
-    switch (selectedOption) {
-        case "back":
-            $(".interface").html("");
-            generateMenus('buildMenu')
-        case "tiles":
-            self.tileLoc = imageSrc;
-            self.tileType = "tile";
-            $('#myModal').modal('toggle');
-
-            break;
-        case "characters":
-            self.tileLoc = imageSrc;
-            self.tileType = "character";
-            $('#myModal').modal('toggle')
-
-            break;
-        case "background":
-            setBackground();
-            $('#myModal').modal('toggle')
-
-            break;
-        case "save":
-            saveLevel();
-            break;
-        case "play":
-            /* Enter play game function here */
-            break;
+    function populateDropdown() {
+        var items = [tileList, characterList, backgroundList];
+        $.each(items, function(i) {
+            var dropdown = [];
+            var assetType = items[i];
+            console.log(assetType.name);
+            dropdown.push("<div class='dropdown-menu' aria-labelledby='"+assetType.name+"'>");
+            for (var j = 0; j < assetType.length; j++) {
+                dropdown.push("<a id='"+assetType[j].name+"' class='dropdown-item'><img src='"+assetType[j].src+"'>&nbsp"+assetType[j].name+"</a>")
+            }
+            dropdown.push("</div>");
+            $(dropdown.join('')).appendTo("#"+assetType.name);
+        });
     }
+
+
+$(document).on("click", "#menu .objects li", function() {
+        /*     $('li').css({
+            "background-color": "#173B0B"
+        })
+        $(this).css({
+            "background-color": "#FF8000"
+        }); */
+/*         self.selectedOption = $(this).attr('id');
+ */        var selectedOption = $(this).attr('id');
+        var imageSrc = $("img", this).attr("src");
+        console.log("Selected Option: "+selectedOption);
+        switch (selectedOption) {
+            case "back":
+                $(".interface").html("");
+                generateMenus('buildMenu');
+                break;
+            case "tiles":
+                self.tileLoc = imageSrc;
+                self.tileType = "tile";
+                console.log("Tile clicked");
+                break;
+            case "characters":
+                self.tileLoc = imageSrc;
+                self.tileType = "character";
+                console.log("Characters appended")
+                break;
+            case "backgrounds":
+            console.log("Background clicked");
+                break;
+            case "save":
+                saveLevel();
+                break;
+            case "play":
+                /* Enter play game function here */
+                break;
+        }
+    });
+/*     });
+ */
+/* $(document).on("click", ".dropdown-menu a", function() {
+    var selectedOption = $(this).attr('id');
+    console.log("here: " +selectedOption);
 });
 
+ */

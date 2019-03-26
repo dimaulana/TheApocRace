@@ -11,16 +11,24 @@
    border: 2px red;
   }
 
+  #previous:disabled:hover, #next:disabled:hover {
+      background: #007bff;
+      color: white;
+  }
+
     .objects {
       font-family: 'Star Jedi', arial;
       font-size: 0.95em;
     }
 
-
     .editorMenu img {
       height: 45px;
       width: 45px;
       float: left;
+    }
+
+    .modalMenu {
+      display: inline-block;
     }
 
     ul {
@@ -42,8 +50,9 @@ a:hover {
   color: white;
 }
 
+
 li {
-  flex: 0 0 calc(100%/7);
+  flex: 0 0 calc(100%/6);
   /* any width as long a % times number of items does not exceed 100% */
   height: 50px;
   width: 75px;
@@ -54,6 +63,11 @@ li {
   border: 1px solid;
 }
 
+li a {
+  display: block;
+
+}
+
 li:hover {
   background: #FF8000;
   cursor: pointer;
@@ -62,35 +76,30 @@ li:hover {
 #editor {
   border: 2px solid;
 }
-
-
-
-
 </style>
 
 </head>
 <body>
-    <div class="row">
+    <div class="row" id="menu">
        <div class="col w-100 justify-content-center">
-           <ul class="objects">
-             <li class="editorMenu" id="back">
+           <ul class="objects dropdown">
+            <li class="editorMenu" id="back">
                 Back
              </li>
-             <li class="editorMenu" id="map">
-                <img id="map" src="client/images/map.png">
-                Map
-             </li>
              <li class="editorMenu" id="tiles">
-                <img id="brickTile" src="client/images/brickTile1.png">
-                   Tiles
+                <a href="#" id="tiles" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                    <img class="selectedTile" id="brickTile" src="client/images/tile1.png">Tiles
+                </a>
               </li>
              <li class="editorMenu" id="characters">
-                <img id="character1" src="client/images/characterL1.png">
-                   <a id="char" href="#">Characters</a>
+                <a href="#" id="characters" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                    <img class="selectedChar" id="character1" src="client/images/charThumbnail.png">Characters
+                  </a>
              </li>
-             <li class="editorMenu" id="background">
-                <img id="newyork1" src="client/images/newyork1.png">
-                   <a id="background" href="#">Background</a>
+             <li class="editorMenu" id="backgrounds" role="button">
+                <a href="#" id="backgrounds" class="dropdown-toggle" data-toggle="dropdown"  aria-expanded="false">
+                    <img class="selectedBg" id="newyork1" src="client/images/newyork1.png">Background
+                </a>
              </li>
              <li class="editorMenu" id="save">
                 <img id="save" src="client/images/save.png">
@@ -101,40 +110,17 @@ li:hover {
                     <a id="save" href="#">Play</a>
              </li>
             </ul>
-          </div>
+         </div>
         </div>
     
     <div class="row" id="wrapper">
     
     <div class="col-xs-4" id="canvasEditor">
-      <button id="previous" disabled><</button>
         <canvas id="editor" height=720 width=1280> </canvas>
-      <button id="next">></button>
+        <button class="btn btn-primary" id="previous" style="float: left;" disabled><<</button>
+      <button class="btn btn-primary" id="next" style="float: right;">>></button>
       </div>
       </div>
-
-      <!-- Modal content -->
-      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              ...
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
                                     
 </body>
 
