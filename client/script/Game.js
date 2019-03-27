@@ -92,7 +92,7 @@ Bullet = function(param){
 	self.img.src = self.fileLocation;
 
 	self.update = function(){
-		if(self.timer++ > 20)
+		if(self.timer++ > 40)
 			self.toRemove = true;
 
 		for (var i in bulletList)
