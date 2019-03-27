@@ -25,7 +25,8 @@ const SPRITE_SIZE = 40;
 var player, sprite_sheet, backgroundSound, level, viewport;
 var obstacles = [];
 var stars = [];
-var paused = true; // When the game has not started, paused is true in order to stop the updates;
+var paused = false; // When the game has not started, paused is true in order to stop the updates;
+var gameStarted = false;
 var spriteBox = false;
 
 var score = {
@@ -407,6 +408,7 @@ startNewGame = function(){
 
 		addListener();
 		paused = false;
+		gameStarted = true;
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
 		score = 0;
@@ -457,6 +459,10 @@ var isPaused = function(){
 }
 
 function update() {
+	if(!gameStarted){
+		return;
+	}
+
 	if (paused) {
 		//generatePaused();
 		isPaused();
