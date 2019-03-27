@@ -86,10 +86,17 @@ Bullet = function(param){
 		img: new Image(),
 		fileLocation: param.img,
 		tag: param.tag,
-		timer: param.timer
+		timer: param.timer,
+		angle: param.angle,
+		scale: 1
 	}
 
 	self.img.src = self.fileLocation;
+
+	if(player.scaleX < 0){
+		self.speedX = -10;
+		self.scale = -1;
+	}
 
 	self.update = function(){
 		if(self.timer++ > 40)
@@ -202,7 +209,7 @@ Player = function(param) {
 		if(self.jump && self.state != "jump") {
 			// self.up = false;
 			// TODO: Get a better jump speed;
-			self.speedY = -self.speedMax*6;
+			self.speedY = -self.speedMax*12;
 			self.state = "jump";
 		}
 		else{
@@ -223,7 +230,7 @@ Player = function(param) {
 	self.shootBullet = function(angle){
 		var bullet = new Bullet({
 			tag: "bullet",
-			angle: 0,
+			angle: angle,
 			x: self.x + 25 - viewport.x,
 			y: self.y + 18 - viewport.y,
 			img: 'client/images/bullet.png',
