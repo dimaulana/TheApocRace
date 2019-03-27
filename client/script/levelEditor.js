@@ -42,7 +42,7 @@ tile3.name = "Tile 3";
 var tileList = [tile1, tile2, tile3];
 tileList.name = "tiles";
 
-/* Characters */
+/* Character & Enemies */
 var character = new Image();
 character.src = "client/images/charThumbnail.png";
 character.name = "Player 1";
@@ -51,8 +51,8 @@ var enemy = new Image();
 enemy.src = "client/images/enemyThumbnail.png";
 enemy.name = "Enemy 1"
 
-var characterList = [character, enemy];
-characterList.name = "characters";
+var enemyList = [character, enemy];
+enemyList.name = "enemies";
 
 
 
@@ -85,16 +85,13 @@ levelEditor = function () {
     self.screenArray = {};
 
     /* Initiate variables */
-    self.tile = brickTile;
     self.backgroundLoc = "";
     self.tileLoc = "";
     self.tileType = "";
     self.tileMap = [];
     self.currentScreen = 0;
-    self.selectedOption = "tiles";
     self.itemId = 0;
     self.mouseDown = false;
-
     initiate();
 }
 
@@ -117,8 +114,9 @@ levelEditor = function () {
             }
             screenArray[i] = item;
         }
-/*         self.canvas.style.background = "url('"+newyork1.src+"')";
- */        updateData();
+        updateData();
+
+        console.log(tileType);
     }
 
 /* Saves the data into the main array */    
@@ -159,8 +157,7 @@ levelEditor = function () {
 
 
 function setBackground() {
-    self.canvas.style.background = "url('client/images/losAngeles1.png')";
-    self.backgroundLoc = "client/images/losAngeles1.png";
+    self.canvas.style.background = "url('"+backgroundLoc+"')";
     updateData();
 }
 
@@ -176,7 +173,6 @@ function mousePosition(canvas, evt) {
 
 $(document).on("click", "#canvasEditor button", function (e) {
     var selectedOption = $(this).attr('id');
-
     if (selectedOption === "next") {
         if (currentScreen < numberOfScreens) {
             currentScreen++;
@@ -213,43 +209,51 @@ function clicked(e) {
 
 /* Draws asset into current canvas */
 function drawItem(e) {
+    console.log(self.tileType);
+    var res = self.tileLoc.substring(22);
+
+    /* Find asset to draw and make image */
+
+    console.log(res);
+    if (self.selectedTile != "") {
     var mouse = mousePosition(self.canvas, e);
     let gridX = Math.floor(mouse.x / tileSize) * tileSize;
     let gridY = Math.floor(mouse.y / tileSize) * tileSize;
         if (mouse.y < canvasHeight && mouse.x < gameWidth) {
-
-            self.ctx.clearRect(gridX, gridY, tile.width, tile.height);
-            let tileX = Math.floor(mouse.x / tile.width);
-            let tileY = Math.floor(mouse.y / tile.width);
-            let targetTile = tileY * columns + tileX;
             let id = self.itemId;
             var item = {
                 "id" : id,
-                "img" : tileLoc,
-                "type" : tileType,
+                "img" : self.tileLoc.substring(22),
+                "type" : self.tileType,
                 "x" : gridX,
                 "y" : gridY,
-                "height" : tile.height,
-                "width" : tile.width
+                "height" : self.tileType.height,
+                "width" : self.tileType.width
             }
-            if (tileType === "player" || tileType === "enemy") {
-                if (tileType === "player") {
+            self.ctx.clearRect(gridX, gridY, item.width, item.height);
+            let tileX = Math.floor(mouse.x / item.width);
+            let tileY = Math.floor(mouse.y / item.width);
+            let targetTile = tileY * columns + tileX;
+            if (tileType === "enemies") {
+ /*                if (tileType === "player") {
                     var index = 0;
                 }
                 if (tileType === "enemy") {
                     var index = 1;
-                }
-                self.ctx.drawImage(tile, index*tileSize, 0, 40, 80, gridX, gridY, tile.width, tile.height);
+                } */
+                self.ctx.drawImage(item.img, 1*tileSize, 0, 40, 80, gridX, gridY, tile.width, tile.height);
                 tileMap[targetTile] = item;
                 tileMap[targetTile + self.columns] = item;
             }
-            else if (tile.type === "tile") {
-                self.ctx.drawImage(tile, gridX, gridY, tile.width , tile.height);
+            else if (tileType === "tiles") {
+                console.log();
+                self.ctx.drawImage(item.img, gridX, gridY, item.width , item.height);
                 tileMap[targetTile] = item;
             }
             itemId++;
         }
         updateData();
+    }
 }
 
 
@@ -271,7 +275,7 @@ function removeItem(e) {
     
         if (mouse.y < canvasHeight && mouse.x < gameWidth) {
             self.ctx.clearRect(topX, topY, width, height);
-            if (type === "character") {
+            if (type === "enemies") {
                     $.each(tileMap, function(i) {
                         if (tileMap[i].id === id) {
                             delete tileMap[i];
@@ -297,11 +301,10 @@ function removeItem(e) {
     }
 
     function populateDropdown() {
-        var items = [tileList, characterList, backgroundList];
+        var items = [tileList, enemyList, backgroundList];
         $.each(items, function(i) {
             var dropdown = [];
             var assetType = items[i];
-            console.log(assetType.name);
             dropdown.push("<div class='dropdown-menu' aria-labelledby='"+assetType.name+"'>");
             for (var j = 0; j < assetType.length; j++) {
                 dropdown.push("<a id='"+assetType[j].name+"' class='dropdown-item'><img src='"+assetType[j].src+"'>&nbsp"+assetType[j].name+"</a>")
@@ -311,49 +314,45 @@ function removeItem(e) {
         });
     }
 
-
-$(document).on("click", "#menu .objects li", function() {
-        /*     $('li').css({
-            "background-color": "#173B0B"
-        })
-        $(this).css({
-            "background-color": "#FF8000"
-        }); */
-/*         self.selectedOption = $(this).attr('id');
- */        var selectedOption = $(this).attr('id');
+    $(document).on("click", ".objects li .dropdown-menu a", function() {
         var imageSrc = $("img", this).attr("src");
-        console.log("Selected Option: "+selectedOption);
-        switch (selectedOption) {
-            case "back":
-                $(".interface").html("");
-                generateMenus('buildMenu');
-                break;
-            case "tiles":
-                self.tileLoc = imageSrc;
-                self.tileType = "tile";
-                console.log("Tile clicked");
-                break;
-            case "characters":
-                self.tileLoc = imageSrc;
-                self.tileType = "character";
-                console.log("Characters appended")
-                break;
-            case "backgrounds":
+        var id = $(this).attr("id");
+         var selectedOption = $(this).closest("li").attr("id");
+         var imageId = $(this).closest("a").attr("id");
+         console.log("selectedOption: "+selectedOption);
+ 
+    switch (selectedOption) {
+        case "back":
+            $(".interface").html("");
+            generateMenus('buildMenu');
+            break;
+        case "tiles":
+            self.tileLoc = imageSrc;
+            self.tileType = selectedOption;
+            self.tileType.height = 40;
+            self.tileType.width = 40;
+            console.log("Tile clicked");
+            $(".selectedTile").attr("src",imageSrc);
+            break;
+        case "enemies":
+            self.tileLoc = imageSrc;
+            self.tileType = selectedOption;
+            self.tileType.height = 80;
+            self.tileType.width = 40;
+            console.log("Enemies appended");
+            $(".selectedChar").attr("src",imageSrc);
+            break;
+        case "backgrounds":
+            self.backgroundLoc = imageSrc;
             console.log("Background clicked");
-                break;
-            case "save":
-                saveLevel();
-                break;
-            case "play":
-                /* Enter play game function here */
-                break;
+            $(".selectedBg").attr("src",imageSrc);
+            setBackground();
+            break;
+        case "save":
+            saveLevel();
+            break;
+        case "play":
+            /* Enter play game function here */
+            break;
         }
-    });
-/*     });
- */
-/* $(document).on("click", ".dropdown-menu a", function() {
-    var selectedOption = $(this).attr('id');
-    console.log("here: " +selectedOption);
-});
-
- */
+    }); 
