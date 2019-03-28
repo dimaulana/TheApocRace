@@ -248,6 +248,9 @@ levelEditor = function () {
         }
         self.updateData();
         console.log(self.tileMap);
+
+        var tileMap = self.tileMap;
+        socket.emit('levelEditSaved', tileMap);
     }
 
 
@@ -292,7 +295,7 @@ levelEditor = function () {
 
 
     self.saveLevel = function () {
-
+        
     }
 
     self.populateDropdown = function () {

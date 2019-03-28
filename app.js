@@ -10,7 +10,7 @@
 require('./server/DatabaseManager');
 var AssetManager = require('./server/AssetManager.js');
 var GamePlay = require('./server/GamePlay');
-
+var fs = require ('fs');
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
@@ -148,6 +148,13 @@ io.sockets.on('connection',function(socket) {
 			SOCKET_LIST[i].emit('addToChat', playerName + ': ' + data);
 		}
 
+	});
+
+	socket.on('levelEditSaved', function(data){
+		console.log(data);
+		if(data !== null){
+			fs.writeFileSync('leveledited.json', JSON.stringify(data));
+		}
 	});
 
 	socket.on('evalServer',function(data) {
