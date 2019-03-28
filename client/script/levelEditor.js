@@ -166,6 +166,132 @@ levelEditor = function () {
         }
     }
 
+    self.clicked = function (e) {
+        if (e.button === 0) {
+            self.drawItem(e);
+        }
+        if (e.button === 2) {
+            self.removeItem(e);
+        }
+    }
+
+    self.findSprite = function (name, type) {
+        /* Find the retrieved asset into loaded asset */
+        var sprite = new Image();
+        if (type === "enemies") {
+            for (var i = 0; i < enemyList.length; i++) {
+                if (enemyList[i].name.replace(/\s/g, '') === name) {
+                    sprite.src = enemyList[i].spriteSrc;
+                    return sprite;
+                }
+            }
+        }
+        if (type === "tiles") {
+            for (var i = 0; i < tileList.length; i++) {
+                if (tileList[i].name.replace(/\s/g, '') === name) {
+                    sprite.src = tileList[i].src;
+                    return sprite;
+                }
+            }
+        }
+
+    }
+
+    /* Draws asset into current canvas */
+    self.drawItem = function (e) {
+        var mouse = self.mousePosition(self.canvas, e);
+        let gridX = Math.floor(mouse.x / self.tileSize) * self.tileSize;
+        let gridY = Math.floor(mouse.y / self.tileSize) * self.tileSize;
+        if (mouse.y < 720 && mouse.x < 1280) {
+            let id = self.itemId;
+            var item = {
+                "id": id,
+                "name": self.pickedTile.name,
+                "type": self.pickedTile.type,
+                "x": gridX,
+                "y": gridY,
+                "height": self.pickedTile.height,
+                "width": self.pickedTile.width
+            }
+            self.ctx.clearRect(gridX, gridY, item.width, item.height);
+            let tileX = Math.floor(mouse.x / item.width);
+            let tileY = Math.floor(mouse.y / item.width);
+            let targetTile = tileY * self.columns + tileX;
+            var asset = self.findSprite(self.pickedTile.name, self.pickedTile.type);
+            if (item.type === "enemies") {
+                item.img = asset.src;
+                asset.onload = function () {
+                    self.ctx.drawImage(asset, 0, 0, 40, 80, gridX, gridY, item.width, item.height);
+                    self.tileMap[targetTile] = item;
+                    self.tileMap[targetTile + self.columns] = item;
+                }
+            }
+            if (item.type === "tiles") {
+                item.img = asset.src;
+                asset.onload = function() {
+                    self.ctx.drawImage(asset, gridX, gridY, item.width, item.height);
+                    self.tileMap[targetTile] = item;
+                }  
+            }
+            self.itemId++;
+        }
+        self.updateData();
+    }
+
+
+    /* Delete drawn asset item */
+    self.removeItem = function (e) {
+        self.mouseDown = true;
+        var mouse = self.mousePosition(self.canvas, e);
+        let tileX = Math.floor(mouse.x / self.tileSize);
+        let tileY = Math.floor(mouse.y / self.tileSize);
+        let targetTile = tileY * self.columns + tileX;
+        if (self.tileMap[targetTile]) {
+            var topX = self.tileMap[targetTile].x;
+            var topY = self.tileMap[targetTile].y;
+            var height = self.tileMap[targetTile].height;
+            var width = self.tileMap[targetTile].width;
+            var id = self.tileMap[targetTile].id;
+            var type = self.tileMap[targetTile].type;
+
+            if (mouse.y < 720 && mouse.x < 1280) {
+                self.ctx.clearRect(topX, topY, width, height);
+                if (type === "enemies") {
+                    for (var i = 0; i < self.tileMap.length; i++) {
+                        if (self.tileMap[i]) {
+                            if (self.tileMap[i].id === id) {
+                                delete self.tileMap[i];
+                            }
+                        }
+                    }
+                } else if (type === "tiles") {
+                    delete self.tileMap[targetTile];
+                }
+            }
+        }
+        self.updateData();
+    }
+
+
+    self.saveLevel = function () {
+
+    }
+
+    self.populateDropdown = function () {
+        var items = [tileList, enemyList, backgroundList];
+        $.each(items, function (i) {
+            var dropdown = [];
+            var assetType = items[i];
+            dropdown.push("<div class='dropdown-menu' aria-labelledby='" + assetType.name + "'>");
+            for (var j = 0; j < assetType.length; j++) {
+                dropdown.push("<a id='" + assetType[j].name.replace(/\s/g, '') + "' class='dropdown-item'><img src='" + assetType[j].src + "'>&nbsp" + assetType[j].name + "</a>")
+            }
+            dropdown.push("</div>");
+            $(dropdown.join('')).appendTo("#" + assetType.name);
+        });
+    }
+
+    /* Handle creation of new screen */
     $(document).on("click", "#canvasEditor button", function (e) {
         var selectedOption = $(this).attr('id');
         if (selectedOption === "next") {
@@ -188,153 +314,34 @@ levelEditor = function () {
         self.transition();
     });
 
-    /* function drag() {
-        var position = self.getMousePos(self)
-    } */
-
-    self.clicked = function (e) {
-        if (e.button === 0) {
-            self.drawItem(e);
-        }
-        if (e.button === 2) {
-            self.removeItem(e);
-        }
-    }
-
-    self.findSprite = function (val) {
-
-        /* Find the retrieved asset into loaded asset */
-        for (var i = 0; i < enemyList.length; i++) {
-            if (enemyList[i].name.replace(/\s/g, '') === val) {
-                return enemyList[i].spriteSrc;
-            }
-        }
-    }
-
-    /* Draws asset into current canvas */
-    self.drawItem = function (e) {
-        var mouse = self.mousePosition(self.canvas, e);
-        let gridX = Math.floor(mouse.x / self.tileSize) * self.tileSize;
-        let gridY = Math.floor(mouse.y / self.tileSize) * self.tileSize;
-        if (mouse.y < 720 && mouse.x < 1280) {
-            let id = self.itemId;
-            var item = {
-                "id": id,
-                "name": self.pickedTile.name,
-                "type": self.pickedTile.type,
-                "x": gridX,
-                "y": gridY,
-                "height": self.pickedTile.height,
-                "width": self.pickedTile.width
-            }
-            var asset = new Image();
-            self.ctx.clearRect(gridX, gridY, item.width, item.height);
-            let tileX = Math.floor(mouse.x / item.width);
-            let tileY = Math.floor(mouse.y / item.width);
-            let targetTile = tileY * self.columns + tileX;
-            if (item.type === "enemies") {
-                item.img = self.findSprite(self.pickedTile.name);
-                asset.src = item.img;
-                self.ctx.drawImage(asset, 0, 0, 40, 80, gridX, gridY, item.width, item.height);
-                self.tileMap[targetTile] = item;
-                self.tileMap[targetTile + self.columns] = item;
-            } else if (item.type === "tiles") {
-                item.img = self.pickedTile.loc;
-                asset.src = item.img;
-                self.ctx.drawImage(asset, gridX, gridY, item.width, item.height);
-                self.tileMap[targetTile] = item;
-            }
-            self.itemId++;
-        }
-        self.updateData();
-        console.log(self.tileMap);
-    }
-
-
-    /* Delete drawn asset item */
-    self.removeItem = function (e) {
-        var contents = self.tileMap;
-        self.mouseDown = true;
-        var mouse = self.mousePosition(self.canvas, e);
-        let tileX = Math.floor(mouse.x / self.tileSize);
-        let tileY = Math.floor(mouse.y / self.tileSize);
-        let targetTile = tileY * self.columns + tileX;
-        console.log("remove function");
-        if (self.tileMap[targetTile]) {
-            var topX = self.tileMap[targetTile].x;
-            var topY = self.tileMap[targetTile].y;
-            var height = self.tileMap[targetTile].height;
-            var width = self.tileMap[targetTile].width;
-            var id = self.tileMap[targetTile].id;
-            var type = self.tileMap[targetTile].type;
-
-            if (mouse.y < 720 && mouse.x < 1280) {
-                self.ctx.clearRect(topX, topY, width, height);
-                if (type === "enemies") {
-                    $.each(self.tileMap, function (i) {
-                        if (self.tileMap[i].id === id) {
-                            delete self.tileMap[i];
-                            console.log("Remove player");
-                            console.log(self.tileMap);
-                        }
-                    });
-                }
-                /* Assign ID to each object and delete both by ID value */
-            } else if (type === "tile") {
-                delete self.tileMap[targetTile];
-                console.log("Removing Tiles")
-                console.log(self.tileMap);
-            }
-        }
-        self.updateData();
-        console.log(self.tileMap);
-    }
-
-
-    self.saveLevel = function () {
-
-    }
-
-    self.populateDropdown = function () {
-        var items = [tileList, enemyList, backgroundList];
-        $.each(items, function (i) {
-            var dropdown = [];
-            var assetType = items[i];
-            dropdown.push("<div class='dropdown-menu' aria-labelledby='" + assetType.name + "'>");
-            for (var j = 0; j < assetType.length; j++) {
-                dropdown.push("<a id='" + assetType[j].name.replace(/\s/g, '') + "' class='dropdown-item'><img src='" + assetType[j].src + "'>&nbsp" + assetType[j].name + "</a>")
-            }
-            dropdown.push("</div>");
-            $(dropdown.join('')).appendTo("#" + assetType.name);
-        });
-    }
-
-    /* New on-click function, will be updated. */
-    /* 
-        $(document).on("click", ".objects li", function() {
-            console.log("HERE1");
-
-
-
-            $(".dropdown-menu a").on("click", function() {
-                console.log("HERE2");
-            })
-        }) */
-
-    $(document).on("click", ".objects li .dropdown-menu a", function () {
-        var imageSrc = $("img", this).attr("src");
-        var selectedOption = $(this).closest("li").attr("id");
-        var imageId = $(this).closest("a").attr("id");
+    /* Handle main buttons on clicks */
+    $(document).on("click", ".objects li", function () {
+        var selectedOption = $(this).attr("id");
         switch (selectedOption) {
             case "back":
                 $(".interface").html("");
                 generateMenus('buildMenu');
                 break;
+            case "save":
+                self.saveLevel();
+                break;
+            case "play":
+                console.log("play game");
+                break;
+        }
+    });
+
+    /* Handle dropdown on clicks */
+    $(document).on("click", ".objects li .dropdown-menu a", function () {
+        var imageSrc = $("img", this).attr("src");
+        var selectedDropdown = $(this).closest("li").attr("id");
+        var imageId = $(this).closest("a").attr("id");
+        switch (selectedDropdown) {
             case "tiles":
                 var tile = {
                     "loc": imageSrc.substring(22),
                     "name": imageId,
-                    "type": selectedOption,
+                    "type": selectedDropdown,
                     "height": 40,
                     "width": 40
                 };
@@ -345,7 +352,7 @@ levelEditor = function () {
                 var tile = {
                     "loc": imageSrc.substring(22),
                     "name": imageId,
-                    "type": selectedOption,
+                    "type": selectedDropdown,
                     "height": 80,
                     "width": 40
                 };
@@ -354,19 +361,11 @@ levelEditor = function () {
                 break;
             case "backgrounds":
                 self.backgroundLoc = imageSrc.substring(22);
-                console.log("Background clicked");
                 $(".selectedBg").attr("src", imageSrc);
                 self.setBackground();
                 break;
-            case "save":
-                saveLevel();
-                break;
-            case "play":
-                /* Enter play game function here */
-                break;
         }
     });
-
 
     self.initiate();
     return self;
