@@ -14,7 +14,8 @@ ctx.font= "30px arcade";
 var player, sprite_sheet, backgroundSound, level, viewport;
 var entityManager = new EntityManager();
 var bulletList = []
-var paused = true; // When the game has not started, paused is true in order to stop the updates;
+var paused = false;
+var gameStarted = false;
 var spriteBox = false;
 
 var score = {
@@ -289,7 +290,7 @@ function keyDownHandler(e) {
 			paused = !paused;
 		break;
 
-		case 73: // i key for spriteBox which can be used for collisions
+		case 66: // i key for spriteBox which can be used for collisions
 			spriteBox = !spriteBox;
 		break;
 	}
@@ -330,7 +331,6 @@ startNewGame = function(){
 		player = entityManager.getEntityByTag("Player");
 		if (backgroundSound) backgroundSound.play();
 		addListener();
-		paused = false;
 		gameStarted = true;
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
