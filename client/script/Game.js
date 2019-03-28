@@ -34,6 +34,8 @@ var score = {
 	topScore: 0 // Later to come from the database taken compared to other players
 }
 
+
+
 const SPRITE_HEIGHT = 119;
 
 // TODO: Hussein - Move to its own script file
@@ -322,6 +324,11 @@ function canvasDraw() {
 	ctx.fillStyle= "white";
 	//ctx.fillText('SCORE: ' + score,scoreX,ScoreY);
 	ctx.fillText(score.text + score.int, score.x, score.y);
+	
+	
+	ctx.fillText('Player: ' , 20,40);
+	ctx.fillText('HP: ' ,20,70);
+	
 	player.draw();
 
 	bulletList.forEach(function(bullet){
@@ -421,7 +428,7 @@ var leaderBoard = function (){
 	//TODO: loop on all scores and find the highest scrore
 	// Then rank accoring to scores
 	var rank=0
-	var maxRank=10;// number of player
+	var maxRank=10;// number of players
 
 	ctx.font= "50px arcade";
 	ctx.beginPath();

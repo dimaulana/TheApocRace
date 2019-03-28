@@ -9,7 +9,7 @@ newyork1.src = "client/images/newyork1.png";
 
 levelEditor = function () {
     console.log("Creating level editor.");
-
+	
     self.canvasWidth = 1280;
     self.canvasHeight = 720;
 /* Set tile properties to draw columns, rows and total level dimensions */
