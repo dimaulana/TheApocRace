@@ -176,15 +176,26 @@ levelEditor = function () {
         }
     }
 
-    self.findSprite = function (val) {
+    self.findSprite = function (name, type) {
         /* Find the retrieved asset into loaded asset */
-        for (var i = 0; i < enemyList.length; i++) {
-            if (enemyList[i].name.replace(/\s/g, '') === val) {
-                var sprite = new Image();
-                sprite.src = enemyList[i].spriteSrc;
-                return sprite;
+        var sprite = new Image();
+        if (type === "enemies") {
+            for (var i = 0; i < enemyList.length; i++) {
+                if (enemyList[i].name.replace(/\s/g, '') === name) {
+                    sprite.src = enemyList[i].spriteSrc;
+                    return sprite;
+                }
             }
         }
+        if (type === "tiles") {
+            for (var i = 0; i < tileList.length; i++) {
+                if (tileList[i].name.replace(/\s/g, '') === name) {
+                    sprite.src = tileList[i].src;
+                    return sprite;
+                }
+            }
+        }
+
     }
 
     /* Draws asset into current canvas */
@@ -207,10 +218,10 @@ levelEditor = function () {
             let tileX = Math.floor(mouse.x / item.width);
             let tileY = Math.floor(mouse.y / item.width);
             let targetTile = tileY * self.columns + tileX;
+            var asset = self.findSprite(self.pickedTile.name, self.pickedTile.type);
             if (item.type === "enemies") {
                 console.log("We are drawing an enemy");
-                item.img = self.findSprite(self.pickedTile.name).src;
-                var asset = self.findSprite(self.pickedTile.name);
+                item.img = asset.src;
                 asset.onload = function () {
                     self.ctx.drawImage(asset, 0, 0, 40, 80, gridX, gridY, item.width, item.height);
                     self.tileMap[targetTile] = item;
@@ -218,10 +229,11 @@ levelEditor = function () {
                 }
             }
             if (item.type === "tiles") {
-                item.img = self.pickedTile.loc;
-                asset.src = item.img;
-                self.ctx.drawImage(asset, gridX, gridY, item.width, item.height);
-                self.tileMap[targetTile] = item;
+                item.img = asset.src;
+                asset.onload = function() {
+                    self.ctx.drawImage(asset, gridX, gridY, item.width, item.height);
+                    self.tileMap[targetTile] = item;
+                }  
             }
             self.itemId++;
         }
