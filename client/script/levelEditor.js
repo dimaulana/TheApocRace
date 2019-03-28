@@ -213,6 +213,7 @@ levelEditor = function () {
 
     /* Draws asset into current canvas */
     self.drawItem = function (e) {
+        console.log("Currently Drawing: " + self.pickedTile.name);
         var mouse = self.mousePosition(self.canvas, e);
         let gridX = Math.floor(mouse.x / self.tileSize) * self.tileSize;
         let gridY = Math.floor(mouse.y / self.tileSize) * self.tileSize;
@@ -233,12 +234,17 @@ levelEditor = function () {
             let tileY = Math.floor(mouse.y / item.width);
             let targetTile = tileY * self.columns + tileX;
             if (item.type === "enemies") {
+                console.log("We are drawing an enemy");
                 item.img = self.findSprite(self.pickedTile.name);
+                console.log("item img: " + item.img);
                 asset.src = item.img;
+                console.log("asset: " + asset);
                 self.ctx.drawImage(asset, 0, 0, 40, 80, gridX, gridY, item.width, item.height);
+                console.log("item drawn");
                 self.tileMap[targetTile] = item;
                 self.tileMap[targetTile + self.columns] = item;
-            } else if (item.type === "tiles") {
+            }
+            if (item.type === "tiles") {
                 item.img = self.pickedTile.loc;
                 asset.src = item.img;
                 self.ctx.drawImage(asset, gridX, gridY, item.width, item.height);
@@ -270,20 +276,31 @@ levelEditor = function () {
 
             if (mouse.y < 720 && mouse.x < 1280) {
                 self.ctx.clearRect(topX, topY, width, height);
+                console.log("Type: " + type);
                 if (type === "enemies") {
-                    $.each(self.tileMap, function (i) {
-                        if (self.tileMap[i].id === id) {
-                            delete self.tileMap[i];
-                            console.log("Remove player");
-                            console.log(self.tileMap);
+
+                    var filteredTileMap = self.tileMap.filter(tiles => tiles.id === id);
+
+                    console.log(filteredTileMap);
+                    for (var i = 0; i < self.tileMap.length; i++) {
+                        console.log("i: " + i);
+                        if (self.tileMap[i]) {
+                            if (self.tileMap[i].id === id) {
+                                delete self.tileMap[i];
+                            }
                         }
-                    });
+
+                    }
+
+
                 }
                 /* Assign ID to each object and delete both by ID value */
-            } else if (type === "tile") {
-                delete self.tileMap[targetTile];
-                console.log("Removing Tiles")
-                console.log(self.tileMap);
+                else if (type === "tiles") {
+                    console.log("Type is tile");
+                    delete self.tileMap[targetTile];
+                    console.log("Removing Tiles")
+                    console.log(self.tileMap);
+                }
             }
         }
         self.updateData();
@@ -309,32 +326,34 @@ levelEditor = function () {
         });
     }
 
-    /* New on-click function, will be updated. */
-    /* 
-        $(document).on("click", ".objects li", function() {
-            console.log("HERE1");
-
-
-
-            $(".dropdown-menu a").on("click", function() {
-                console.log("HERE2");
-            })
-        }) */
-
-    $(document).on("click", ".objects li .dropdown-menu a", function () {
-        var imageSrc = $("img", this).attr("src");
-        var selectedOption = $(this).closest("li").attr("id");
-        var imageId = $(this).closest("a").attr("id");
+    /* Handle main buttons on clicks */
+    $(document).on("click", ".objects li", function () {
+        var selectedOption = $(this).attr("id");
         switch (selectedOption) {
             case "back":
                 $(".interface").html("");
                 generateMenus('buildMenu');
                 break;
+            case "save":
+                self.saveLevel();
+                break;
+            case "play":
+                console.log("play game");
+                break;
+        }
+    });
+
+    /* Handle dropdown on clicks */
+    $(document).on("click", ".objects li .dropdown-menu a", function () {
+        var imageSrc = $("img", this).attr("src");
+        var selectedDropdown = $(this).closest("li").attr("id");
+        var imageId = $(this).closest("a").attr("id");
+        switch (selectedDropdown) {
             case "tiles":
                 var tile = {
                     "loc": imageSrc.substring(22),
                     "name": imageId,
-                    "type": selectedOption,
+                    "type": selectedDropdown,
                     "height": 40,
                     "width": 40
                 };
@@ -345,7 +364,7 @@ levelEditor = function () {
                 var tile = {
                     "loc": imageSrc.substring(22),
                     "name": imageId,
-                    "type": selectedOption,
+                    "type": selectedDropdown,
                     "height": 80,
                     "width": 40
                 };
@@ -358,15 +377,8 @@ levelEditor = function () {
                 $(".selectedBg").attr("src", imageSrc);
                 self.setBackground();
                 break;
-            case "save":
-                saveLevel();
-                break;
-            case "play":
-                /* Enter play game function here */
-                break;
         }
     });
-
 
     self.initiate();
     return self;
