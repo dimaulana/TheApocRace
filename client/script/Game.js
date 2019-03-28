@@ -24,40 +24,6 @@ var score = {
 	topScore: 0 // Later to come from the database taken compared to other players
 }
 
-
-
-const SPRITE_HEIGHT = 119;
-
-// TODO: Hussein - Move to its own script file
-function Animation(frame_set, delay) {
-
-    this.count = 0;
-    this.delay = delay; // The number of game cycles to wait until the next frame change.
-    this.frame = 0;
-    this.frame_index = 0;
-    this.frame_set = frame_set;
-
-    this.change = function(frame_set, delay = 15) {
-    	if (this.frame_set != frame_set) {
-    		this.count = 0;
-    		this.delay = delay;
-    		this.frame_index = 0;
-    		this.frame_set = frame_set;
-    		this.frame = this.frame_set[this.frame_index];
-    	}
-    }
-
-    this.update = function() {
-    	this.count ++;
-
-		if (this.count >= this.delay) { // If enough cycles have passed, we change the frame.
-    		this.count = 0; // Reset count;
-    		this.frame_index = (this.frame_index == this.frame_set.length - 1) ? 0 : this.frame_index + 1;
-    		this.frame = this.frame_set[this.frame_index]; // Update current frame;
-    	}
-    }
-}
-
 viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
 
 // DEPRACATED:
@@ -257,12 +223,6 @@ function canvasDraw() {
 	// Updating the score;
 	ctx.fillStyle= "white";
 	ctx.fillText(score.text + score.int, score.x, score.y);
-	
-	
-	ctx.fillText('Player: ' , 20,40);
-	ctx.fillText('HP: ' ,20,70);
-	
-	player.draw();
 
 	// Draw player;
 	/** Not using for now;
@@ -391,7 +351,7 @@ var leaderBoard = function (){
 	//TODO: loop on all scores and find the highest scrore
 	// Then rank accoring to scores
 	var rank=0
-	var maxRank=10;// number of players
+	var maxRank=10;// number of player
 
 	ctx.font= "50px arcade";
 	ctx.beginPath();

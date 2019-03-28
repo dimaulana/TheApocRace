@@ -86,7 +86,7 @@ input[type=password]:focus {
 /* Star background*/
 
   .star {
-	background: url(../images/flames1.0.png) repeat top center;
+	background: url(../images/comet.png) repeat top center;
 	height: 100%;
 	width: 100%;
 	top: 0;
@@ -111,17 +111,6 @@ input[type=password]:focus {
 	width: 1280;
   }
 
-	.credits {
-      font-family: 'star-jedi', arial;
-      font-size: 2.3em;
-	  box-shadow: inset 0 1.5px 3px rgb(190, 190, 190),  5px #f5f7f8;
-	  background-color: #4d3f3fa8;
-	  font-weight:bold;
-	  color:white;
-	  padding-left:20px;
-	  /* overflow-y:auto; */
-	}
-
     .controlObjects {
       font-family: 'arcade', arial;
       font-size: 2.3em;
@@ -139,8 +128,7 @@ input[type=password]:focus {
 		font-family: 'arcade', arial;
 		font-size: 2.5em;
 		color:blue; 
-	}
-		
+	} 
 	.extrasMenu img {
       height: 45px;
       width: 45px;

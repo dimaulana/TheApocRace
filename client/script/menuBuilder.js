@@ -34,6 +34,9 @@ $(document).ready(function() {
                     break;            
                 case "Extras":
                     generateMenus("extraMenu");
+					// TODO::Fix here
+					//$('.interface').load('.extras');
+					//$('.extras').show();
                     break;
                 case "Sign Out":
                     /* Add account signed out function here. */ 
@@ -43,11 +46,7 @@ $(document).ready(function() {
         else if (currentPage === "extraMenu") {
             switch(menuClicked) {
                 case "Credits":
-                    //$('.credits').show();
-					$('.interface').load("client/credits.html");
-					//TODO: Fix animation
-					//$('.credits').animate({
-					//scrollTop: $('.credits').get(0).scrollHeight},1000);    
+                    $('.interface').load("ENTER DIV ID HERE");
                     break;
                 case "Profile": 
                     $('.interface').load("ENTER PAGE URL HERE");
@@ -73,8 +72,7 @@ $(document).ready(function() {
 		else if (currentPage === "optionsMenu") {
             switch(menuClicked) {
                 case "Controls":
-                    //$('.gameControls').show();
-					$('.interface').load("client/controls.html");
+                    $('.gameControls').show();
                     break;
 				case "Sound":
                     $('.interface').load("# Add div container here");
@@ -119,7 +117,7 @@ function generateMenus(k) {
         $(items.join('')).appendTo(".btn-group-vertical");
         }
 	else if (k === "optionsMenu") {
-		currentPage = k;
+        currentPage = k;
         $.each(buildMenu, function(i) {
             items.push("<button id='playMenu-"+optionsMenu[i]+"' class='btn btn-primary btn-lg ml-2 type='submit'>"+optionsMenu[i]+"</button>")
         });
@@ -133,7 +131,6 @@ function generateMenus(k) {
         $(items.join('')).appendTo(".btn-group-vertical");
         }
     else {
-		
         $.each(mainMenu, function(i) {
             currentPage = k;
             items.push("<button id='playMenu-"+mainMenu[i]+"' class='btn btn-primary btn-lg ml-2 type='submit'>"+mainMenu[i]+"</button>")
