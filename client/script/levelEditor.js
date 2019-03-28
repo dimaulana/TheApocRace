@@ -156,16 +156,18 @@ levelEditor = function () {
         self.updateData();
     }
 
+    /* Translates mouse position from normal coordinates to canvas coordinates */
     self.mousePosition = function (canvas, evt) {
-        var rect = canvas.getBoundingClientRect(), // abs. size of element
-            scaleX = canvas.width / rect.width, // relationship bitmap vs. element for X
-            scaleY = canvas.height / rect.height; // relationship bitmap vs. element for Y
+        var rect = canvas.getBoundingClientRect(),
+            scaleX = canvas.width / rect.width,
+            scaleY = canvas.height / rect.height;
         return {
-            x: (evt.clientX - rect.left) * scaleX, // scale mouse coordinates after they have
-            y: (evt.clientY - rect.top) * scaleY // been adjusted to be relative to element
+            x: (evt.clientX - rect.left) * scaleX,
+            y: (evt.clientY - rect.top) * scaleY
         }
     }
 
+    /* Handles left and right click for drawing */
     self.clicked = function (e) {
         if (e.button === 0) {
             self.drawItem(e);
@@ -175,8 +177,8 @@ levelEditor = function () {
         }
     }
 
+    /* Find the retrieved asset into loaded asset */
     self.findSprite = function (name, type) {
-        /* Find the retrieved asset into loaded asset */
         var sprite = new Image();
         if (type === "enemies") {
             for (var i = 0; i < enemyList.length; i++) {
@@ -228,10 +230,10 @@ levelEditor = function () {
             }
             if (item.type === "tiles") {
                 item.img = asset.src;
-                asset.onload = function() {
+                asset.onload = function () {
                     self.ctx.drawImage(asset, gridX, gridY, item.width, item.height);
                     self.tileMap[targetTile] = item;
-                }  
+                }
             }
             self.itemId++;
         }
@@ -273,10 +275,12 @@ levelEditor = function () {
     }
 
 
+    /* Save level */
     self.saveLevel = function () {
 
     }
 
+    /* Populate level editor dropdown menu from array of assets */
     self.populateDropdown = function () {
         var items = [tileList, enemyList, backgroundList];
         $.each(items, function (i) {
@@ -336,6 +340,7 @@ levelEditor = function () {
         var imageSrc = $("img", this).attr("src");
         var selectedDropdown = $(this).closest("li").attr("id");
         var imageId = $(this).closest("a").attr("id");
+
         switch (selectedDropdown) {
             case "tiles":
                 var tile = {
@@ -347,6 +352,8 @@ levelEditor = function () {
                 };
                 self.pickedTile = tile;
                 $(".selectedTile").attr("src", imageSrc);
+                $("#tiles").css({ "background-color" : "#FF8000"});
+                $("#enemies").css({"background-color" : "#173B0B"});
                 break;
             case "enemies":
                 var tile = {
@@ -358,6 +365,8 @@ levelEditor = function () {
                 };
                 self.pickedTile = tile;
                 $(".selectedChar").attr("src", imageSrc);
+                $("#enemies").css({ "background-color" : "#FF8000"  });
+                $("#tiles").css({ "background-color" : "#173B0B"});
                 break;
             case "backgrounds":
                 self.backgroundLoc = imageSrc.substring(22);
@@ -367,6 +376,7 @@ levelEditor = function () {
         }
     });
 
+    /* Starters */
     self.initiate();
     return self;
 
