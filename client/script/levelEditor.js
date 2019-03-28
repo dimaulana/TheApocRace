@@ -55,6 +55,7 @@ enemy.name = "Enemy 1"
 
 var enemyList = [character, enemy];
 enemyList.name = "enemies";
+console.log(enemyList);
 
 levelEditor = function () {
     var self = {};
@@ -166,32 +167,6 @@ levelEditor = function () {
         }
     }
 
-    $(document).on("click", "#canvasEditor button", function (e) {
-        var selectedOption = $(this).attr('id');
-        if (selectedOption === "next") {
-            if (self.currentScreen < self.numberOfScreens) {
-                self.currentScreen++;
-                if (self.currentScreen === 9) {
-                    this.setAttribute('disabled', true);
-                }
-            }
-            previous.removeAttribute('disabled');
-        } else if (selectedOption === "previous") {
-            if (self.currentScreen < self.numberOfScreens && self.currentScreen > 0) {
-                self.currentScreen--;
-                if (self.currentScreen === 0) {
-                    this.setAttribute("disabled", true);
-                }
-            }
-            next.removeAttribute('disabled');
-        }
-        self.transition();
-    });
-
-    /* function drag() {
-        var position = self.getMousePos(self)
-    } */
-
     self.clicked = function (e) {
         if (e.button === 0) {
             self.drawItem(e);
@@ -202,18 +177,18 @@ levelEditor = function () {
     }
 
     self.findSprite = function (val) {
-
         /* Find the retrieved asset into loaded asset */
         for (var i = 0; i < enemyList.length; i++) {
             if (enemyList[i].name.replace(/\s/g, '') === val) {
-                return enemyList[i].spriteSrc;
+                var sprite = new Image();
+                sprite.src = enemyList[i].spriteSrc;
+                return sprite;
             }
         }
     }
 
     /* Draws asset into current canvas */
     self.drawItem = function (e) {
-        console.log("Currently Drawing: " + self.pickedTile.name);
         var mouse = self.mousePosition(self.canvas, e);
         let gridX = Math.floor(mouse.x / self.tileSize) * self.tileSize;
         let gridY = Math.floor(mouse.y / self.tileSize) * self.tileSize;
@@ -228,21 +203,19 @@ levelEditor = function () {
                 "height": self.pickedTile.height,
                 "width": self.pickedTile.width
             }
-            var asset = new Image();
             self.ctx.clearRect(gridX, gridY, item.width, item.height);
             let tileX = Math.floor(mouse.x / item.width);
             let tileY = Math.floor(mouse.y / item.width);
             let targetTile = tileY * self.columns + tileX;
             if (item.type === "enemies") {
                 console.log("We are drawing an enemy");
-                item.img = self.findSprite(self.pickedTile.name);
-                console.log("item img: " + item.img);
-                asset.src = item.img;
-                console.log("asset: " + asset);
-                self.ctx.drawImage(asset, 0, 0, 40, 80, gridX, gridY, item.width, item.height);
-                console.log("item drawn");
-                self.tileMap[targetTile] = item;
-                self.tileMap[targetTile + self.columns] = item;
+                item.img = self.findSprite(self.pickedTile.name).src;
+                var asset = self.findSprite(self.pickedTile.name);
+                asset.onload = function () {
+                    self.ctx.drawImage(asset, 0, 0, 40, 80, gridX, gridY, item.width, item.height);
+                    self.tileMap[targetTile] = item;
+                    self.tileMap[targetTile + self.columns] = item;
+                }
             }
             if (item.type === "tiles") {
                 item.img = self.pickedTile.loc;
@@ -259,13 +232,11 @@ levelEditor = function () {
 
     /* Delete drawn asset item */
     self.removeItem = function (e) {
-        var contents = self.tileMap;
         self.mouseDown = true;
         var mouse = self.mousePosition(self.canvas, e);
         let tileX = Math.floor(mouse.x / self.tileSize);
         let tileY = Math.floor(mouse.y / self.tileSize);
         let targetTile = tileY * self.columns + tileX;
-        console.log("remove function");
         if (self.tileMap[targetTile]) {
             var topX = self.tileMap[targetTile].x;
             var topY = self.tileMap[targetTile].y;
@@ -278,28 +249,15 @@ levelEditor = function () {
                 self.ctx.clearRect(topX, topY, width, height);
                 console.log("Type: " + type);
                 if (type === "enemies") {
-
-                    var filteredTileMap = self.tileMap.filter(tiles => tiles.id === id);
-
-                    console.log(filteredTileMap);
                     for (var i = 0; i < self.tileMap.length; i++) {
-                        console.log("i: " + i);
                         if (self.tileMap[i]) {
                             if (self.tileMap[i].id === id) {
                                 delete self.tileMap[i];
                             }
                         }
-
                     }
-
-
-                }
-                /* Assign ID to each object and delete both by ID value */
-                else if (type === "tiles") {
-                    console.log("Type is tile");
+                } else if (type === "tiles") {
                     delete self.tileMap[targetTile];
-                    console.log("Removing Tiles")
-                    console.log(self.tileMap);
                 }
             }
         }
@@ -326,6 +284,29 @@ levelEditor = function () {
         });
     }
 
+    /* Handle creation of new screen */
+    $(document).on("click", "#canvasEditor button", function (e) {
+        var selectedOption = $(this).attr('id');
+        if (selectedOption === "next") {
+            if (self.currentScreen < self.numberOfScreens) {
+                self.currentScreen++;
+                if (self.currentScreen === 9) {
+                    this.setAttribute('disabled', true);
+                }
+            }
+            previous.removeAttribute('disabled');
+        } else if (selectedOption === "previous") {
+            if (self.currentScreen < self.numberOfScreens && self.currentScreen > 0) {
+                self.currentScreen--;
+                if (self.currentScreen === 0) {
+                    this.setAttribute("disabled", true);
+                }
+            }
+            next.removeAttribute('disabled');
+        }
+        self.transition();
+    });
+
     /* Handle main buttons on clicks */
     $(document).on("click", ".objects li", function () {
         var selectedOption = $(this).attr("id");
@@ -346,6 +327,7 @@ levelEditor = function () {
     /* Handle dropdown on clicks */
     $(document).on("click", ".objects li .dropdown-menu a", function () {
         var imageSrc = $("img", this).attr("src");
+        console.log(imageSrc);
         var selectedDropdown = $(this).closest("li").attr("id");
         var imageId = $(this).closest("a").attr("id");
         switch (selectedDropdown) {
