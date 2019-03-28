@@ -25,7 +25,8 @@ const SPRITE_SIZE = 40;
 var player, sprite_sheet, backgroundSound, level, viewport;
 var obstacles = [];
 var stars = [];
-var paused = true; // When the game has not started, paused is true in order to stop the updates;
+var paused = false; // When the game has not started, paused is true in order to stop the updates;
+var gameStarted = false;
 var spriteBox = false;
 
 var score = {
@@ -85,13 +86,20 @@ Bullet = function(param){
 		img: new Image(),
 		fileLocation: param.img,
 		tag: param.tag,
-		timer: param.timer
+		timer: param.timer,
+		angle: param.angle,
+		scale: 1
 	}
 
 	self.img.src = self.fileLocation;
 
+	if(player.scaleX < 0){
+		self.speedX = -10;
+		self.scale = -1;
+	}
+
 	self.update = function(){
-		if(self.timer++ > 20)
+		if(self.timer++ > 40)
 			self.toRemove = true;
 
 		for (var i in bulletList)
@@ -201,7 +209,7 @@ Player = function(param) {
 		if(self.jump && self.state != "jump") {
 			// self.up = false;
 			// TODO: Get a better jump speed;
-			self.speedY = -self.speedMax*6;
+			self.speedY = -self.speedMax*12;
 			self.state = "jump";
 		}
 		else{
@@ -222,7 +230,7 @@ Player = function(param) {
 	self.shootBullet = function(angle){
 		var bullet = new Bullet({
 			tag: "bullet",
-			angle: 0,
+			angle: angle,
 			x: self.x + 25 - viewport.x,
 			y: self.y + 18 - viewport.y,
 			img: 'client/images/bullet.png',
@@ -407,6 +415,7 @@ startNewGame = function(){
 
 		addListener();
 		paused = false;
+		gameStarted = true;
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
 		score = 0;
@@ -457,6 +466,10 @@ var isPaused = function(){
 }
 
 function update() {
+	if(!gameStarted){
+		return;
+	}
+
 	if (paused) {
 		//generatePaused();
 		isPaused();
