@@ -46,11 +46,12 @@ class Transform extends Component{
 	constructor(param){
 		super();
 		this.pos = new Vec2(param.x, param.y);
-		this.prevPos = new Vec2(0.0, 0.0);
+		this.prevPos = new Vec2(param.x, param.y);
 		this.scale = new Vec2(1.0, 1.0);
 		this.speed = new Vec2(0.0, 0.0);
-		this.speedMax = param.speedMax;
+		this.speedMax = (param.speedMax) ? param.speedMax : 10;
 		this.angle = 0;
+		this.state = "standing";
 	}
 }
 
@@ -124,8 +125,9 @@ class Sprite extends Component {
 		super();
 		this.location = param.loc;
 		
-		if (!param.frame_set)
-			this.frame_set = param.frame_set;
+		if (param.frame_sets) {
+			this.frame_sets = param.frame_sets;
+		}
 	}
 }
 

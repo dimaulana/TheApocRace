@@ -18,49 +18,38 @@ class GamePlay {
 	}
 
 	init() {
-		//this.spawnPlayer();
-		//var playerPack = this.player.getInitPack();
-
-		// Get the player image location;
-		//playerPack.fileLocation = this.loadLevelData([{"type": "Player"}]).Player;
-
-		//this.socket.emit('initPack', playerPack);
-
 		var levelPack = {};
 		levelPack.name = this.name;
 		levelPack.file = this.file;
+		levelPack.data = [];
 
 		this.loadLevelData(this.getLevelData());
 
-		levelPack.data = this.entityManager.getEntities();
-
-		// this.entityManager.getEntities().forEach(function(entity) {
-		// 	// Get init pack for all the entities;
-		// 	levelPack.data.push(entity.getInitPack());
-		// })
-
-		//levelPack.assetLocation = this.loadLevelData(levelPack.data);
+		this.entityManager.getEntities().forEach(function(entity) {
+			// Get init pack for all the entities;
+			levelPack.data.push(entity.getInitPack());
+		});
 
 		this.socket.emit('levelPack', levelPack);
 	}
 
 	spawnPlayer(data) {
 		this.player = this.entityManager.addEntity("Player");
-		this.player.addComponent(components.TRANSFORM, {x: data.x, y: data.y});
+		this.player.addComponent(components.TRANSFORM, {x: data.x, y: data.y, speedMax: 10});
 		this.player.addComponent(components.GRAVITY);
 		this.player.addComponent(components.INPUT);
 		this.player.addComponent(components.STATS);
 		this.player.addComponent(components.DIMENSION, {w: 40, h: 80});
-		this.player.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Player"), frame_set: [[0], [1], [2, 3, 4], [5, 6, 7]]});
+		this.player.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Player"), frame_sets: [[0], [1], [2, 3, 4], [5, 6, 7]]});
 	}
 
 	spawnEnemy(data) {
 		var enemy = this.entityManager.addEntity("Enemy");
-		enemy.addComponent(components.TRANSFORM, {x: data.x, y: data.y});
+		enemy.addComponent(components.TRANSFORM, {x: data.x, y: data.y, speedMax: 10});
 		enemy.addComponent(components.GRAVITY);
 		enemy.addComponent(components.DIMENSION, {w: 40, h: 80});
 		enemy.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Enemy"),
-											   frame_set: data.frame_set});
+											   frame_sets: data.frame_sets});
 
 		if (data.ai === "Basic") {
 			// Do nothing??
@@ -76,13 +65,14 @@ class GamePlay {
 	spawnTile(data) {
 		var tile = this.entityManager.addEntity(data.type);
 		tile.addComponent(components.TRANSFORM, {x: data.x, y: data.y});
+		tile.addComponent(components.DIMENSION, {w: 40, h: 40});
 		tile.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(data.type)});
 	}
 
 	getLevelData(){
 		let rawdata = fs.readFileSync('server/bin/' + this.file);
 		let json = JSON.parse(rawdata);
-		return json;
+		return json;  
 	}
 
 	loadLevelData(levelData){
@@ -91,7 +81,6 @@ class GamePlay {
 		var type;
 
 		for (var i = 0; i < levelData.length; i++) {
-		//levelData.forEach(function(data) {
 			// Get all the types checked;
 			type = levelData[i].type;
 			switch(type) {
@@ -115,7 +104,6 @@ class GamePlay {
 				case "LA1":
 				case "LA2":
 				case "LA3":
-					//loc = this.assetManager.getTexture(type);
 					// TODO: How to handle background picture?
 					var background = this.entityManager.addEntity(type);
 					background.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(type)});
@@ -123,8 +111,6 @@ class GamePlay {
 				break;
 
 				case "Sound":
-					// loc = this.assetManager.getSound("StoryMode");
-					// locationsMap.Sound = loc;
 					var sound = this.entityManager.addEntity(type);
 					sound.addComponent(components.SPRITE, {loc: this.assetManager.getSound(levelData[i].mode)});
 

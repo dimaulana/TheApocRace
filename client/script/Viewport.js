@@ -19,8 +19,8 @@ function Viewport (x, y, w, h) {
 			case "Player":
 				// Trying to center the player to the viewport;
 				// Note: this.y does not change as we are moving camera just to the left or right;
-				if (entity.x > ((this.w / 2) - entity.width/2)) {
-					this.x = entity.x - (this.w / 2 - entity.width/2);
+				if (entity.properties.pos.x > ((this.w / 2) - entity.properties.width/2)) {
+					this.x = entity.properties.pos.x - (this.w / 2 - entity.properties.width/2);
 				}
 				else {
 					this.x = 0; // Return viewport to the original position;

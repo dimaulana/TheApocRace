@@ -4,8 +4,8 @@ const components = require('./ComponentEnum.js');
 class Entity{
 
     constructor(tag){
-        this.tag = tag,
-        this.id = this.getUniqueId(),
+        this.tag = tag;
+        this.id = this.getUniqueId();
         this.components = new Array();
     }
 
@@ -26,7 +26,7 @@ class Entity{
                 param.speedMax = component.speedMax;
                 param.angle = component.angle;
             }
-            if (components.ofType(components.GRAVITY)) {
+            if (component.ofType(components.GRAVITY)) {
                 param.gravity = component.gravity;
             }
 
@@ -47,7 +47,6 @@ class Entity{
             }
 
             if (component.ofType(components.INPUT)) {
-                // Not needed now!
                 param.jump = component.jump;
                 param.left = component.left;
                 param.right = component.right;
@@ -64,7 +63,11 @@ class Entity{
                 param.posArray = component.positons;
             }
             if (component.ofType(components.SPRITE)) {
-                param.fileLocation = components.location;
+                param.fileLocation = component.location;
+
+                if (component.frame_sets) {
+                    param.frame_sets = component.frame_sets;
+                }
             }
         });
         return param;
