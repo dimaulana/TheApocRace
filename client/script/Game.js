@@ -1,17 +1,8 @@
-
-// Game.js starts and sets the game at the front end;
-// Contributors: Hussein Parpia, Sahil Anand, Victor Mutandwa
 /* Game.js starts and sets the game at the front end;
 
    Contributors: Hussein Parpia, Sahil Anand
 */
 
-// Load Animation class
-var script = document.createElement('script');
-script.src = 'client/script/Animation.js';
-document.head.appendChild(script);
-
-var bulletList = []
 // Get canvas element
 var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
@@ -19,12 +10,10 @@ var display = document.querySelector('#game').getContext("2d");
 
 ctx.font= "30px arcade";
 
-// Dimensions of the player images;
-const SPRITE_SIZE = 40;
-
+// Variable declaration and initialising;
 var player, sprite_sheet, backgroundSound, level, viewport;
-var obstacles = [];
-var stars = [];
+var entityManager = new EntityManager();
+var bulletList = []
 var paused = true; // When the game has not started, paused is true in order to stop the updates;
 var spriteBox = false;
 
@@ -70,11 +59,7 @@ function Animation(frame_set, delay) {
 
 viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
 
-// TODO: Add it to player object, To keep track of the player sprite;
-sprite_sheet = {
-	frame_sets:[[0], [1], [2, 3, 4], [5, 6, 7]] // standing, running right, running left;
-};
-
+// DEPRACATED:
 Bullet = function(param){
 	var self = {
 		x: param.x,
@@ -87,13 +72,20 @@ Bullet = function(param){
 		img: new Image(),
 		fileLocation: param.img,
 		tag: param.tag,
-		timer: param.timer
+		timer: param.timer,
+		angle: param.angle,
+		scale: 1
 	}
 
 	self.img.src = self.fileLocation;
 
+	if(player.scaleX < 0){
+		self.speedX = -10;
+		self.scale = -1;
+	}
+
 	self.update = function(){
-		if(self.timer++ > 20)
+		if(self.timer++ > 40)
 			self.toRemove = true;
 
 		for (var i in bulletList)
@@ -103,7 +95,7 @@ Bullet = function(param){
 				{
 						delete bulletList[i];
 				}
-		}	
+		}
 		self.x += self.speedX;
 	}
 	self.getInitPack = function(){
@@ -118,7 +110,7 @@ Bullet = function(param){
 		return {
 			id:self.id,
 			x:self.x,
-			y:self.y,		
+			y:self.y,
 		};
 	}
 	self.draw = function() {
@@ -128,125 +120,62 @@ Bullet = function(param){
 	return self;
 }
 
-Player = function(param) {
-	var self = {
-		x: param.pos.x,
-		y: param.pos.y,
-		prev_x: param.prevPos.x,
-		prev_y: param.prevPos.y,
-		speedX: param.speed.x,
-		speedY: param.speed.y,
-		speedMax: param.speedMax,
-		scaleX: param.scale.x,
-		scaleY: param.scale.y,
-		hp: param.hp,
-		score: param.score,
-		lives: param.lives,
-		width: param.width,
-		height: param.height,
-		alive: param.alive,
-		angle: param.angle,
-		gravity: param.gravity,
-		right: false,
-		left: false,
-		up:  false,
-		down: false,
-		jump: false,
-		pressingAttack:false,
-		state: "stand",
-		animation: new Animation(),
-		image: new Image(),
-		fileLocation: param.fileLocation
+function updatePlayer() {
+	// Update speed;
+	if (player.properties.right) {
+		player.properties.speed.x = player.properties.speedMax;
+		player.changeAnimation(2);
+		player.properties.scale.x = 1.0;
+	}
+	else if (player.properties.left) {
+		player.properties.speed.x = -player.properties.speedMax;
+		player.changeAnimation(3);
+		player.properties.scale.x = -1.0;
+	}
+	else {
+		player.properties.speed.x = 0;
+		player.changeAnimation((player.properties.scale.x == -1.0) ? 1 : 0);
 	}
 
-	self.update = function() {
-		self.updateSpeed();
-
-		self.prev_x = self.x;
-		self.prev_y = self.y;
-
-		self.x += self.speedX;
-		self.y += self.speedY;
-
-		self.y -= self.gravity;
-
-		if(self.pressingAttack){
-			self.shootBullet(self.mouseAngle);
-		}
+	if (player.properties.jump && player.properties.state != "jumping") {
+		player.properties.speed.y = -player.properties.speedMax * 12;
+		player.properties.state = "jumping";
+	}
+	else {
+		player.properties.speed.y = 0;
 	}
 
+	// Update position;
+	player.properties.prevPos.x = player.properties.pos.x;
+	player.properties.prevPos.y = player.properties.pos.y;
 
-	self.updateSpeed = function() {
-		var delay = 5;
+	player.properties.pos.x += player.properties.speed.x;
+	player.properties.pos.y += player.properties.speed.y;
 
-		if (self.right) {
-			self.speedX = self.speedMax;
-			self.animation.change(sprite_sheet.frame_sets[2], delay);
-			//self.state = "run";
-			self.scaleX = 1.0;
-			score.int++;
-		}
-		else if (self.left) {
-			self.speedX = -self.speedMax;
-			self.animation.change(sprite_sheet.frame_sets[3], delay);
-			//self.state = "run";
-			self.scaleX = -1.0;
-		}
-		else {
+	player.properties.pos.y -= player.properties.gravity;
 
-			self.speedX = 0;
-			// If scale is -1 choose the opposite facing sprite;
-			self.animation.change(sprite_sheet.frame_sets[(self.scaleX == -1.0) ? 1 : 0], delay);
-			//self.state = "stand";
-		}
-
-		if(self.jump && self.state != "jump") {
-			// self.up = false;
-			// TODO: Get a better jump speed;
-			self.speedY = -self.speedMax*6;
-			self.state = "jump";
-		}
-		else{
-			self.speedY = 0;
-			//self.state = "stand";
-		}
-	}
-	// Draw the player based on the current frame;
-	self.draw = function() {
-		ctx.drawImage(self.image, self.animation.frame * SPRITE_SIZE, 0, this.width, this.height,
-						Math.floor(self.x - viewport.x), Math.floor(self.y - viewport.y), SPRITE_SIZE, SPRITE_SIZE*2);
-		if (spriteBox)
-			ctx.strokeRect(Math.floor(self.x - viewport.x), Math.floor(self.y - viewport.y), SPRITE_SIZE, SPRITE_SIZE*2);
-
-		display.drawImage(ctx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height, 0, 0, display.canvas.width, display.canvas.height);
+	if(player.properties.shoot){
+		//self.shootBullet(self.mouseAngle);
+		// TODO: Spawn bullet;
 	}
 
-	self.shootBullet = function(angle){
-		var bullet = new Bullet({
-			tag: "bullet",
-			angle: 0,
-			x: self.x + 25 - viewport.x,
-			y: self.y + 18 - viewport.y,
-			img: 'client/images/bullet.png',
-			timer: 0
-		});
+	// Update player animation;
+	player.animation.update();
+}
 
-		var sound = new Sound('client/sound/gun_shot.wav');
-    sound.play();
-		bulletList.push(bullet);
-	}
-
-	return self;
+function updateEntities() {
+	// Update Player first:
+	updatePlayer();
 }
 
 // Function to handle collisions;
 function getOverlap(a, b) {
-	var delta = { x: Math.abs((a.x + a.width/2) - (b.x + b.width/2)),
-				  y: Math.abs((a.y + a.height/2) - (b.y + b.height/2))
+	var delta = { x: Math.abs((a.properties.pos.x + a.properties.width/2) - (b.properties.pos.x + b.properties.width/2)),
+				  y: Math.abs((a.properties.pos.y + a.properties.height/2) - (b.properties.pos.y + b.properties.height/2))
 				}
 
-	var halfSizeA = { x: a.width / 2, y: a.height / 2 };
-	var halfSizeB = { x: b.width / 2, y: b.height / 2 };
+	var halfSizeA = { x: a.properties.width / 2, y: a.properties.height / 2 };
+	var halfSizeB = { x: b.properties.width / 2, y: b.properties.height / 2 };
 
 	var overlapX = halfSizeA.x + halfSizeB.x - delta.x;
 	var overlapY = halfSizeA.y + halfSizeB.y - delta.y;
@@ -256,12 +185,12 @@ function getOverlap(a, b) {
 
 function getPrevOverlap(a, b) {
 
-	var delta = { x: Math.abs((a.prev_x + a.width/2) - (b.prev_x + b.width/2)),
-				  y: Math.abs((a.prev_y + a.height/2) - (b.prev_y + b.height/2))
+	var delta = { x: Math.abs((a.properties.prevPos.x + a.properties.width/2) - (b.properties.prevPos.x + b.properties.width/2)),
+				  y: Math.abs((a.properties.prevPos.y + a.properties.height/2) - (b.properties.prevPos.y + b.properties.height/2))
 				}
 
-	var halfSizeA = { x: a.width / 2, y: a.height / 2 };
-	var halfSizeB = { x: b.width / 2, y: b.height / 2 };
+	var halfSizeA = { x: a.properties.width / 2, y: a.properties.height / 2 };
+	var halfSizeB = { x: b.properties.width / 2, y: b.properties.height / 2 };
 
 	var overlapX = halfSizeA.x + halfSizeB.x - delta.x;
 	var overlapY = halfSizeA.y + halfSizeB.y - delta.y;
@@ -272,7 +201,9 @@ function getPrevOverlap(a, b) {
 var testCollisions = function () {
 
 	// Collison of player with tiles;
- 	obstacles.forEach(function(entity) {
+ 	entityManager.getEntities().forEach(function(entity) {
+
+ 		if (entity.tag != "Tile1" && entity.tag != "Tile2" && entity.tag != "Tile2") return;
 
   		var currentOverlap = getOverlap(player, entity);
   		var prevOverlap = getPrevOverlap(player, entity);
@@ -280,30 +211,30 @@ var testCollisions = function () {
   		if (currentOverlap.x > 0 && currentOverlap.y > 0) {
   			if (prevOverlap.x > 0) {
   				// Collision from top or bottom;
-  				if ((player.y - player.prev_y) > 0) {
+  				if ((player.properties.pos.y - player.properties.prevPos.y) > 0) {
   					// Collision came from top of tile;
-  					player.speedY = 0;
-  					player.y -= currentOverlap.y;
-  					player.state = "stand"; // Jumping ends as he is now on the tile;
+  					player.properties.speed.y = 0;
+  					player.properties.pos.y -= currentOverlap.y;
+  					player.properties.state = "standing"; // Jumping ends as he is now on the tile;
   				}
-  				else if (((player.y - player.prev_y) < 0)) {
+  				else if (((player.properties.pos.y - player.properties.prevPos.y) < 0)) {
   					// Collision came from bottom of tile;
-  					player.speedY = 0;
-  					player.y += currentOverlap.y;
+  					player.properties.speed.y = 0;
+  					player.properties.pos.y += currentOverlap.y;
   				}
   			}
 
   			if (prevOverlap.y > 0) {
   				// Collision from right or left;
-  				if ((player.x - player.prev_x) > 0) {
+  				if ((player.properties.pos.x - player.properties.prevPos.x) > 0) {
   					// Collision from right;
-  					player.speedX = 0;
-  					player.x += currentOverlap.x;
+  					player.properties.speed.x = 0;
+  					player.properties.pos.x += currentOverlap.x;
   				}
-  				else if ((player.x - player.prev_x) < 0) {
+  				else if ((player.properties.pos.x - player.properties.prevPos.x) < 0) {
   					// Collision from left;
-  					player.speedX = 0;
-  					player.x -= currentOverlap.x;
+  					player.properties.speed.x = 0;
+  					player.properties.pos.x -= currentOverlap.x;
   				}
   			}
   		}
@@ -311,18 +242,19 @@ var testCollisions = function () {
 
     // Collision of player with the canvas
     // (Taking the x and y of canvas to be 0, 0);
-    if (player.x < 0) player.x = 0;
+    if (player.properties.pos.x < 0) player.properties.pos.x = 0;
 
-    if (player.y < 0) player.y = 0;
+    if (player.properties.pos.y < 0) player.properties.pos.y = 0;
 }
 
 
 // Redraw canvas according to the updated positons;
 function canvasDraw() {
+	// Clear the canvas for refresh;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
 	// Updating the score;
 	ctx.fillStyle= "white";
-	//ctx.fillText('SCORE: ' + score,scoreX,ScoreY);
 	ctx.fillText(score.text + score.int, score.x, score.y);
 	
 	
@@ -331,60 +263,94 @@ function canvasDraw() {
 	
 	player.draw();
 
-	bulletList.forEach(function(bullet){
-		bullet.draw();
+	// Draw player;
+	/** Not using for now;
+	ctx.drawImage(player.image, player.animation.frame * player.properties.width, 0, player.properties.width, player.properties.height,
+					Math.floor(player.properties.pos.x - viewport.x), Math.floor(player.properties.pos.y - viewport.y), player.properties.width, player.properties.height);
+	if (spriteBox)
+		ctx.strokeRect(Math.floor(player.properties.pos.x - viewport.x), Math.floor(player.properties.pos.y - viewport.y), player.properties.width, player.properties.height);
+
+	display.drawImage(ctx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height, 0, 0, display.canvas.width, display.canvas.height);
+	**/
+
+	// Draw tiles and other entities;
+	entityManager.getEntities().forEach(function(e) {
+		switch(e.tag) {
+			case "Tile1":
+			case "Tile2":
+			case "Tile3":
+				ctx.drawImage(e.image, e.properties.pos.x - viewport.x, e.properties.pos.y - viewport.y);
+
+				if (spriteBox)
+					ctx.strokeRect(e.properties.pos.x - viewport.x, e.properties.pos.y - viewport.y,
+									e.properties.width, e.properties.height)
+			break;
+
+			case "Player":
+			case "Enemy":
+				ctx.drawImage(e.image, e.animation.frame * e.properties.width, 0, e.properties.width, e.properties.height,
+					Math.floor(e.properties.pos.x - viewport.x), Math.floor(e.properties.pos.y - viewport.y), e.properties.width, e.properties.height);
+				if (spriteBox)
+					ctx.strokeRect(Math.floor(e.properties.pos.x - viewport.x), Math.floor(e.properties.pos.y - viewport.y), e.properties.width, e.properties.height);
+
+				display.drawImage(ctx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height, 0, 0, display.canvas.width, display.canvas.height);
+			break;
+		}
 	});
 
-	obstacles.forEach(function(tile) {
-		tile.draw();
-	});
+
 }
 
 function keyDownHandler(e) {
 	switch (e.keyCode) {
+		case 27: // ESC key for getting back to the menu;
+			// TODO:
+			// Quit game;
+			// Save progress;
+		break;
+
 		case 68: // d key
-			player.right = true;
+			player.properties.right = true;
 		break;
 
 		case 65: // a key
-			player.left = true;
+			player.properties.left = true;
 		break;
 
 		case 87: // w key
-			player.jump = true;
+			player.properties.jump = true;
 		break;
 
 		case 83: // s key
-			player.pressingAttack = true;
+			player.properties.shoot = true;
 		break;
 
 		case 80: // p key
-			paused = !paused;	
+			paused = !paused;
 		break;
 
 		case 73: // i key for spriteBox which can be used for collisions
 			spriteBox = !spriteBox;
 		break;
-
 	}
 }
 
 function keyUpHandler(e) {
 	switch (e.keyCode) {
 		case 68: // d key
-			player.right = false;
+			player.properties.right = false;
 		break;
 
 		case 65: // a key
-			player.left = false;
+			player.properties.left = false;
 		break;
 
 		case 87: // w key
-			player.jump = false;
+			player.properties.jump = false;
 		break;
 
 		case 83: // s key
-			player.pressingAttack = false;
+			player.properties.shoot = false;
 		break;
 	}
 }
@@ -395,34 +361,31 @@ function addListener() {
 }
 
 startNewGame = function(){
+	socket.emit('storyMode', {});
 
-	socket.on('levelPack', function(data){
+	socket.on('levelPack', function(data) {
 		level = new Level(data);
-		level.loadLevel(data);
+		level.loadLevel();
 
+		player = entityManager.getEntityByTag("Player");
+		if (backgroundSound) backgroundSound.play();
+		addListener();
+		paused = false;
+		gameStarted = true;
+		timeWhenGameStarted = Date.now();
+		frameCount = 0;
+		// backgroundSound = new sound('client/sound/background.mp3');
+		//backgroundSound.play();
 	});
 
 	$(".star").hide();
 	$('#game').show();
 	$('.paused').hide();
 
-	socket.emit('storyMode', {});
-	socket.on('initPack', function(data) {
-		player = new Player(data);
-		player.image.src = player.fileLocation;
-		player.draw();
-
-		addListener();
-		paused = false;
-		timeWhenGameStarted = Date.now();
-		frameCount = 0;
-		score = 0;
-		// backgroundSound = new sound('client/sound/background.mp3');
-		//backgroundSound.play();
-
-	});
 }
+
 var leaderButton = false;
+
 //A function that shows the top scorers
 var leaderBoard = function (){
 	//TODO: loop on all scores and find the highest scrore
@@ -443,7 +406,6 @@ var leaderBoard = function (){
 
 	if(score.int > score.topScore){
 		//TODO: Get player name,score,level and rank them
-
 	}
 }
 
@@ -464,32 +426,23 @@ var isPaused = function(){
 }
 
 function update() {
+	if(!gameStarted){
+		return;
+	}
+
 	if (paused) {
-		//generatePaused();
 		isPaused();
 		return;
 	}
 
 	if(leaderButton){
-	  leaderBoard();
+		leaderBoard();
 		return;
 	}
 
-	player.update();
-	player.animation.update();
-	// TODO: Update all the other entities based
-	// on the speed of the player
+	updateEntities();
 
-	// Update Tiles;
 	testCollisions();
-
-	obstacles.forEach(function(tile) {
-		tile.update();
-	});
-
-	bulletList.forEach(function(bullet){
-		bullet.update();
-	});
 
 	viewport.update("Player", player); // Update the viewport before drawing on canvas;
 
