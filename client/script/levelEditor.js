@@ -95,6 +95,7 @@ levelEditor = function () {
 
     /* Initiates the first empty canvas */
     self.initiate = function () {
+        $("#screenCounter").html(self.currentScreen+1+"/"+self.numberOfScreens);
         self.populateDropdown();
         self.canvas.addEventListener('mousedown', self.clicked, false);
         document.addEventListener('contextmenu', event => event.preventDefault());
@@ -277,7 +278,6 @@ levelEditor = function () {
 
     /* Save level */
     self.saveLevel = function () {
-
     }
 
     /* Populate level editor dropdown menu from array of assets */
@@ -297,6 +297,7 @@ levelEditor = function () {
 
     /* Handle creation of new screen */
     $(document).on("click", "#canvasEditor button", function (e) {
+        $('#screenCounter').html("");
         var selectedOption = $(this).attr('id');
         if (selectedOption === "next") {
             if (self.currentScreen < self.numberOfScreens) {
@@ -315,6 +316,7 @@ levelEditor = function () {
             }
             next.removeAttribute('disabled');
         }
+        $("#screenCounter").html(self.currentScreen+1+"/"+self.numberOfScreens);
         self.transition();
     });
 
