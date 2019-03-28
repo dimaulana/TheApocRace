@@ -9,7 +9,11 @@ const components = {
 	LIFESPAN: "Lifespan",
 	STATS: "Stats",
 	INPUT: "Input",
-	DIMENSION: "Dimension"
+	DIMENSION: "Dimension",
+	PATROL: "Patrol",
+	FOLLOWPLAYER: "FollowPlayer",
+	SPRITE: "Sprite",
+	GRAVITY: "Gravity"
 }
 
 module.exports = components;
