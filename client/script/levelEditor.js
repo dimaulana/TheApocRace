@@ -55,7 +55,6 @@ enemy.name = "Enemy 1"
 
 var enemyList = [character, enemy];
 enemyList.name = "enemies";
-console.log(enemyList);
 
 levelEditor = function () {
     var self = {};
@@ -220,7 +219,6 @@ levelEditor = function () {
             let targetTile = tileY * self.columns + tileX;
             var asset = self.findSprite(self.pickedTile.name, self.pickedTile.type);
             if (item.type === "enemies") {
-                console.log("We are drawing an enemy");
                 item.img = asset.src;
                 asset.onload = function () {
                     self.ctx.drawImage(asset, 0, 0, 40, 80, gridX, gridY, item.width, item.height);
@@ -238,7 +236,6 @@ levelEditor = function () {
             self.itemId++;
         }
         self.updateData();
-        console.log(self.tileMap);
     }
 
 
@@ -259,7 +256,6 @@ levelEditor = function () {
 
             if (mouse.y < 720 && mouse.x < 1280) {
                 self.ctx.clearRect(topX, topY, width, height);
-                console.log("Type: " + type);
                 if (type === "enemies") {
                     for (var i = 0; i < self.tileMap.length; i++) {
                         if (self.tileMap[i]) {
@@ -274,7 +270,6 @@ levelEditor = function () {
             }
         }
         self.updateData();
-        console.log(self.tileMap);
     }
 
 
@@ -339,7 +334,6 @@ levelEditor = function () {
     /* Handle dropdown on clicks */
     $(document).on("click", ".objects li .dropdown-menu a", function () {
         var imageSrc = $("img", this).attr("src");
-        console.log(imageSrc);
         var selectedDropdown = $(this).closest("li").attr("id");
         var imageId = $(this).closest("a").attr("id");
         switch (selectedDropdown) {
@@ -367,7 +361,6 @@ levelEditor = function () {
                 break;
             case "backgrounds":
                 self.backgroundLoc = imageSrc.substring(22);
-                console.log("Background clicked");
                 $(".selectedBg").attr("src", imageSrc);
                 self.setBackground();
                 break;
