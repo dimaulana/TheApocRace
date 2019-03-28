@@ -59,6 +59,7 @@ enemyList.name = "enemies";
 levelEditor = function () {
     var self = {};
     console.log("Creating level editor.");
+	
     /* Set game total sizes */
     self.canvasWidth = 12800;
     self.canvasHeight = 720;
