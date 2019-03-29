@@ -27,6 +27,7 @@ const assetCollection = [
 							{"type": "Texture", "name": "LA1", "path": "/client/images/losAngeles1.png"},
 							{"type": "Texture", "name": "LA2", "path": "/client/images/losAngeles2.png"},
 							{"type": "Texture", "name": "LA3", "path": "/client/images/losAngeles3.png"},
+							{"type": "Texture", "name": "NewYork", "path": "/client/images/combinedNY.png"},
 							{"type": "Texture", "name": "Bullet", "path": "/client/images/bullet.png"},
 							{"type": "Font", "name": "Helvetica", "path": "client/fonts/helvetica.ttf"},
 							{"type": "Sound", "name": "StoryMode", "path": "client/sound/background.mp3"}

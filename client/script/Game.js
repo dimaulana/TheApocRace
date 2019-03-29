@@ -23,6 +23,11 @@ var score = {
 	topScore: 0 // Later to come from the database taken compared to other players
 }
 
+var username = {
+	text: "Player: ", x: 20, y: 40,
+	name: "",
+}
+
 var viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
 
 
@@ -209,12 +214,27 @@ function canvasDraw() {
 	// Clear the canvas for refresh;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+	// Change background animation;
+	var background = entityManager.getEntityByTag("Background");
+	if (background) { // Check if background exists;
+		if (player.properties.pos.x >= 200 && player.properties.pos.x < 400) {
+			background.changeAnimation(1);
+		}
+		else if (player.properties.pos.x >= 400) {
+			background.changeAnimation(2);
+		}
+		else {
+			background.changeAnimation(0);
+		}
+		background.animation.update();
+		ctx.drawImage(background.image, background.animation.frame * 1280, 0, 1280, 720, 0, 0, 1280, 720);
+	} // Else just draw default background;
+
 	// Updating the score;
 	ctx.fillStyle= "white";
 	ctx.fillText(score.text + score.int, score.x, score.y);
 	
-	
-	ctx.fillText('Player: ' , 20,40);
+	ctx.fillText(username.text + username.name, username.x, username.y);
 	ctx.fillText('HP: ' + 0 ,20,70);
 	
 
@@ -322,6 +342,7 @@ startNewGame = function(){
 	socket.emit('storyMode', {});
 
 	socket.on('levelPack', function(data) {
+		username.name = data.username;
 		level = new Level(data);
 		level.loadLevel();
 
