@@ -10,7 +10,8 @@
 require('./server/DatabaseManager');
 var AssetManager = require('./server/AssetManager.js');
 var GamePlay = require('./server/GamePlay');
-
+var LevelEditor = require('./server/LevelEditor');
+var fs = require ('fs');
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
@@ -60,6 +61,15 @@ var startGame = function(data) {
 			socket: data.socket,
 			assetManager: assetManager
 		});
+}
+
+var newLevelEditor = function(data){
+	var levelEditor = new LevelEditor(data);
+	levelEditor.readSavedFile();
+
+	data.socket.on('saveNewLevel', function(data){
+		levelEditor.writeToFile(data);
+	});
 }
 
 var io = require('socket.io')(serv,{});
@@ -121,7 +131,7 @@ io.sockets.on('connection',function(socket) {
 
 		// TODO: Get level for story mode;
 		//var myLevel = getLevelStoppedPreviously();
-		var myLevel = 1;
+		var myLevel = 2;
 
 		startGame({
 			level: myLevel,
@@ -148,6 +158,10 @@ io.sockets.on('connection',function(socket) {
 			SOCKET_LIST[i].emit('addToChat', playerName + ': ' + data);
 		}
 
+	});
+
+	socket.on('loadLevel', function(levelName){
+		newLevelEditor({levelName: levelName, socket: socket});
 	});
 
 	socket.on('evalServer',function(data) {
