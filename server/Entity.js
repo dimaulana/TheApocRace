@@ -69,6 +69,14 @@ class Entity{
                     param.frame_sets = component.frame_sets;
                 }
             }
+
+            if (component.ofType(components.WEAPON)) {
+                param.weaponClock = component.clock;
+                param.weaponName = component.name;
+                param.weaponMap = component.map;
+                param.weaponInterval = component.coolDown;
+                param.weaponFile = component.imageLoc;
+            }
         });
         return param;
     }
@@ -140,6 +148,9 @@ class Entity{
 
             case components.SPRITE:
                 c = new Component.Sprite(param); break;
+
+            case components.WEAPON:
+                c = new Component.Weapon(param); break;
 
 
             default:

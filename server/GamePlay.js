@@ -39,14 +39,17 @@ class GamePlay {
 		this.player.addComponent(components.GRAVITY);
 		this.player.addComponent(components.INPUT);
 		this.player.addComponent(components.STATS);
+		this.player.addComponent(components.WEAPON, {loc: this.assetManager.getTexture("Bullet")});
 		this.player.addComponent(components.DIMENSION, {w: 40, h: 80});
-		this.player.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Player"), frame_sets: [[0], [1], [2, 3, 4], [5, 6, 7]]});
+		this.player.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Player"), frame_sets: [[0], [1], [2, 3, 4, 5], [6, 7, 8, 9]]});
 	}
 
 	spawnEnemy(data) {
 		var enemy = this.entityManager.addEntity("Enemy");
 		enemy.addComponent(components.TRANSFORM, {x: data.x, y: data.y, speedMax: 10});
 		enemy.addComponent(components.GRAVITY);
+		enemy.addComponent(components.STATS);
+		enemy.addComponent(components.WEAPON, {loc: this.assetManager.getTexture("Bullet")});
 		enemy.addComponent(components.DIMENSION, {w: 40, h: 80});
 		enemy.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Enemy"),
 											   frame_sets: data.frame_sets});

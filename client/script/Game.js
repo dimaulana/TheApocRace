@@ -10,10 +10,9 @@ var display = document.querySelector('#game').getContext("2d");
 
 ctx.font= "30px arcade";
 
-// Variable declaration and initialising;
-var player, sprite_sheet, backgroundSound, level, viewport;
+// Variables declaration and initialising;
+var player, backgroundSound, level;
 var entityManager = new EntityManager();
-var bulletList = []
 var paused = false;
 var gameStarted = false;
 var spriteBox = false;
@@ -24,67 +23,36 @@ var score = {
 	topScore: 0 // Later to come from the database taken compared to other players
 }
 
-viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
+var viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
 
-// DEPRACATED:
-Bullet = function(param){
-	var self = {
-		x: param.x,
-		y: param.y,
-		id: Math.floor(Math.random() * (100000 - 0)) + 0,
-		speedX: 10,
-		speedY: 10,
-		lifespan: param.lifespan,
-		toRemove: false,
-		img: new Image(),
-		fileLocation: param.img,
-		tag: param.tag,
-		timer: param.timer,
-		angle: param.angle,
-		scale: 1
+
+function spawnBullet(entity) {
+	// Check weaponClock;
+	if (entity.properties.weaponClock < entity.properties.weaponInterval) return;
+	entity.properties.weaponClock = 0; // Restart weaponClock;
+
+	var bulletsToSpawn = 0;
+	if (entity.properties.weaponName == "normal") {
+		bulletsToSpawn = 1;
 	}
 
-	self.img.src = self.fileLocation;
-
-	if(player.scaleX < 0){
-		self.speedX = -10;
-		self.scale = -1;
+	var param = {};
+	param.tag = "Bullet";
+	param.pos = {
+		x: entity.properties.pos.x + 18,
+		y: entity.properties.pos.y + 20
 	}
-
-	self.update = function(){
-		if(self.timer++ > 40)
-			self.toRemove = true;
-
-		for (var i in bulletList)
-		{
-				var bullet = bulletList[i];
-				if(bullet.toRemove && bullet.tag === "bullet")
-				{
-						delete bulletList[i];
-				}
-		}
-		self.x += self.speedX;
+	param.clock = 0;
+	param.width = 10;
+	param.height = 10;
+	param.prevPos = param.pos;
+	param.lifespan = 20;
+	param.speed = {x: 30, y: 0};
+	param.alive = true;
+	param.fileLocation = entity.properties.weaponFile;
+	for (var i = 0; i < bulletsToSpawn; i++) {
+		entityManager.addEntity(param);
 	}
-	self.getInitPack = function(){
-		return {
-			id:1,
-			x:120,
-			y:32,
-			map:self.map,
-		};
-	}
-	self.getUpdatePack = function(){
-		return {
-			id:self.id,
-			x:self.x,
-			y:self.y,
-		};
-	}
-	self.draw = function() {
-			ctx.drawImage(self.img ,self.x, self.y, 10, 10);
-	}
-
-	return self;
 }
 
 function updatePlayer() {
@@ -121,18 +89,36 @@ function updatePlayer() {
 
 	player.properties.pos.y -= player.properties.gravity;
 
-	if(player.properties.shoot){
-		//self.shootBullet(self.mouseAngle);
-		// TODO: Spawn bullet;
-	}
+	player.properties.weaponClock++; // Update weaponClock;
 
 	// Update player animation;
 	player.animation.update();
 }
 
 function updateEntities() {
-	// Update Player first:
+	// First update entityManager;
+	entityManager.update();
+
+	// Update Player;
 	updatePlayer();
+
+	entityManager.getEntities().forEach(function(entity) {
+		if (entity.tag == "Bullet") {
+			entity.properties.clock++;
+			if (entity.properties.clock > entity.properties.lifespan) {
+				// TODO: Remove bullet
+				entity.properties.alive = false;
+				console.log("no more");
+			}
+			else {
+				entity.properties.prevPos = entity.properties.pos;
+				entity.properties.pos.x += entity.properties.speed.x;
+				console.log("here");
+			}
+		}
+
+		// TODO: Implement enemy movement here;
+	});
 }
 
 // Function to handle collisions;
@@ -170,6 +156,8 @@ var testCollisions = function () {
 	// Collison of player with tiles;
  	entityManager.getEntities().forEach(function(entity) {
 
+ 		// TODO:
+ 		// Collision of bullets with player, enemies and tiles;
  		if (entity.tag != "Tile1" && entity.tag != "Tile2" && entity.tag != "Tile2") return;
 
   		var currentOverlap = getOverlap(player, entity);
@@ -240,7 +228,9 @@ function canvasDraw() {
 			case "Tile1":
 			case "Tile2":
 			case "Tile3":
-				ctx.drawImage(e.image, e.properties.pos.x - viewport.x, e.properties.pos.y - viewport.y);
+			case "Bullet":
+				ctx.drawImage(e.image, e.properties.pos.x - viewport.x, e.properties.pos.y - viewport.y,
+								e.properties.width, e.properties.height);
 
 				if (spriteBox)
 					ctx.strokeRect(e.properties.pos.x - viewport.x, e.properties.pos.y - viewport.y,
@@ -284,6 +274,7 @@ function keyDownHandler(e) {
 
 		case 83: // s key
 			player.properties.shoot = true;
+			spawnBullet(player);
 		break;
 
 		case 80: // p key
@@ -328,8 +319,12 @@ startNewGame = function(){
 		level = new Level(data);
 		level.loadLevel();
 
+		entityManager.update(); // Call update for intialization;
+
 		player = entityManager.getEntityByTag("Player");
+
 		if (backgroundSound) backgroundSound.play();
+
 		addListener();
 		gameStarted = true;
 		timeWhenGameStarted = Date.now();
@@ -386,9 +381,7 @@ var isPaused = function(){
 }
 
 function update() {
-	if(!gameStarted){
-		return;
-	}
+	if(!gameStarted) return; // Stop updates if game is not being played;
 
 	if (paused) {
 		isPaused();
@@ -404,7 +397,7 @@ function update() {
 
 	testCollisions();
 
-	viewport.update("Player", player); // Update the viewport before drawing on canvas;
+	viewport.update("Player", player); // Update the viewport relative to player before drawing on canvas;
 
 	canvasDraw();
 }
