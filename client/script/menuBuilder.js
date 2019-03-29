@@ -34,9 +34,6 @@ $(document).ready(function() {
                     break;            
                 case "Extras":
                     generateMenus("extraMenu");
-					// TODO::Fix here
-					//$('.interface').load('.extras');
-					//$('.extras').show();
                     break;
                 case "Sign Out":
                     /* Add account signed out function here. */ 
