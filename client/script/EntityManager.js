@@ -4,7 +4,6 @@
 	Contributor: Hussein Parpia;
 */
 
-
 // Load Animation class
 var script = document.createElement('script');
 script.src = 'client/script/Animation.js';
@@ -23,7 +22,7 @@ function Entity(param) {
 	self.image = new Image();
 	self.image.src = self.properties.fileLocation;
 
-	if (self.tag == "Player" || self.tag == "Enemy") {
+	if (self.tag == "Player" || self.tag == "Enemy" || self.tag == "Background") {
 		self.animation = new Animation();
 	}
 
