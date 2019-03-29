@@ -386,9 +386,7 @@ var isPaused = function(){
 }
 
 function update() {
-	if(!gameStarted){
-		return;
-	}
+	if(!gameStarted) return; // Stop updates if game is not being played;
 
 	if (paused) {
 		isPaused();
@@ -404,7 +402,7 @@ function update() {
 
 	testCollisions();
 
-	viewport.update("Player", player); // Update the viewport before drawing on canvas;
+	viewport.update("Player", player); // Update the viewport relative to player before drawing on canvas;
 
 	canvasDraw();
 }
