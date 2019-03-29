@@ -278,6 +278,16 @@ levelEditor = function () {
 
     /* Save level */
     self.saveLevel = function () {
+        $(".saveLevel").on("click", function() {
+          var levelName =  $("#levelName").val();
+          self.screenArray.name = levelName;
+            
+          /* Save data here */
+         if (levelName) {
+            $('#saveModal').modal('hide');
+        }    
+
+        });
     }
 
     /* Populate level editor dropdown menu from array of assets */
