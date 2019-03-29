@@ -86,45 +86,54 @@ levelEditor = function () {
 
 
     /* Initiates the first empty canvas */
-    self.initiate = function () {
-        $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
-        self.populateDropdown();
-        self.canvas.addEventListener('mousedown', self.clicked, false);
-        document.addEventListener('contextmenu', event => event.preventDefault());
-        // var asset = self.findSprite("Player1", "Character");
-        // asset.onload = function () {
-        //     dCtx.drawImage(asset, 40, 0, 40, 80, 60, 50, 40, 80);
-        //     console.log("image drawn");
-        //     var initialScreen = {
-        //         "imageData": dCtx.getImageData(0, 0, 1280, 720),
-        //         "background": "",
-        //         "tileMap": []                
-        //     }
-        //     var player = {
-        //         "name": "Player1",
-        //         "type": "Character",
-        //         "x": 60,
-        //         "y": 50
-        //     }
-        //     initialScreen.tileMap.push(player);
-        //     self.screenArray[0] = initialScreen;
-        //     console.log(self.screenArray);
-        // }
+    self.initiate = function (levelName) {
+        if(!levelName) levelName = "";
+        socket.emit('loadLevel', levelName);
 
-        for (var i = 0; i < self.numberOfScreens; i++) {
-            var destination = document.createElement('canvas');
-            destination.width = self.gameWidth;
-            destination.height = self.canvasHeight;
-            var dCtx = destination.getContext("2d");
-            dCtx.clearRect(0, 0, 1280, 720);
-            var item = {
-                "imageData": dCtx.getImageData(0, 0, 1280, 720),
-                "background": "",
-                "tileMap": []
+        socket.on('getLevelData', function(data){
+            if(data){
+                // TODO: load level given data
             }
-            self.screenArray[i] = item;
-        }
-        self.updateData();
+        
+            $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
+            self.populateDropdown();
+            self.canvas.addEventListener('mousedown', self.clicked, false);
+            document.addEventListener('contextmenu', event => event.preventDefault());
+            // var asset = self.findSprite("Player1", "Character");
+            // asset.onload = function () {
+            //     dCtx.drawImage(asset, 40, 0, 40, 80, 60, 50, 40, 80);
+            //     console.log("image drawn");
+            //     var initialScreen = {
+            //         "imageData": dCtx.getImageData(0, 0, 1280, 720),
+            //         "background": "",
+            //         "tileMap": []                
+            //     }
+            //     var player = {
+            //         "name": "Player1",
+            //         "type": "Character",
+            //         "x": 60,
+            //         "y": 50
+            //     }
+            //     initialScreen.tileMap.push(player);
+            //     self.screenArray[0] = initialScreen;
+            //     console.log(self.screenArray);
+            // }
+    
+            for (var i = 0; i < self.numberOfScreens; i++) {
+                var destination = document.createElement('canvas');
+                destination.width = self.gameWidth;
+                destination.height = self.canvasHeight;
+                var dCtx = destination.getContext("2d");
+                dCtx.clearRect(0, 0, 1280, 720);
+                var item = {
+                    "imageData": dCtx.getImageData(0, 0, 1280, 720),
+                    "background": "",
+                    "tileMap": []
+                }
+                self.screenArray[i] = item;
+            }
+            self.updateData();
+        });  
     }
 
     /* Shows the grid */
@@ -158,7 +167,6 @@ levelEditor = function () {
         self.tileMap = self.screenArray[self.currentScreen].tileMap;
         self.canvas.style.background = "url('" + self.background.loc + "')";
         self.ctx.putImageData(destination, 0, 0);
-        self.ctx.drawImage(asset, 1 * self.tileSize, 0, 40, 80, gridX, gridY, 40, 80);
         self.displayGrid();
     };
 
@@ -299,23 +307,28 @@ levelEditor = function () {
 
     /* Save level */
     self.saveLevel = function () {
-        $(".saveLevel").on("click", function () {
-            var levelName = $("#levelName").val();
-            self.screenArray.name = levelName;
-
-            /* Save data here */
-            if (levelName) {
-                $('#saveModal').modal('hide');
-            }
+        $(".saveLevel").on("click", function() {
+          var levelName =  $("#levelName").val();
+          self.screenArray.name = levelName;
+            
+          /* Save data here */
+         if (levelName) {
+            $('#saveModal').modal('hide');
+        }    
 
         console.log(self.tileMap)
         var tileMapToSend = self.tileMap.filter(function(item){
             return item!==null;
-        })
-        socket.emit('saveNewLevel', tileMapToSend, levelName); 
+        });
+        
+        var pack = {
+            tileMap : tileMapToSend,
+            levelName: levelName
+        }
+        socket.emit('saveNewLevel', pack); 
         });
     }
-
+    
     /* Populate level editor dropdown menu from array of assets */
     self.populateDropdown = function () {
         var items = [tileList, enemyList, backgroundList];

@@ -63,6 +63,15 @@ var startGame = function(data) {
 		});
 }
 
+var newLevelEditor = function(data){
+	var levelEditor = new LevelEditor(data);
+	levelEditor.readSavedFile();
+
+	data.socket.on('saveNewLevel', function(data){
+		levelEditor.writeToFile(data);
+	});
+}
+
 var io = require('socket.io')(serv,{});
 io.sockets.on('connection',function(socket) {
 	socket.id = Math.random();
@@ -122,7 +131,7 @@ io.sockets.on('connection',function(socket) {
 
 		// TODO: Get level for story mode;
 		//var myLevel = getLevelStoppedPreviously();
-		var myLevel = 1;
+		var myLevel = 2;
 
 		startGame({
 			level: myLevel,
@@ -151,12 +160,9 @@ io.sockets.on('connection',function(socket) {
 
 	});
 
-	socket.on('saveNewLevel', function(data, levelName){
-		var levelEditor = new LevelEditor(levelName);
-		levelEditor.writeToFile(data);
+	socket.on('loadLevel', function(levelName){
+		newLevelEditor({levelName: levelName, socket: socket});
 	});
-
-	socket.emit('loadLevel', )
 
 	socket.on('evalServer',function(data) {
 		if (!DEBUG)
