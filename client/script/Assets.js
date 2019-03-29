@@ -18,8 +18,8 @@ Level = function(data){
     			backgroundSound = new Sound(self.levelData[i].fileLocation);
     			continue;
     		}
-    		var e = new Entity(self.levelData[i]);
-    		entityManager.addEntity(e);
+    		//var e = new Entity(self.levelData[i]);
+    		entityManager.addEntity(self.levelData[i]);
     	}
     	return;
     }

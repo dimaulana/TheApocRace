@@ -15,6 +15,10 @@ function Entity(param) {
 	var self = {};
 	self.tag = param.tag;
 	self.properties = param;
+
+	if (!self.properties.id) {
+		self.properties.id = Math.random().toString(36).substr(2, 9);
+	}
 	
 	self.image = new Image();
 	self.image.src = self.properties.fileLocation;
@@ -37,9 +41,12 @@ function Entity(param) {
 function EntityManager() {
 	var self = {};
 	self.entities = [];
+	self.entitiesToAdd = [];
 
-	self.addEntity = function(entity) {
-		self.entities.push(entity);
+	self.addEntity = function(param) {
+		var entity = new Entity(param);
+		self.entitiesToAdd.push(entity);
+		return entity;
 	}
 
 	self.getEntities = function() {
@@ -51,6 +58,34 @@ function EntityManager() {
 			return e.properties.tag == tag;
 		})
 		return entity;
+	}
+
+	self.update = function() {
+		// Add new entities to the main entities array;
+		self.entitiesToAdd.forEach(function(e) {
+			self.entities.push(e);
+		});
+		self.entitiesToAdd = []; // clear entitiesToAdd;
+
+		// Check for dead entities;
+		var toRemove = [];
+		self.entities.forEach(function(e) {
+			if (e.properties.alive == null) return;
+
+			if (e.properties.alive == false) {
+				toRemove.push(e);
+			}
+		});
+
+		toRemove.forEach(function(e) {
+			self.removeEntity(e);
+		});
+	}
+
+	// Remove dead entities;
+	self.removeEntity = function(entity) {
+		self.entities.splice( self.entities.indexOf(entity), 1);
+		delete entity;
 	}
 
 	return self;
