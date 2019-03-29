@@ -3,7 +3,7 @@ script.type = 'text/javascript';
 document.getElementsByTagName('head')[0].appendChild(script);
 /* Declare the Menu pages */
 var mainMenu = ["Play", "Build", "Options", "Extras", "Sign Out"];
-var buildMenu = ["New Level", "Load Level", "Back"]; 
+var buildMenu = ["New Level", "Load Level", "Back"];
 var playMenu = ["Story Mode", "Custom", "Back"];
 var extraMenu = ["Credits", "Profile", "Back"];
 var optionsMenu = ["Controls","Sound", "Back"];
@@ -31,7 +31,7 @@ $(document).ready(function() {
                     break;
                 case "Options":
                     generateMenus("optionsMenu");
-                    break;            
+                    break;
                 case "Extras":
                     generateMenus("extraMenu");
 					// TODO::Fix here
@@ -39,8 +39,8 @@ $(document).ready(function() {
 					//$('.extras').show();
                     break;
                 case "Sign Out":
-                    /* Add account signed out function here. */ 
-                    $('#account').show();   
+                    /* Add account signed out function here. */
+                    $('#account').show();
             }
         }
         else if (currentPage === "extraMenu") {
@@ -48,9 +48,9 @@ $(document).ready(function() {
                 case "Credits":
                     $('.interface').load("client/credits.html");
                     break;
-                case "Profile": 
-                    $('.interface').load("ENTER PAGE URL HERE");
-                    break;          
+                case "Profile":
+                    $('.interface').load("client/profile.html");
+                    break;
                 case "Back":
                     generateMenus("mainMenu");
                     break;
@@ -61,9 +61,9 @@ $(document).ready(function() {
                 case "New Level":
                     $('.interface').load("client/levelEditor.html");
                     break;
-                case "Load Level": 
+                case "Load Level":
                     $('.interface').load("ENTER PAGE URL HERE");
-                    break;          
+                    break;
                 case "Back":
                     generateMenus("mainMenu");
                     break;
@@ -73,7 +73,7 @@ $(document).ready(function() {
             switch(menuClicked) {
                 case "Controls":
 				  $('.interface').load("client/controls.html");
-                  
+
                     break;
 				case "Sound":
                     $('.interface').load("# Add div container here");
@@ -139,5 +139,3 @@ function generateMenus(k) {
         $(items.join('')).appendTo(".btn-group-vertical");
         }
     }
-
-

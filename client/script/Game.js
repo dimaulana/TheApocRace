@@ -23,6 +23,11 @@ var score = {
 	topScore: 0 // Later to come from the database taken compared to other players
 }
 
+var username = {
+	text: "Player: ", x: 20, y: 40,
+	name: "",
+}
+
 var viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
 
 
@@ -48,7 +53,10 @@ function spawnBullet(entity) {
 	param.prevPos = param.pos;
 	param.lifespan = 20;
 	param.speed = {x: 30, y: 0};
+	param.scale = {x: 1.0, y: 1.0};
+	if (entity.properties.scale.x == -1.0) param.scale.x = -1.0;
 	param.alive = true;
+
 	param.fileLocation = entity.properties.weaponFile;
 	for (var i = 0; i < bulletsToSpawn; i++) {
 		entityManager.addEntity(param);
@@ -106,14 +114,12 @@ function updateEntities() {
 		if (entity.tag == "Bullet") {
 			entity.properties.clock++;
 			if (entity.properties.clock > entity.properties.lifespan) {
-				// TODO: Remove bullet
 				entity.properties.alive = false;
-				console.log("no more");
 			}
 			else {
 				entity.properties.prevPos = entity.properties.pos;
-				entity.properties.pos.x += entity.properties.speed.x;
-				console.log("here");
+				entity.properties.pos.x += (entity.properties.scale.x == -1.0) ? -entity.properties.speed.x : entity.properties.speed.x;
+				// TODO: Invert the image?
 			}
 		}
 
@@ -208,12 +214,27 @@ function canvasDraw() {
 	// Clear the canvas for refresh;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+	// Change background animation;
+	var background = entityManager.getEntityByTag("Background");
+	if (background) { // Check if background exists;
+		if (player.properties.pos.x >= 200 && player.properties.pos.x < 400) {
+			background.changeAnimation(1);
+		}
+		else if (player.properties.pos.x >= 400) {
+			background.changeAnimation(2);
+		}
+		else {
+			background.changeAnimation(0);
+		}
+		background.animation.update();
+		ctx.drawImage(background.image, background.animation.frame * 1280, 0, 1280, 720, 0, 0, 1280, 720);
+	} // Else just draw default background;
+
 	// Updating the score;
 	ctx.fillStyle= "white";
 	ctx.fillText(score.text + score.int, score.x, score.y);
 	
-	
-	ctx.fillText('Player: ' , 20,40);
+	ctx.fillText(username.text + username.name, username.x, username.y);
 	ctx.fillText('HP: ' + 0 ,20,70);
 	
 
@@ -321,6 +342,7 @@ startNewGame = function(){
 	socket.emit('storyMode', {});
 
 	socket.on('levelPack', function(data) {
+		username.name = data.username;
 		level = new Level(data);
 		level.loadLevel();
 

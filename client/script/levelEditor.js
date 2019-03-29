@@ -24,7 +24,7 @@ losAngeles3.src = "client/images/losAngeles3.png";
 losAngeles3.name = "LA 3";
 
 var backgroundList = [newyork1, newyork2, newyork3, losAngeles1, losAngeles2, losAngeles3];
-backgroundList.name = "backgrounds";
+backgroundList.name = "Background";
 
 /* Tiles */
 var tile1 = new Image();
@@ -40,7 +40,7 @@ tile3.src = "client/images/tile3.png";
 tile3.name = "Tile 3";
 
 var tileList = [tile1, tile2, tile3];
-tileList.name = "tiles";
+tileList.name = "Tile";
 
 /* Character & Enemies */
 var character = new Image();
@@ -54,7 +54,7 @@ enemy.spriteSrc = "client/images/enemyrun.png";
 enemy.name = "Enemy 1"
 
 var enemyList = [character, enemy];
-enemyList.name = "enemies";
+enemyList.name = "Character";
 
 levelEditor = function () {
     var self = {};
@@ -75,36 +75,48 @@ levelEditor = function () {
     self.columns = 1280 / self.tileSize;
     self.rows = 1280 / self.tileSize;
 
-    /* Set buffer tile to draw into current screen */
-    self.buffer = document.createElement('canvas');
-    self.bCtx = self.buffer.getContext("2d");
-    self.buffer.width = self.canvasWidth;
-    self.buffer.height = self.canvasHeight;
-
     /* initiate tile map for each screen */
     self.screenArray = {};
 
     /* Initiate variables */
-    self.backgroundLoc = "";
+    self.background = {};
     self.tileMap = [];
     self.pickedTile = {};
     self.currentScreen = 0;
-    self.itemId = 0;
-    self.mouseDown = false;
 
 
     /* Initiates the first empty canvas */
     self.initiate = function () {
-        $("#screenCounter").html(self.currentScreen+1+"/"+self.numberOfScreens);
+        $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
         self.populateDropdown();
         self.canvas.addEventListener('mousedown', self.clicked, false);
         document.addEventListener('contextmenu', event => event.preventDefault());
+        // var asset = self.findSprite("Player1", "Character");
+        // asset.onload = function () {
+        //     dCtx.drawImage(asset, 40, 0, 40, 80, 60, 50, 40, 80);
+        //     console.log("image drawn");
+        //     var initialScreen = {
+        //         "imageData": dCtx.getImageData(0, 0, 1280, 720),
+        //         "background": "",
+        //         "tileMap": []                
+        //     }
+        //     var player = {
+        //         "name": "Player1",
+        //         "type": "Character",
+        //         "x": 60,
+        //         "y": 50
+        //     }
+        //     initialScreen.tileMap.push(player);
+        //     self.screenArray[0] = initialScreen;
+        //     console.log(self.screenArray);
+        // }
 
         for (var i = 0; i < self.numberOfScreens; i++) {
             var destination = document.createElement('canvas');
             destination.width = self.gameWidth;
             destination.height = self.canvasHeight;
             var dCtx = destination.getContext("2d");
+            dCtx.clearRect(0, 0, 1280, 720);
             var item = {
                 "imageData": dCtx.getImageData(0, 0, 1280, 720),
                 "background": "",
@@ -132,9 +144,9 @@ levelEditor = function () {
 
     /* Saves the data into the main array */
     self.updateData = function () {
-        self.screenArray[self.currentScreen].imageData = self.ctx.getImageData(0, 0, 1280, self.canvasHeight);
+        self.screenArray[self.currentScreen].imageData = self.ctx.getImageData(0, 0, 1280, 720);
         self.screenArray[self.currentScreen].tileMap = self.tileMap;
-        self.screenArray[self.currentScreen].background = self.backgroundLoc;
+        self.screenArray[self.currentScreen].background = self.background;
         self.displayGrid();
     };
 
@@ -142,18 +154,16 @@ levelEditor = function () {
     self.transition = function () {
         var destination = self.screenArray[self.currentScreen].imageData;
         self.tileMap = [];
-        self.backgroundLoc = self.screenArray[self.currentScreen].background;
+        self.background = self.screenArray[self.currentScreen].background;
         self.tileMap = self.screenArray[self.currentScreen].tileMap;
-        self.canvas.style.background = "url('" + self.backgroundLoc + "')";
+        self.canvas.style.background = "url('" + self.background.loc + "')";
         self.ctx.putImageData(destination, 0, 0);
+        self.ctx.drawImage(asset, 1 * self.tileSize, 0, 40, 80, gridX, gridY, 40, 80);
         self.displayGrid();
     };
 
-
-
-
     self.setBackground = function () {
-        self.canvas.style.background = "url('" + self.backgroundLoc + "')";
+        self.canvas.style.background = "url('" + self.background.loc + "')";
         self.updateData();
     }
 
@@ -181,7 +191,7 @@ levelEditor = function () {
     /* Find the retrieved asset into loaded asset */
     self.findSprite = function (name, type) {
         var sprite = new Image();
-        if (type === "enemies") {
+        if (type === "Character") {
             for (var i = 0; i < enemyList.length; i++) {
                 if (enemyList[i].name.replace(/\s/g, '') === name) {
                     sprite.src = enemyList[i].spriteSrc;
@@ -189,7 +199,7 @@ levelEditor = function () {
                 }
             }
         }
-        if (type === "tiles") {
+        if (type === "Tile") {
             for (var i = 0; i < tileList.length; i++) {
                 if (tileList[i].name.replace(/\s/g, '') === name) {
                     sprite.src = tileList[i].src;
@@ -197,7 +207,6 @@ levelEditor = function () {
                 }
             }
         }
-
     }
 
     /* Draws asset into current canvas */
@@ -205,87 +214,99 @@ levelEditor = function () {
         var mouse = self.mousePosition(self.canvas, e);
         let gridX = Math.floor(mouse.x / self.tileSize) * self.tileSize;
         let gridY = Math.floor(mouse.y / self.tileSize) * self.tileSize;
-        if (mouse.y < 720 && mouse.x < 1280) {
-            let id = self.itemId;
-            var item = {
-                "id": id,
-                "name": self.pickedTile.name,
-                "type": self.pickedTile.type,
-                "x": gridX,
-                "y": gridY,
-                "height": self.pickedTile.height,
-                "width": self.pickedTile.width
-            }
-            self.ctx.clearRect(gridX, gridY, item.width, item.height);
-            let tileX = Math.floor(mouse.x / item.width);
-            let tileY = Math.floor(mouse.y / item.width);
-            let targetTile = tileY * self.columns + tileX;
-            var asset = self.findSprite(self.pickedTile.name, self.pickedTile.type);
-            if (item.type === "enemies") {
-                item.img = asset.src.substring(22);
-                asset.onload = function () {
-                    self.ctx.drawImage(asset, 0, 0, 40, 80, gridX, gridY, item.width, item.height);
-                    self.tileMap[targetTile] = item;
-                    self.tileMap[targetTile + self.columns] = item;
+        let tileX = Math.floor(mouse.x / 40);
+        let tileY = Math.floor(mouse.y / 40);
+        let targetTile = tileY * self.columns + tileX;
+        if (self.validate(targetTile)) {
+            if (mouse.y < 720 && mouse.x < 1280) {
+                var item = {
+                    "name": self.pickedTile.name,
+                    "type": self.pickedTile.type,
+                    "x": gridX,
+                    "y": gridY,
+                }
+                self.ctx.clearRect(gridX, gridY, 40, 40);
+                var asset = self.findSprite(self.pickedTile.name, self.pickedTile.type);
+                if (item.type === "Character") {
+                    item.img = asset.src.substring(22);
+                    item.tilePos = targetTile;
+                    item.tilePos1 = targetTile + self.columns;
+                    self.tileMap.push(item);
+                    asset.onload = function () {
+                        self.ctx.drawImage(asset, 1 * self.tileSize, 0, 40, 80, gridX, gridY, 40, 80);
+                    }
+                }
+                if (item.type === "Tile") {
+                    item.img = asset.src.substring(22);
+                    item.tilePos = targetTile;
+                    self.tileMap.push(item);
+                    asset.onload = function () {
+                        self.ctx.drawImage(asset, gridX, gridY, 40, 40);
+                    }
                 }
             }
-            if (item.type === "tiles") {
-                item.img = asset.src.substring(22);
-                asset.onload = function () {
-                    self.ctx.drawImage(asset, gridX, gridY, item.width, item.height);
-                    self.tileMap[targetTile] = item;
-                }
-            }
-            self.itemId++;
+            self.updateData();
         }
-        self.updateData();
+
     }
 
+    /* Makes sure no tiles are in the way */
+    self.validate = function (targetTile) {
+        for (var i = 0; i < self.tileMap.length; i++) {
+            if (self.tileMap[i].tilePos === targetTile || self.tileMap[i].tilePos1 === targetTile) {
+                alert("You cannot draw on a tile with existing objects.");
+                return false;
+            }
+            if (self.tileMap[i].name === "Player1") {
+                alert("You cannot modify player position.");
+                return false;
+            }
+        }
+        return true;
+    }
 
     /* Delete drawn asset item */
     self.removeItem = function (e) {
-        self.mouseDown = true;
         var mouse = self.mousePosition(self.canvas, e);
         let tileX = Math.floor(mouse.x / self.tileSize);
         let tileY = Math.floor(mouse.y / self.tileSize);
         let targetTile = tileY * self.columns + tileX;
-        if (self.tileMap[targetTile]) {
-            var topX = self.tileMap[targetTile].x;
-            var topY = self.tileMap[targetTile].y;
-            var height = self.tileMap[targetTile].height;
-            var width = self.tileMap[targetTile].width;
-            var id = self.tileMap[targetTile].id;
-            var type = self.tileMap[targetTile].type;
-
-            if (mouse.y < 720 && mouse.x < 1280) {
-                self.ctx.clearRect(topX, topY, width, height);
-                if (type === "enemies") {
-                    for (var i = 0; i < self.tileMap.length; i++) {
-                        if (self.tileMap[i]) {
-                            if (self.tileMap[i].id === id) {
-                                delete self.tileMap[i];
-                            }
-                        }
-                    }
-                } else if (type === "tiles") {
-                    delete self.tileMap[targetTile];
+        var height = 40;
+        var width = 40;
+        var targetItem;
+        var location;
+        // if (validate(targetTile)) {
+            for (var i = 0; i < self.tileMap.length; i++) {
+                if (self.tileMap[i].tilePos === targetTile || self.tileMap[i].tilePos1 === targetTile) {
+                    targetItem = self.tileMap[i];
+                    location = i;
                 }
             }
-        }
-        self.updateData();
+            if (targetItem) {
+                var topX = targetItem.x;
+                var topY = targetItem.y;
+                if (mouse.y < 720 && mouse.x < 1280) {
+                    if (targetItem.type === "Character") {
+                        height = 80;
+                    }
+                    self.ctx.clearRect(topX, topY, width, height);
+                    self.tileMap.splice(location, 1);
+                }
+            }
+            self.updateData();
+        // }
     }
-
 
     /* Save level */
     self.saveLevel = function () {
-        $(".saveLevel").on("click", function() {
-          var levelName =  $("#levelName").val();
-          self.screenArray.name = levelName;
-            
-          /* Save data here */
-         if (levelName) {
-            $('#saveModal').modal('hide');
-        }    
+        $(".saveLevel").on("click", function () {
+            var levelName = $("#levelName").val();
+            self.screenArray.name = levelName;
+
+            /* Save data here */
+            if (levelName) {
+                $('#saveModal').modal('hide');
+            }
 
         console.log(self.tileMap)
         var tileMapToSend = self.tileMap.filter(function(item){
@@ -331,7 +352,7 @@ levelEditor = function () {
             }
             next.removeAttribute('disabled');
         }
-        $("#screenCounter").html(self.currentScreen+1+"/"+self.numberOfScreens);
+        $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
         self.transition();
     });
 
@@ -339,14 +360,15 @@ levelEditor = function () {
     $(document).on("click", ".objects li", function () {
         var selectedOption = $(this).attr("id");
         switch (selectedOption) {
-            case "back":
+            case "Back":
                 $(".interface").html("");
+                $(".menu").html("");
                 generateMenus('buildMenu');
                 break;
-            case "save":
+            case "Save":
                 self.saveLevel();
                 break;
-            case "play":
+            case "Play":
                 console.log("play game");
                 break;
         }
@@ -357,36 +379,41 @@ levelEditor = function () {
         var imageSrc = $("img", this).attr("src");
         var selectedDropdown = $(this).closest("li").attr("id");
         var imageId = $(this).closest("a").attr("id");
-
         switch (selectedDropdown) {
-            case "tiles":
+            case "Tile":
                 var tile = {
                     "loc": imageSrc.substring(22),
                     "name": imageId,
                     "type": selectedDropdown,
-                    "height": 40,
-                    "width": 40
                 };
                 self.pickedTile = tile;
                 $(".selectedTile").attr("src", imageSrc);
-                $("#tiles").css({ "background-color" : "#FF8000"});
-                $("#enemies").css({"background-color" : "#173B0B"});
+                $("#Tile").css({
+                    "background-color": "#FF8000"
+                });
+                $("#Character").css({
+                    "background-color": "#173B0B"
+                });
                 break;
-            case "enemies":
+            case "Character":
                 var tile = {
                     "loc": imageSrc.substring(22),
                     "name": imageId,
                     "type": selectedDropdown,
-                    "height": 80,
-                    "width": 40
                 };
                 self.pickedTile = tile;
                 $(".selectedChar").attr("src", imageSrc);
-                $("#enemies").css({ "background-color" : "#FF8000"  });
-                $("#tiles").css({ "background-color" : "#173B0B"});
+                $("#Character").css({
+                    "background-color": "#FF8000"
+                });
+                $("#Tile").css({
+                    "background-color": "#173B0B"
+                });
                 break;
-            case "backgrounds":
-                self.backgroundLoc = imageSrc.substring(22);
+            case "Background":
+                self.background.type = "Background";
+                self.background.name = imageId;
+                self.background.loc = imageSrc.substring(22);
                 $(".selectedBg").attr("src", imageSrc);
                 self.setBackground();
                 break;
