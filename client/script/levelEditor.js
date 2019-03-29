@@ -291,7 +291,7 @@ levelEditor = function () {
         var tileMapToSend = self.tileMap.filter(function(item){
             return item!==null;
         })
-        socket.emit('saveNewLevel', tileMapToSend); 
+        socket.emit('saveNewLevel', tileMapToSend, levelName); 
         });
     }
 

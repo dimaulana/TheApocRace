@@ -10,6 +10,7 @@
 require('./server/DatabaseManager');
 var AssetManager = require('./server/AssetManager.js');
 var GamePlay = require('./server/GamePlay');
+var LevelEditor = require('./server/LevelEditor');
 var fs = require ('fs');
 var express = require('express');
 var app = express();
@@ -150,11 +151,12 @@ io.sockets.on('connection',function(socket) {
 
 	});
 
-	socket.on('saveNewLevel', function(data){
-		if(data !== null){
-			fs.writeFileSync('leveledited.json', JSON.stringify(data));
-		}
+	socket.on('saveNewLevel', function(data, levelName){
+		var levelEditor = new LevelEditor(levelName);
+		levelEditor.writeToFile(data);
 	});
+
+	socket.emit('loadLevel', )
 
 	socket.on('evalServer',function(data) {
 		if (!DEBUG)
