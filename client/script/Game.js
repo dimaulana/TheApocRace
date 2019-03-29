@@ -48,8 +48,8 @@ function spawnBullet(entity) {
 	param.prevPos = param.pos;
 	param.lifespan = 20;
 	param.speed = {x: 30, y: 0};
-
-	if (entity.properties.scale.x == -1.0) param.scale = {x: -1.0, y: 1.0};
+	param.scale = {x: 1.0, y: 1.0};
+	if (entity.properties.scale.x == -1.0) param.scale.x = -1.0;
 	param.alive = true;
 
 	param.fileLocation = entity.properties.weaponFile;
