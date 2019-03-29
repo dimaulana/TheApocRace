@@ -1,4 +1,7 @@
 [
+    {"type": "Player", "x": 60, "y": 500},
+    {"type": "Enemy", "x": 500, "y": 500, "ai": "Basic", "frame_sets":[[0], [1]]},
+    {"type": "Enemy", "x": 800, "y": 500, "ai": "FollowPlayer", "followSpeed": 5, "frame_sets":[[0], [1]]},
     {"type": "Tile2", "x": 0, "y": 679},
     {"type": "Tile2", "x": 40, "y": 679},
     {"type": "Tile2", "x": 80, "y": 679},

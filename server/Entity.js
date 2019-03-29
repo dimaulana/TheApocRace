@@ -4,8 +4,8 @@ const components = require('./ComponentEnum.js');
 class Entity{
 
     constructor(tag){
-        this.tag = tag,
-        this.id = this.getUniqueId(),
+        this.tag = tag;
+        this.id = this.getUniqueId();
         this.components = new Array();
     }
 
@@ -13,6 +13,8 @@ class Entity{
     // For now everything is packed into components.
     getInitPack() {
         var param = {};
+        param.tag = this.tag;
+        param.id = this.id;
 
         this.components.forEach(function(component) {
 
@@ -23,26 +25,57 @@ class Entity{
                 param.speed = component.speed;
                 param.speedMax = component.speedMax;
                 param.angle = component.angle;
+            }
+            if (component.ofType(components.GRAVITY)) {
                 param.gravity = component.gravity;
             }
-            else if (component.ofType(components.LIFESPAN)) {
+
+            if (component.ofType(components.LIFESPAN)) {
                 param.lifespan = component.lifespan;
             }
-            else if (component.ofType(components.STATS)) {
+
+            if (component.ofType(components.STATS)) {
                 param.score = component.score;
                 param.hp = component.hp;
                 param.lives = component.lives;
                 param.alive = component.alive;
             }
-            else if (component.ofType(components.DIMENSION)) {
+
+            if (component.ofType(components.DIMENSION)) {
                 param.width = component.width;
                 param.height = component.height;
             }
-            else if (component.ofType(components.INPUT)) {
-                // Not needed now!
+
+            if (component.ofType(components.INPUT)) {
+                param.jump = component.jump;
+                param.left = component.left;
+                param.right = component.right;
+                param.shoot = component.shoot;
+                param.canShoot = component.canShoot;
             }
-            else {
-                // Do nothing;
+
+            if (component.ofType(components.FOLLOWPLAYER)) {
+                param.followSpeed = component.speed;
+            }
+
+            if (component.ofType(components.PATROL)) {
+                param.patrolSpeed = component.speed;
+                param.posArray = component.positons;
+            }
+            if (component.ofType(components.SPRITE)) {
+                param.fileLocation = component.location;
+
+                if (component.frame_sets) {
+                    param.frame_sets = component.frame_sets;
+                }
+            }
+
+            if (component.ofType(components.WEAPON)) {
+                param.weaponClock = component.clock;
+                param.weaponName = component.name;
+                param.weaponMap = component.map;
+                param.weaponInterval = component.coolDown;
+                param.weaponFile = component.imageLoc;
             }
         });
         return param;
@@ -85,12 +118,15 @@ class Entity{
         return null;
     }
 
-    addComponent(type) {
+    addComponent(type, param) {
         var c;
 
         switch (type) {
             case components.TRANSFORM:
-                c = new Component.Transform(); break;
+                c = new Component.Transform(param); break;
+
+            case components.GRAVITY:
+                c = new Component.Gravity(); break;
 
             case components.LIFESPAN:
                 c = new Component.Lifespan(); break;
@@ -102,7 +138,20 @@ class Entity{
                 c = new Component.Input(); break;
 
             case components.DIMENSION:
-                c = new Component.Dimension(); break;
+                c = new Component.Dimension(param); break;
+
+            case components.FOLLOWPLAYER:
+                c = new Component.FollowPlayer(param); break;
+
+            case components.PATROL:
+                c = new Component.Patrol(param); break;
+
+            case components.SPRITE:
+                c = new Component.Sprite(param); break;
+
+            case components.WEAPON:
+                c = new Component.Weapon(param); break;
+
 
             default:
                 console.log("Type: ", type , " not found");

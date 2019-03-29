@@ -18,76 +18,112 @@ class GamePlay {
 	}
 
 	init() {
-		this.spawnPlayer();
-		var playerPack = this.player.getInitPack();
-
-		// Get the player image location;
-		playerPack.fileLocation = this.getMemoryLocationForAsset([{"type": "Player"}]).Player;
-
-		this.socket.emit('initPack', playerPack);
-
 		var levelPack = {};
 		levelPack.name = this.name;
 		levelPack.file = this.file;
-		levelPack.data = this.getLevelData();
+		levelPack.data = [];
 
-		if (levelPack.data !== undefined || levelPack.data.length > 0) {
-			levelPack.assetLocation = this.getMemoryLocationForAsset(levelPack.data);
-		}
+		this.loadLevelData(this.getLevelData());
+
+		this.entityManager.getEntities().forEach(function(entity) {
+			// Get init pack for all the entities;
+			levelPack.data.push(entity.getInitPack());
+		});
 
 		this.socket.emit('levelPack', levelPack);
 	}
 
-	spawnPlayer() {
-		this.player = this.entityManager.addEntity("player");
-		this.player.addComponent(components.TRANSFORM);
+	spawnPlayer(data) {
+		this.player = this.entityManager.addEntity("Player");
+		this.player.addComponent(components.TRANSFORM, {x: data.x, y: data.y, speedMax: 10});
+		this.player.addComponent(components.GRAVITY);
 		this.player.addComponent(components.INPUT);
 		this.player.addComponent(components.STATS);
-		this.player.addComponent(components.DIMENSION);
+		this.player.addComponent(components.WEAPON, {loc: this.assetManager.getTexture("Bullet")});
+		this.player.addComponent(components.DIMENSION, {w: 40, h: 80});
+		this.player.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Player"), frame_sets: [[0], [1], [2, 3, 4, 5], [6, 7, 8, 9]]});
+	}
 
-		// All the components;
+	spawnEnemy(data) {
+		var enemy = this.entityManager.addEntity("Enemy");
+		enemy.addComponent(components.TRANSFORM, {x: data.x, y: data.y, speedMax: 10});
+		enemy.addComponent(components.GRAVITY);
+		enemy.addComponent(components.STATS);
+		enemy.addComponent(components.WEAPON, {loc: this.assetManager.getTexture("Bullet")});
+		enemy.addComponent(components.DIMENSION, {w: 40, h: 80});
+		enemy.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Enemy"),
+											   frame_sets: data.frame_sets});
+
+		if (data.ai === "Basic") {
+			// Do nothing??
+		}
+		else if (data.ai === "FollowPlayer") {
+			enemy.addComponent(components.FOLLOWPLAYER, data.followSpeed);
+		}
+		else if (data.ai === "Patrol") {
+			enemy.addComponent(components.PATROL, {pos: data.patrolPos, speed: data.patrolSpeed});
+		}
+	}
+
+	spawnTile(data) {
+		var tile = this.entityManager.addEntity(data.type);
+		tile.addComponent(components.TRANSFORM, {x: data.x, y: data.y});
+		tile.addComponent(components.DIMENSION, {w: 40, h: 40});
+		tile.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(data.type)});
 	}
 
 	getLevelData(){
-		let rawdata = fs.readFileSync('server/bin/' + this.file);  
-		let json = JSON.parse(rawdata); 
-		return json;
+		let rawdata = fs.readFileSync('server/bin/' + this.file);
+		let json = JSON.parse(rawdata);
+		return json;  
 	}
 
-	getMemoryLocationForAsset(levelData){
+	loadLevelData(levelData){
 		var locationsMap = {}
 		var loc;
 		var type;
 
-		for(var i = 0; i < levelData.length; i++){
-			type = levelData[i]["type"];
+		for (var i = 0; i < levelData.length; i++) {
 			// Get all the types checked;
+			type = levelData[i].type;
 			switch(type) {
 				case "Player":
+					this.spawnPlayer(levelData[i]);
+				break;
+
+				case "Enemy":
+					this.spawnEnemy(levelData[i]);
+				break;
+
 				case "Tile1":
 				case "Tile2":
 				case "Tile3":
+					this.spawnTile(levelData[i]);
+				break;
+
 				case "NY1":
 				case "NY2":
 				case "NY3":
 				case "LA1":
 				case "LA2":
 				case "LA3":
-					loc = this.assetManager.getTexture(type);
-					locationsMap[type] = loc;
+					// TODO: How to handle background picture?
+					var background = this.entityManager.addEntity(type);
+					background.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(type)});
+
 				break;
 
 				case "Sound":
-					loc = this.assetManager.getSound("StoryMode");
-					locationsMap.Sound = loc;
+					var sound = this.entityManager.addEntity(type);
+					sound.addComponent(components.SPRITE, {loc: this.assetManager.getSound(levelData[i].mode)});
+
  				break;
 
 				default:
 					console.log("Could not find the asset type: " + type);
-					break;		
+					break;
 			}
-		}
-		return locationsMap;
+		};
 	}
 };
 

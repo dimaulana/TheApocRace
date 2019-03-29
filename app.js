@@ -150,8 +150,7 @@ io.sockets.on('connection',function(socket) {
 
 	});
 
-	socket.on('levelEditSaved', function(data){
-		console.log(data);
+	socket.on('saveNewLevel', function(data){
 		if(data !== null){
 			fs.writeFileSync('leveledited.json', JSON.stringify(data));
 		}
