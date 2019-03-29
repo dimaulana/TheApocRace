@@ -40,7 +40,7 @@ class GamePlay {
 		this.player.addComponent(components.INPUT);
 		this.player.addComponent(components.STATS);
 		this.player.addComponent(components.DIMENSION, {w: 40, h: 80});
-		this.player.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Player"), frame_sets: [[0], [1], [2, 3, 4], [5, 6, 7]]});
+		this.player.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Player"), frame_sets: [[0], [1], [2, 3, 4, 5], [6, 7, 8, 9]]});
 	}
 
 	spawnEnemy(data) {
