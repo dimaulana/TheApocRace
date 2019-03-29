@@ -46,7 +46,7 @@ $(document).ready(function() {
         else if (currentPage === "extraMenu") {
             switch(menuClicked) {
                 case "Credits":
-                    $('.interface').load("client/credits.html");
+                   $('.interface').load("client/credits.html");
                     break;
                 case "Profile": 
                     $('.interface').load("ENTER PAGE URL HERE");
@@ -72,8 +72,7 @@ $(document).ready(function() {
 		else if (currentPage === "optionsMenu") {
             switch(menuClicked) {
                 case "Controls":
-				  $('.interface').load("client/controls.html");
-                  
+    			    $('.interface').load("client/controls.html");
                     break;
 				case "Sound":
                     $('.interface').load("# Add div container here");

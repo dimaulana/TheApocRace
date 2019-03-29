@@ -381,6 +381,24 @@ var isPaused = function(){
 	ctx.fillStyle = "red";
 	ctx.fillText('GAME PAUSED' ,500, 150);
 	//Add buttons
+var buttonX = 520;
+var buttonY = 300;
+var buttonW = 160;
+var buttonH = 50;
+//Setting up in-game buttons 
+
+ctx.fillStyle = "blue";
+//Resume button
+ctx.fillRect(buttonX, buttonY, buttonW, buttonH);
+//Save button
+ctx.fillRect(520, 370, buttonW, buttonH);
+//Quit button
+ctx.fillRect(520, 440, buttonW, buttonH);
+ctx.fillStyle= "yellow";
+ctx.fillText("RESUME",540,340);
+ctx.fillText("SAVE",545,410);
+ctx.fillText("QUIT",545,480);
+
 
 	ctx.strokeStyle = "blue";
 	ctx.fillStyle = "rgba(0,0,0,0.01)";
