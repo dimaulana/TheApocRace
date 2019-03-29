@@ -1,6 +1,6 @@
 /* Game.js starts and sets the game at the front end;
 
-   Contributors: Hussein Parpia, Sahil Anand
+   Contributors: Hussein Parpia, Sahil Anand,Victor Mutandwa
 */
 
 // Get canvas element
@@ -211,6 +211,11 @@ function canvasDraw() {
 	// Updating the score;
 	ctx.fillStyle= "white";
 	ctx.fillText(score.text + score.int, score.x, score.y);
+	
+	
+	ctx.fillText('Player: ' , 20,40);
+	ctx.fillText('HP: ' + 0 ,20,70);
+	
 
 	// Draw player;
 	/** Not using for now;
