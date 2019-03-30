@@ -228,12 +228,13 @@ function canvasDraw() {
 		// }
 
 		//background.animation.update();
-		if (player.properties.speed.x > 0) background.frame++
+		if (player.properties.speed.x > 0 && player.properties.pos.x > canvas.width/2) background.frame++
 		else if (player.properties.speed.x < 0) {
 			background.frame--
 			if (background.frame < 0) background.frame = 0;
 		}
 		ctx.drawImage(background.image, background.frame, 0, 1280, 720, 0, 0, 1280, 720);
+		// ctx.drawImage(background.image, viewport.x, 0, 1280, 720, 0, 0, 1280, 720);
 	} // Else just draw default background;
 
 	// Updating the score;
