@@ -85,6 +85,8 @@ levelEditor = function () {
     self.pickedTile = {};
     self.currentScreen = 0;
     self.mouseDown;
+    self.viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
+
 
 
     /* Initiates the first empty canvas */
@@ -96,7 +98,6 @@ levelEditor = function () {
             if (data) {
                 // TODO: load level given data
             }
-
             $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
             self.populateDropdown();
             self.canvas.addEventListener('click', self.clicked);
@@ -169,6 +170,7 @@ levelEditor = function () {
         self.tileMap = self.screenArray[self.currentScreen].tileMap;
         self.canvas.style.background = "url('" + self.background.loc + "')";
         self.ctx.putImageData(destination, 0, 0);
+        viewport.update("Editor", self.currentScreen);
         self.updateData();
     };
 
@@ -191,15 +193,9 @@ levelEditor = function () {
     /* Handles left and right click for drawing */
     self.clicked = function (e) {
         self.drawItem(e);
-        // if (e.button === 0) {
-        //     self.drawItem(e);
-        // }
-        // if (e.button === 2) {
-        //     self.removeItem(e);
-        // }
     }
 
-    self.down = function(e) {
+    self.down = function (e) {
         self.mouseDown = true;
         if (e.button === 2) self.removeItem(e);
         else return;
@@ -211,12 +207,12 @@ levelEditor = function () {
         }
     }
 
-    self.reset = function(e) {
+    self.reset = function (e) {
         self.mouseDown = false;
     }
 
- 
- 
+
+
     /* Find the retrieved asset into loaded asset */
     self.findSprite = function (name, type) {
         var sprite = new Image();
@@ -240,7 +236,6 @@ levelEditor = function () {
 
     /* Draws asset into current canvas */
     self.drawItem = function (e) {
-        console.log("hello")
         var mouse = self.mousePosition(self.canvas, e);
         let gridX = Math.floor(mouse.x / self.tileSize) * self.tileSize;
         let gridY = Math.floor(mouse.y / self.tileSize) * self.tileSize;
@@ -253,7 +248,7 @@ levelEditor = function () {
                 var item = {
                     "name": self.pickedTile.name,
                     "type": self.pickedTile.type,
-                    "x": gridX,
+                    "x": gridX + viewport.x,
                     "y": gridY,
                 }
                 self.ctx.clearRect(gridX, gridY, 40, 40);
@@ -268,14 +263,14 @@ levelEditor = function () {
                     }
                 }
                 if (item.type === "Tile") {
-                        item.img = asset.src.substring(22);
-                        item.tilePos = targetTile;
-                        self.tileMap.push(item);
-                        asset.onload = function () {
-                            self.ctx.drawImage(asset, gridX, gridY, 40, 40);    
-                        }
-                    
-       
+                    item.img = asset.src.substring(22);
+                    item.tilePos = targetTile;
+                    self.tileMap.push(item);
+                    asset.onload = function () {
+                        self.ctx.drawImage(asset, gridX, gridY, 40, 40);
+                    }
+
+
                 }
             }
             self.updateData();
