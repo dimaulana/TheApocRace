@@ -344,7 +344,7 @@ canvas.addEventListener('click', function(event) {
     // Executes if button was clicked!
 		console.log('resume was clicked!');
 		//$('.paused').hide();
-		paused=false;
+ 		paused=false;
 	}
 	///save button save listener
 	else if (
@@ -366,8 +366,7 @@ canvas.addEventListener('click', function(event) {
   ) {
     // Executes if button was clicked!
 		gameStarted=false;
-
-		
+			//TODO: FIX HERE :Clear all canvas and previous game history
 		$('.star').show();
 		$(".interface").html("");
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
