@@ -80,7 +80,6 @@ levelEditor = function () {
 
     /* Initiate variables */
     self.background = {};
-    self.imageData;
     self.tileMap = [];
     self.pickedTile = {};
     self.currentScreen = 0;
@@ -105,9 +104,6 @@ levelEditor = function () {
             self.canvas.addEventListener('mousedown', self.down);
             self.canvas.addEventListener('mousemove', self.move);
             self.canvas.addEventListener('mouseup', self.reset);
-
-
-
 
             for (var i = 0; i < self.numberOfScreens; i++) {
                 var destination = document.createElement('canvas');
@@ -159,7 +155,6 @@ levelEditor = function () {
         self.screenArray[self.currentScreen].tileMap = self.tileMap;
         self.screenArray[self.currentScreen].background = self.background;
         self.displayGrid();
-        console.log(self.screenArray);
     };
 
     /* Function to change the screen */
@@ -282,10 +277,13 @@ levelEditor = function () {
     self.validate = function (targetTile) {
         if (!self.pickedTile || Object.keys(self.pickedTile).length === 0) {
             alert("Please elect an object to draw.");
-            // return false;
+            return false;
         }
         for (var i = 0; i < self.tileMap.length; i++) {
-            if (self.tileMap[i].tilePos === targetTile || self.tileMap[i].tilePos1 === targetTile || self.tileMap[i].tilePos === targetTile + self.columns) {
+            if (self.tileMap[i].tilePos === targetTile || self.tileMap[i].tilePos1 === targetTile) {
+                return false;
+            }
+            if (self.pickedTile.type === "Character" && self.tileMap[i].tilePos === (targetTile+self.columns)) {
                 return false;
             }
         }
@@ -349,6 +347,21 @@ levelEditor = function () {
             socket.emit('saveNewLevel', pack);
         });
     }
+    
+    /* Load Level */
+    self.loadLevel = function () {
+        // for (var i = 0; i < self.numberOfScreens; i++) {
+        //     var destination = document.createElement('canvas');
+        //     var dCtx = destination.getContext("2d");
+        //     var item = {
+        //         "imageData": dCtx.getImageData(0, 0, 1280, 720),
+        //         "background": {},
+        //         "tileMap": []
+        //     }
+        //     self.screenArray[i] = item;
+        // }
+    }
+
 
     /* Populate level editor dropdown menu from array of assets */
     self.populateDropdown = function () {
@@ -460,5 +473,6 @@ levelEditor = function () {
     /* Starters */
     self.initiate();
     return self;
-
 };
+
+
