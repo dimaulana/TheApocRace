@@ -84,6 +84,7 @@ levelEditor = function () {
     self.tileMap = [];
     self.pickedTile = {};
     self.currentScreen = 0;
+    self.mouseDown;
 
 
     /* Initiates the first empty canvas */
@@ -98,8 +99,14 @@ levelEditor = function () {
 
             $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
             self.populateDropdown();
-            self.canvas.addEventListener('mousedown', self.clicked, false);
+            self.canvas.addEventListener('click', self.clicked);
             document.addEventListener('contextmenu', event => event.preventDefault());
+            self.canvas.addEventListener('mousedown', self.down);
+            self.canvas.addEventListener('mousemove', self.move);
+            self.canvas.addEventListener('mouseup', self.reset);
+
+
+
 
             for (var i = 0; i < self.numberOfScreens; i++) {
                 var destination = document.createElement('canvas');
@@ -113,7 +120,6 @@ levelEditor = function () {
             }
 
             /* Sets up default player position */
-
             var asset = self.findSprite("Player1", "Character");
             var player = {
                 "name": "Player1",
@@ -127,7 +133,7 @@ levelEditor = function () {
             asset.onload = function () {
                 self.ctx.drawImage(asset, 0, 0, 40, 80, 40, 560, 40, 80);
                 self.updateData();
-            };         
+            };
         });
     }
 
@@ -157,13 +163,13 @@ levelEditor = function () {
 
     /* Function to change the screen */
     self.transition = function () {
-        // self.ctx.clearRect(0, 0, 1280, 720);
+        self.ctx.clearRect(0, 0, 1280, 720);
         var destination = self.screenArray[self.currentScreen].imageData;
         self.background = self.screenArray[self.currentScreen].background;
         self.tileMap = self.screenArray[self.currentScreen].tileMap;
         self.canvas.style.background = "url('" + self.background.loc + "')";
         self.ctx.putImageData(destination, 0, 0);
-        self.displayGrid();
+        self.updateData();
     };
 
     self.setBackground = function () {
@@ -172,26 +178,45 @@ levelEditor = function () {
     }
 
     /* Translates mouse position from normal coordinates to canvas coordinates */
-    self.mousePosition = function (canvas, evt) {
+    self.mousePosition = function (canvas, e) {
         var rect = canvas.getBoundingClientRect(),
             scaleX = canvas.width / rect.width,
             scaleY = canvas.height / rect.height;
         return {
-            x: (evt.clientX - rect.left) * scaleX,
-            y: (evt.clientY - rect.top) * scaleY
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
         }
     }
 
     /* Handles left and right click for drawing */
     self.clicked = function (e) {
-        if (e.button === 0) {
+        self.drawItem(e);
+        // if (e.button === 0) {
+        //     self.drawItem(e);
+        // }
+        // if (e.button === 2) {
+        //     self.removeItem(e);
+        // }
+    }
+
+    self.down = function(e) {
+        self.mouseDown = true;
+        if (e.button === 2) self.removeItem(e);
+        else return;
+    }
+
+    self.move = function (e) {
+        if (self.mouseDown) {
             self.drawItem(e);
-        }
-        if (e.button === 2) {
-            self.removeItem(e);
         }
     }
 
+    self.reset = function(e) {
+        self.mouseDown = false;
+    }
+
+ 
+ 
     /* Find the retrieved asset into loaded asset */
     self.findSprite = function (name, type) {
         var sprite = new Image();
@@ -215,6 +240,7 @@ levelEditor = function () {
 
     /* Draws asset into current canvas */
     self.drawItem = function (e) {
+        console.log("hello")
         var mouse = self.mousePosition(self.canvas, e);
         let gridX = Math.floor(mouse.x / self.tileSize) * self.tileSize;
         let gridY = Math.floor(mouse.y / self.tileSize) * self.tileSize;
@@ -239,22 +265,20 @@ levelEditor = function () {
                     self.tileMap.push(item);
                     asset.onload = function () {
                         self.ctx.drawImage(asset, 1 * self.tileSize, 0, 40, 80, gridX, gridY, 40, 80);
-                        self.updateData();
-
                     }
                 }
                 if (item.type === "Tile") {
-                    item.img = asset.src.substring(22);
-                    item.tilePos = targetTile;
-                    self.tileMap.push(item);
-                    asset.onload = function () {
-                        self.ctx.drawImage(asset, gridX, gridY, 40, 40);
-                        self.updateData();
-
-                    }
+                        item.img = asset.src.substring(22);
+                        item.tilePos = targetTile;
+                        self.tileMap.push(item);
+                        asset.onload = function () {
+                            self.ctx.drawImage(asset, gridX, gridY, 40, 40);    
+                        }
+                    
+       
                 }
             }
-            // self.updateData();
+            self.updateData();
         }
 
     }
@@ -263,11 +287,10 @@ levelEditor = function () {
     self.validate = function (targetTile) {
         if (!self.pickedTile || Object.keys(self.pickedTile).length === 0) {
             alert("Please elect an object to draw.");
-            return false;
+            // return false;
         }
         for (var i = 0; i < self.tileMap.length; i++) {
-            if (self.tileMap[i].tilePos === targetTile || self.tileMap[i].tilePos1 === targetTile) {
-                alert("You cannot draw on a tile with existing objects.");
+            if (self.tileMap[i].tilePos === targetTile || self.tileMap[i].tilePos1 === targetTile || self.tileMap[i].tilePos === targetTile + self.columns) {
                 return false;
             }
         }
@@ -280,7 +303,6 @@ levelEditor = function () {
         let tileX = Math.floor(mouse.x / self.tileSize);
         let tileY = Math.floor(mouse.y / self.tileSize);
         let targetTile = tileY * self.columns + tileX;
-        console.log(targetTile);
         var height = 40;
         var width = 40;
         var targetItem;
@@ -321,7 +343,6 @@ levelEditor = function () {
                 $('#saveModal').modal('hide');
             }
 
-            console.log(self.tileMap)
             var tileMapToSend = self.tileMap.filter(function (item) {
                 return item !== null;
             });
@@ -437,6 +458,9 @@ levelEditor = function () {
                 break;
         }
     });
+
+
+
 
     /* Starters */
     self.initiate();
