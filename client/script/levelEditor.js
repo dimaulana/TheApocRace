@@ -254,6 +254,8 @@ levelEditor = function () {
                     self.tileMap.push(item);
                     asset.onload = function () {
                         self.ctx.drawImage(asset, 1 * self.tileSize, 0, 40, 80, gridX, gridY, 40, 80);
+                        self.updateData();
+
                     }
                 }
                 if (item.type === "Tile") {
@@ -262,12 +264,13 @@ levelEditor = function () {
                     self.tileMap.push(item);
                     asset.onload = function () {
                         self.ctx.drawImage(asset, gridX, gridY, 40, 40);
+                        self.updateData();
+
                     }
 
 
                 }
             }
-            self.updateData();
         }
 
     }
@@ -415,6 +418,7 @@ levelEditor = function () {
         var selectedOption = $(this).attr("id");
         switch (selectedOption) {
             case "Back":
+            console.log("")
                 $(".interface").html("");
                 $(".menu").html("");
                 generateMenus('buildMenu');
@@ -473,9 +477,6 @@ levelEditor = function () {
                 break;
         }
     });
-
-
-
 
     /* Starters */
     self.initiate();
