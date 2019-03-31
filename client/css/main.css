@@ -144,3 +144,10 @@ input[type=password]:focus {
       width: 45px;
      /*  float: left; */
     }
+
+		.star.off {
+			-moz-animation-name: none;
+		-webkit-animation-name: none;
+		-ms-animation-name: none;
+			animation-name: none;	
+		}
