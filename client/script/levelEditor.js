@@ -161,10 +161,6 @@ levelEditor = function (lvlName) {
     /* Sets background TODO: Figure out sprite backgrounds */
     self.setBackground = function () {
         self.canvas.style.background = "url('" + self.background.src + "')";
-        // var background = findSprite(self.background.name, self.background.type);
-        // background.onload = function () {
-        //     self.ctx.drawImage(background, self.viewport.x, 0, 1280, 720);
-        // }
     }
 
     /* Translates mouse position from normal coordinates to canvas coordinates */
@@ -428,6 +424,7 @@ levelEditor = function (lvlName) {
             case "Back":
                 $(".interface").html("");
                 $(".menu").html("");
+                $('.star').removeClass("off");
                 generateMenus('buildMenu');
                 break;
             case "Save":
@@ -491,6 +488,7 @@ levelEditor = function (lvlName) {
 };
 
 function startEditor() {
+    $('.star').addClass("off");
     $('#editor').show();
     var editor = new levelEditor();
     return editor;
@@ -508,9 +506,11 @@ function loadEditor() {
 
     $(".menu #loadLevel").on("click", function () {
         var selectedLvl = $(this).text();
+        $('.star').addClass("off");
         if (selectedLvl === "Back") {
             $(".interface").html("");
             $(".menu").html("");
+            $('.star').removeClass("off");
             generateMenus("buildMenu");
         } 
         else {
