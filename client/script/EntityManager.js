@@ -25,6 +25,7 @@ function Entity(param) {
 	if (self.tag == "Player" || self.tag == "Enemy" || self.tag == "Background") {
 		self.animation = new Animation();
 	}
+	if (self.tag == "Background") self.frame = 0;
 
 	self.changeAnimation = function(index) {
 		if (!self.animation) return;

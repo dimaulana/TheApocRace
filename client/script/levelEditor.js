@@ -58,7 +58,6 @@ enemyList.name = "Character";
 
 levelEditor = function () {
     var self = {};
-    console.log("Creating level editor.");
     /* Set game total sizes */
     self.canvasWidth = 12800;
     self.canvasHeight = 720;
@@ -76,7 +75,7 @@ levelEditor = function () {
     self.rows = 1280 / self.tileSize;
 
     /* initiate tile map for each screen */
-    self.screenArray = {};
+    self.screenArray = [];
 
     /* Initiate variables */
     self.background = {};
@@ -119,7 +118,7 @@ levelEditor = function () {
             /* Sets up default player position */
             var asset = self.findSprite("Player1", "Character");
             var player = {
-                "name": "Player1",
+                "name": "Player",
                 "type": "Character",
                 "x": 60,
                 "y": 560,
@@ -165,7 +164,7 @@ levelEditor = function () {
         self.tileMap = self.screenArray[self.currentScreen].tileMap;
         self.canvas.style.background = "url('" + self.background.loc + "')";
         self.ctx.putImageData(destination, 0, 0);
-        viewport.update("Editor", self.currentScreen);
+        self.viewport.update("Editor", self.currentScreen);
         self.updateData();
     };
 
@@ -243,7 +242,7 @@ levelEditor = function () {
                 var item = {
                     "name": self.pickedTile.name,
                     "type": self.pickedTile.type,
-                    "x": gridX + viewport.x,
+                    "x": gridX + self.viewport.x,
                     "y": gridY,
                 }
                 self.ctx.clearRect(gridX, gridY, 40, 40);
@@ -330,6 +329,14 @@ levelEditor = function () {
         $(".saveLevel").on("click", function () {
             var levelName = $("#levelName").val();
             self.screenArray.name = levelName;
+
+            self.tileMap = [];
+            for (var i = 0; i < self.screenArray.length; i++) {
+                // TODO: Instead of each screen to array; Why not make use of the viewport and
+                // save to self.tileMap;
+                self.tileMap.push.apply(self.tileMap, self.screenArray[i].tileMap);
+            }
+
 
             /* Save data here */
             if (levelName) {
