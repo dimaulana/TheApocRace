@@ -59,10 +59,10 @@ $(document).ready(function() {
 		else if (currentPage === "buildMenu") {
             switch(menuClicked) {
                 case "New Level":
-                    $('.interface').load("client/levelEditor.html");
+                    $('.interface').load("client/levelEditor.html", startEditor);
                     break;
                 case "Load Level":
-                    $('.interface').load("ENTER PAGE URL HERE");
+                    $('.interface').load("client/levelEditor.html", startEditor);
                     break;
                 case "Back":
                     generateMenus("mainMenu");

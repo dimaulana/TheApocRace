@@ -15,8 +15,8 @@ class LevelEditor{
     readSavedFile(){
         var data = {};
         if(this.levelName !== ""){
-            var fileName =  './server/bin' + this.levelName;
-            data = fs.readFileSync(fileName);
+            var fileName =  './server/bin/' + this.levelName + ".json";
+            data = fs.readFileSync(fileName, 'utf8');
         }
         this.socket.emit('getLevelData', data);
     }

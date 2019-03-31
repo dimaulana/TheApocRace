@@ -25,9 +25,9 @@ function Viewport(x, y, w, h) {
 					this.x = 0; // Return viewport to the original position;
 				}
 			break;
-
 			case "Editor":
-				this.x = entity * 1280;
+				if (entity === "prev") this.x = 1280;
+				if (entity === "next") this.x = -1280;
 			break;
 
 				// Add more cases if needed; For example, in the case of Level Editor,

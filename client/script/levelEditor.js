@@ -46,17 +46,17 @@ tileList.name = "Tile";
 var character = new Image();
 character.src = "client/images/charThumbnail.png";
 character.spriteSrc = "client/images/playerrun.png"
-character.name = "Player 1";
+character.name = "Player";
 
 var enemy = new Image();
 enemy.src = "client/images/enemyThumbnail.png";
 enemy.spriteSrc = "client/images/enemyrun.png";
-enemy.name = "Enemy 1"
+enemy.name = "Enemy"
 
 var enemyList = [character, enemy];
 enemyList.name = "Character";
 
-levelEditor = function () {
+levelEditor = function (lvlName) {
     var self = {};
     /* Set game total sizes */
     self.canvasWidth = 12800;
@@ -74,9 +74,6 @@ levelEditor = function () {
     self.columns = 1280 / self.tileSize;
     self.rows = 720 / self.tileSize;
 
-    /* initiate tile map for each screen */
-    self.screenArray = [];
-
     /* Initiate variables */
     self.background = {};
     self.tileMap = [];
@@ -85,57 +82,54 @@ levelEditor = function () {
     self.mouseDown;
     self.viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
 
-
-
     /* Initiates the first empty canvas */
     self.initiate = function (levelName) {
         if (!levelName) levelName = "";
         socket.emit('loadLevel', levelName);
-
         socket.on('getLevelData', function (data) {
-            if (data) {
-                // TODO: load level given data
-            }
-            $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
-            self.populateDropdown();
+
+            /* Attach event listeners */
             self.canvas.addEventListener('click', self.clicked);
             document.addEventListener('contextmenu', event => event.preventDefault());
             self.canvas.addEventListener('mousedown', self.down);
             self.canvas.addEventListener('mousemove', self.move);
             self.canvas.addEventListener('mouseup', self.reset);
 
-            for (var i = 0; i < self.numberOfScreens; i++) {
-                var destination = document.createElement('canvas');
-                var dCtx = destination.getContext("2d");
-                var item = {
-                    "imageData": dCtx.getImageData(0, 0, 1280, 720),
-                    "background": {},
-                    "tileMap": []
+            /* If we are loading an existing level, load level */
+            if (!jQuery.isEmptyObject(data)) {
+                self.loadLevel(data);
+            } else {
+                /* Sets up default player position for blank canvas */
+                var asset = self.findSprite("Player", "Character");
+                var player = {
+                    "name": "Player",
+                    "type": "Character",
+                    "x": 40,
+                    "y": 560,
+                    "tilePos": 449,
+                    "tilePos1": 481
                 }
-                self.screenArray[i] = item;
+                self.tileMap.push(player);
+                asset.onload = function () {
+                    self.ctx.drawImage(asset, 0, 0, 40, 80, 40, 560, 40, 80);
+                };
             }
 
-            /* Sets up default player position */
-            var asset = self.findSprite("Player1", "Character");
-            var player = {
-                "name": "Player",
-                "type": "Character",
-                "x": 60,
-                "y": 560,
-                "tilePos": 449,
-                "tilePos1": 481
-            }
-            self.tileMap.push(player);
-            asset.onload = function () {
-                self.ctx.drawImage(asset, 0, 0, 40, 80, 40, 560, 40, 80);
-                self.updateData();
-            };
+            self.displayGrid();
+
+            /* Adds screen number indicator */
+            $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
+
+            /* Populate dropdown options */
+            self.populateDropdown();
+
+
+
         });
     }
 
     /* Shows the grid */
     self.displayGrid = function () {
-        /* Draw the grids */
         for (var i = 0; i <= self.columns; i++) {
             self.ctx.moveTo(i * self.tileSize, 0);
             self.ctx.lineTo(i * self.tileSize, 720);
@@ -148,29 +142,46 @@ levelEditor = function () {
         self.ctx.stroke();
     }
 
-    /* Saves the data into the main array */
-    self.updateData = function () {
-        self.screenArray[self.currentScreen].imageData = self.ctx.getImageData(0, 0, 1280, 720);
-        self.screenArray[self.currentScreen].tileMap = self.tileMap;
-        self.screenArray[self.currentScreen].background = self.background;
+    self.drawToCanvas = function (data) {
+        $.each(data, function (i) {
+            if (data[i].type === "Character" || data[i].type === "Tile") {
+                var asset = self.findSprite(data[i].name, data[i].type);
+                asset.onload = function () {
+                    if (data[i].type === "Character") {
+                        if (data[i].name === "Player") {
+                            self.ctx.drawImage(asset, 0 * self.tileSize, 0, 40, 80, data[i].x, data[i].y, 40, 80);
+                        } else {
+                            self.ctx.drawImage(asset, 1 * self.tileSize, 0, 40, 80, data[i].x, data[i].y, 40, 80);
+                        }
+                    }
+                    if (data[i].type === "Tile") {
+                        self.ctx.drawImage(asset, data[i].x, data[i].y, 40, 40);
+                    }
+                }
+            }
+        });
         self.displayGrid();
-    };
+    }
 
     /* Function to change the screen */
-    self.transition = function () {
+    self.transition = function (val) {
+        self.viewport.update("Editor", val);
         self.ctx.clearRect(0, 0, 1280, 720);
-        var destination = self.screenArray[self.currentScreen].imageData;
-        self.background = self.screenArray[self.currentScreen].background;
-        self.tileMap = self.screenArray[self.currentScreen].tileMap;
-        self.canvas.style.background = "url('" + self.background.loc + "')";
-        self.ctx.putImageData(destination, 0, 0);
-        self.viewport.update("Editor", self.currentScreen);
-        self.updateData();
+        for (var i = 0; i < self.tileMap.length; i++) {
+            if (self.tileMap[i].type === "Character" || self.tileMap[i].type === "Tile") {
+                self.tileMap[i].x += self.viewport.x;
+            }
+        }
+        self.drawToCanvas(self.tileMap);
     };
 
+    /* Sets background TODO: Figure out sprite backgrounds */
     self.setBackground = function () {
-        self.canvas.style.background = "url('" + self.background.loc + "')";
-        self.updateData();
+        self.canvas.style.background = "url('" + self.background.src + "')";
+        // var background = findSprite(self.background.name, self.background.type);
+        // background.onload = function () {
+        //     self.ctx.drawImage(background, self.viewport.x, 0, 1280, 720);
+        // }
     }
 
     /* Translates mouse position from normal coordinates to canvas coordinates */
@@ -206,8 +217,7 @@ levelEditor = function () {
     }
 
 
-
-    /* Find the retrieved asset into loaded asset */
+    /* Find the requested assets */
     self.findSprite = function (name, type) {
         var sprite = new Image();
         if (type === "Character") {
@@ -226,6 +236,13 @@ levelEditor = function () {
                 }
             }
         }
+        if (type === "Background") {
+            for (var i = 0; i < backgroundList.length; i++) {
+                if (backgroundList[i].name.replace(/\s/g, '') === name) {
+                    sprite.src = backgroundList[i].src;
+                }
+            }
+        }
     }
 
     /* Draws asset into current canvas */
@@ -233,67 +250,58 @@ levelEditor = function () {
         var mouse = self.mousePosition(self.canvas, e);
         let gridX = Math.floor(mouse.x / self.tileSize) * self.tileSize;
         let gridY = Math.floor(mouse.y / self.tileSize) * self.tileSize;
-        let tileX = Math.floor(mouse.x / 40);
-        let tileY = Math.floor(mouse.y / 40);
-
+        let tileX = Math.floor(mouse.x / self.tileSize);
+        let tileY = Math.floor(mouse.y / self.tileSize);
+        var offset = (self.columns * self.rows) * self.currentScreen;
         let targetTile = tileY * self.columns + tileX;
-        if (self.validate(targetTile)) {
+        let position = targetTile + offset;
+        if (self.validate(position, offset)) {
             if (mouse.y < 720 && mouse.x < 1280) {
                 var item = {
                     "name": self.pickedTile.name,
                     "type": self.pickedTile.type,
-                    "x": gridX + self.viewport.x,
+                    "x": gridX,
                     "y": gridY,
                 }
                 self.ctx.clearRect(gridX, gridY, 40, 40);
                 var asset = self.findSprite(self.pickedTile.name, self.pickedTile.type);
+                item.tilePos = position;
+                item.img = asset.src.substring(22);
+
                 if (item.type === "Character") {
-                    item.img = asset.src.substring(22);
-                    item.tilePos = targetTile;
-                    item.tilePos1 = targetTile + self.columns;
+                    item.tilePos1 = position + self.columns;
                     self.tileMap.push(item);
                     asset.onload = function () {
                         self.ctx.drawImage(asset, 1 * self.tileSize, 0, 40, 80, gridX, gridY, 40, 80);
-                        self.updateData();
-
                     }
                 }
                 if (item.type === "Tile") {
-                    item.img = asset.src.substring(22);
-                    item.tilePos = targetTile;
                     self.tileMap.push(item);
                     asset.onload = function () {
                         self.ctx.drawImage(asset, gridX, gridY, 40, 40);
-                        self.updateData();
-
                     }
-
-
                 }
             }
         }
+        self.displayGrid();
 
     }
 
     /* Makes sure no tiles are in the way */
-    self.validate = function (targetTile) {
-        console.log("targetTile: "+targetTile);
-        console.log("ROWS*COLUMNS: "+(self.rows * self.columns));
-        console.log("self.rows: "+self.rows);
+    self.validate = function (pos, offset) {
         if (!self.pickedTile || Object.keys(self.pickedTile).length === 0) {
-            alert("Please select an object to draw.");
             return false;
         }
-        if (self.pickedTile.type === "Character" && targetTile + self.columns > (self.columns * self.rows)) {
+        if (self.pickedTile.type === "Character" && pos + self.columns > offset + (self.rows * self.columns)) {
             alert("Invalid character position.");
             return false;
         }
 
         for (var i = 0; i < self.tileMap.length; i++) {
-            if (self.tileMap[i].tilePos === targetTile || self.tileMap[i].tilePos1 === targetTile) {
+            if (self.tileMap[i].tilePos === pos || self.tileMap[i].tilePos1 === pos) {
                 return false;
             }
-            if (self.pickedTile.type === "Character" && self.tileMap[i].tilePos === (targetTile+self.columns)) {
+            if (self.pickedTile.type === "Character" && self.tileMap[i].tilePos === (pos + self.columns)) {
                 return false;
             }
         }
@@ -306,16 +314,19 @@ levelEditor = function () {
         let tileX = Math.floor(mouse.x / self.tileSize);
         let tileY = Math.floor(mouse.y / self.tileSize);
         let targetTile = tileY * self.columns + tileX;
+        var offset = (self.columns * self.rows) * self.currentScreen;
+        let position = targetTile + offset;
+
         var height = 40;
         var width = 40;
         var targetItem;
         var location;
-        if (449 === targetTile || 481 === targetTile) {
+        if (449 === position || 481 === position) {
             alert("Cannot delete player!");
             return;
         } else {
             for (var i = 0; i < self.tileMap.length; i++) {
-                if (self.tileMap[i].tilePos === targetTile || self.tileMap[i].tilePos1 === targetTile) {
+                if (self.tileMap[i].tilePos === position || self.tileMap[i].tilePos1 === position) {
                     targetItem = self.tileMap[i];
                     location = i;
                 }
@@ -331,32 +342,27 @@ levelEditor = function () {
                     self.tileMap.splice(location, 1);
                 }
             }
-            self.updateData();
         }
+        self.displayGrid();
+
     }
 
     /* Save level */
     self.saveLevel = function () {
         $(".saveLevel").on("click", function () {
             var levelName = $("#levelName").val();
-            self.screenArray.name = levelName;
-
-            self.tileMap = [];
-            for (var i = 0; i < self.screenArray.length; i++) {
-                // TODO: Instead of each screen to array; Why not make use of the viewport and
-                // save to self.tileMap;
-                self.tileMap.push.apply(self.tileMap, self.screenArray[i].tileMap);
-            }
-
+            self.tileMap.name = levelName;
 
             /* Save data here */
             if (levelName) {
                 $('#saveModal').modal('hide');
             }
 
-            var tileMapToSend = self.tileMap.filter(function (item) {
-                return item !== null;
-            });
+            var tileMapToSend = self.tileMap;
+            /* Adjust for current screen position offset */
+            for (var i = 0; i < tileMapToSend.length; i++) {
+                tileMapToSend[i].x += 1280*self.currentScreen;
+            }
 
             var pack = {
                 tileMap: tileMapToSend,
@@ -365,19 +371,12 @@ levelEditor = function () {
             socket.emit('saveNewLevel', pack);
         });
     }
-    
+
     /* Load Level */
-    self.loadLevel = function () {
-        // for (var i = 0; i < self.numberOfScreens; i++) {
-        //     var destination = document.createElement('canvas');
-        //     var dCtx = destination.getContext("2d");
-        //     var item = {
-        //         "imageData": dCtx.getImageData(0, 0, 1280, 720),
-        //         "background": {},
-        //         "tileMap": []
-        //     }
-        //     self.screenArray[i] = item;
-        // }
+    self.loadLevel = function (data) {
+        var levelData = JSON.parse(data);
+        self.drawToCanvas(levelData);
+        self.tileMap = levelData;
     }
 
 
@@ -403,7 +402,8 @@ levelEditor = function () {
         if (selectedOption === "next") {
             if (self.currentScreen < self.numberOfScreens) {
                 self.currentScreen++;
-                if (self.currentScreen === 9) {
+                self.transition("next");
+                if (self.currentScreen === self.numberOfScreens - 1) {
                     this.setAttribute('disabled', true);
                 }
             }
@@ -411,6 +411,7 @@ levelEditor = function () {
         } else if (selectedOption === "previous") {
             if (self.currentScreen < self.numberOfScreens && self.currentScreen > 0) {
                 self.currentScreen--;
+                self.transition("prev");
                 if (self.currentScreen === 0) {
                     this.setAttribute("disabled", true);
                 }
@@ -418,7 +419,6 @@ levelEditor = function () {
             next.removeAttribute('disabled');
         }
         $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
-        self.transition();
     });
 
     /* Handle main buttons on clicks */
@@ -426,7 +426,6 @@ levelEditor = function () {
         var selectedOption = $(this).attr("id");
         switch (selectedOption) {
             case "Back":
-            console.log("")
                 $(".interface").html("");
                 $(".menu").html("");
                 generateMenus('buildMenu');
@@ -479,7 +478,7 @@ levelEditor = function () {
             case "Background":
                 self.background.type = "Background";
                 self.background.name = imageId;
-                self.background.loc = imageSrc.substring(22);
+                self.background.src = imageSrc.substring(22);
                 $(".selectedBg").attr("src", imageSrc);
                 self.setBackground();
                 break;
@@ -487,8 +486,11 @@ levelEditor = function () {
     });
 
     /* Starters */
-    self.initiate();
+    self.initiate(lvlName);
     return self;
 };
 
-
+startEditor = function () {
+    var editor = new levelEditor();
+    return editor;
+}
