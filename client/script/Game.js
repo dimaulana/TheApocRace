@@ -367,8 +367,9 @@ canvas.addEventListener('click', function(event) {
 			//TODO: FIX HERE :Clear all canvas and previous game history
 		$('.star').show();
 		$(".interface").html("");
-		//ctx.clearRect(0, 0, canvas.width, canvas.height);
-		$('#game').clearRect(0, 0, canvas.width, canvas.height);
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		$('#game').hide();
+		//$('#game').clearRect(0, 0, canvas.width, canvas.height);
 		generateMenus('mainMenu');
   }
 
