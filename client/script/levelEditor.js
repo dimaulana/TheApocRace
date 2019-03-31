@@ -69,7 +69,6 @@ levelEditor = function (lvlName) {
 
     /* Main large tile */
     self.canvas = document.getElementById("editor");
-    /* Set game screen sizes */
     self.ctx = self.canvas.getContext("2d");
     self.columns = 1280 / self.tileSize;
     self.rows = 720 / self.tileSize;
@@ -361,7 +360,7 @@ levelEditor = function (lvlName) {
             var tileMapToSend = self.tileMap;
             /* Adjust for current screen position offset */
             for (var i = 0; i < tileMapToSend.length; i++) {
-                tileMapToSend[i].x += 1280*self.currentScreen;
+                tileMapToSend[i].x += 1280 * self.currentScreen;
             }
 
             var pack = {
@@ -486,11 +485,33 @@ levelEditor = function (lvlName) {
     });
 
     /* Starters */
-    self.initiate(lvlName);
+    self.initiate(lvlName)
     return self;
 };
 
-startEditor = function () {
+function startEditor() {
+    $('#editor').show();
     var editor = new levelEditor();
+    editor.initiate();
     return editor;
+}
+
+function loadEditor() {
+    /* To Do: get list of levels from directory */
+    var listofLevel = ["level1", "level2", "level3", "level4"];
+    var items = [];
+    $.each(listofLevel, function (i) {
+        items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + listofLevel[i] + "</button>");
+    });
+    $(items.join('')).appendTo(".menu");
+
+    $(".menu #loadLevel").on("click", function () {
+        var selectedLvl = $(this).text();
+        $('.interface').load("client/levelEditor.html", function () {
+            $('#editor').show();
+            // $('.menu').html("");
+            var editor = new levelEditor(selectedLvl);
+        });
+    });
+
 }

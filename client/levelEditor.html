@@ -85,13 +85,16 @@
 
   #editor {
     border: 2px solid;
+    display: none;
   }
+
 </style>
 
 </head>
 
 <body>
-  <div class="row" id="menu">
+
+  <div class="row" id="menuWrapper">
     <div class="col w-100 justify-content-center">
       <ul class="objects dropdown">
         <li class="editorMenu" id="Back">
@@ -124,16 +127,16 @@
     </div>
   </div>
 
-  <div class="row" id="wrapper">
+  <div class="row" id="canvasWrapper">
 
     <div class="col-xs-4" id="canvasEditor">
       <canvas id="editor" height="720" width="1280"> </canvas>
       <button class="btn btn-primary" id="previous" style="float: left;" disabled>
-        <<</button> <div id="screenCounter" class="align-self-center">
+          <<</button> <div id="screenCounter" class="align-self-center">
+      </div>
+      <button class="btn btn-primary" id="next" style="float: right;">>>
+      </button>
     </div>
-    <button class="btn btn-primary" id="next" style="float: right;">>>
-    </button>
-  </div>
   </div>
 
   <!-- Save Level Modal -->
