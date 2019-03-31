@@ -42,7 +42,9 @@ class GamePlay {
 		this.player.addComponent(components.STATS);
 		this.player.addComponent(components.WEAPON, {loc: this.assetManager.getTexture("Bullet")});
 		this.player.addComponent(components.DIMENSION, {w: 40, h: 80});
-		this.player.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Player"), frame_sets: [[0], [1], [2, 3, 4, 5], [6, 7, 8, 9]]});
+		this.player.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Player"), 
+													jumpLoc: this.assetManager.getTexture("PlayerJump"),
+													frame_sets: [[0], [1], [2, 3, 4, 5], [6, 7, 8, 9]]});
 	}
 
 	spawnEnemy(data) {
@@ -53,6 +55,7 @@ class GamePlay {
 		enemy.addComponent(components.WEAPON, {loc: this.assetManager.getTexture("Bullet")});
 		enemy.addComponent(components.DIMENSION, {w: 40, h: 80});
 		enemy.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Enemy"),
+											   jumpLoc: this.assetManager.getTexture("EnemyJump"),
 											   frame_sets: data.frame_sets});
 
 		if (data.ai === "Basic") {

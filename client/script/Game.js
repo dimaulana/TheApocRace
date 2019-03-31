@@ -77,15 +77,16 @@ function updatePlayer() {
 	// Update speed;
 	if (player.properties.right) {
 		player.properties.speed.x = player.properties.speedMax;
-		player.changeAnimation(2);
+		player.changeAnimation({index: 2});
 		player.properties.scale.x = 1.0;
 	} else if (player.properties.left) {
 		player.properties.speed.x = -player.properties.speedMax;
-		player.changeAnimation(3);
+		player.changeAnimation({index: 3});
 		player.properties.scale.x = -1.0;
 	} else {
 		player.properties.speed.x = 0;
-		player.changeAnimation((player.properties.scale.x == -1.0) ? 1 : 0);
+		var i = (player.properties.scale.x == -1.0) ? 1 : 0;
+		player.changeAnimation({index: i});
 	}
 
 	if (player.properties.jump && player.properties.state != "jumping") {
@@ -106,7 +107,17 @@ function updatePlayer() {
 
 	player.properties.weaponClock++; // Update weaponClock;
 
+
 	// Update player animation;
+	if (player.properties.state == "jumping") {
+		// Update to jump animation;
+		player.image.src = player.properties.jumpImage;
+		player.changeAnimation({state: "jump", index: 0});
+	}
+	else {
+		player.image.src = player.properties.fileLocation;
+	}
+
 	player.animation.update();
 }
 
@@ -241,16 +252,6 @@ function canvasDraw() {
 	// Change background animation;
 	var background = entityManager.getEntityByTag("Background");
 	if (background) { // Check if background exists;
-		// if (player.properties.pos.x >= 200 && player.properties.pos.x < 400) {
-		// 	background.changeAnimation(1);
-		// }
-		// else if (player.properties.pos.x >= 400) {
-		// 	background.changeAnimation(2);
-		// }
-		// else {
-		// 	background.changeAnimation(0);
-		// }
-
 		//background.animation.update();
 		if (player.properties.speed.x > 0 && player.properties.pos.x > canvas.width / 2) background.frame++
 		else if (player.properties.speed.x < 0) {

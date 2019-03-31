@@ -27,10 +27,17 @@ function Entity(param) {
 	}
 	if (self.tag == "Background") self.frame = 0;
 
-	self.changeAnimation = function(index) {
+	self.changeAnimation = function(param) {
 		if (!self.animation) return;
 		var delay = 5;
-		self.animation.change(self.properties.frame_sets[index], delay);
+		var frame_sets;
+
+		if (!param.state) frame_sets = self.properties.frame_sets;
+			
+		else if (param.state === "jump")
+			frame_sets = self.properties.jump_sets;
+
+		self.animation.change(frame_sets[param.index], delay);
 	}
 
 

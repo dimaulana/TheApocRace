@@ -68,6 +68,10 @@ class Entity{
                 if (component.frame_sets) {
                     param.frame_sets = component.frame_sets;
                 }
+                if (component.jumpLoc) {
+                    param.jump_sets = component.jump_sets;
+                    param.jumpImage = component.jumpLoc;
+                }
             }
 
             if (component.ofType(components.WEAPON)) {
