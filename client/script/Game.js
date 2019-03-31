@@ -16,6 +16,7 @@ var entityManager = new EntityManager();
 var paused = false;
 var gameStarted = false;
 var spriteBox = false;
+var transition = false;
 
 var score = {
 	x: canvas.width - 200, y: 40,
@@ -101,6 +102,10 @@ function updatePlayer() {
 
 	// Update player animation;
 	player.animation.update();
+
+	if(player.properties.pos.x > 1500){
+			startNewGame(2);
+	}
 }
 
 function updateEntities() {
@@ -345,8 +350,15 @@ function addListener() {
 	document.addEventListener("keyup", keyUpHandler, false);
 }
 
-startNewGame = function(){
-	socket.emit('storyMode', {});
+startNewGame = function(level){
+	// TODO : Properly clear the entity manager
+	console.log(entityManager);
+	entityManager.entities = [];
+	player = {};
+	console.log(entityManager);
+	socket.emit('storyMode', {level: level});
+
+	console.log(level)
 
 	socket.on('levelPack', function(data) {
 		username.name = data.username;
