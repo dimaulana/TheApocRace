@@ -503,15 +503,24 @@ function loadEditor() {
     $.each(listofLevel, function (i) {
         items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + listofLevel[i] + "</button>");
     });
+    items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>Back</button>")
     $(items.join('')).appendTo(".menu");
 
     $(".menu #loadLevel").on("click", function () {
         var selectedLvl = $(this).text();
-        $('.interface').load("client/levelEditor.html", function () {
-            $('#editor').show();
-            // $('.menu').html("");
-            var editor = new levelEditor(selectedLvl);
-        });
+        if (selectedLvl === "Back") {
+            $(".interface").html("");
+            $(".menu").html("");
+            generateMenus("buildMenu");
+        } 
+        else {
+            $('.interface').load("client/levelEditor.html", function () {
+                $('#editor').show();
+                // $('.menu').html("");
+                var editor = new levelEditor(selectedLvl);
+            });
+        }
+
     });
 
 }
