@@ -9,7 +9,6 @@ class LevelEditor{
     writeToFile(data){
         var fileName = this.levelName === "" ? data.levelName : this.levelName;
         fileName = "./server/bin/" + fileName + ".json";
-        console.log(fileName);
         fs.writeFileSync(fileName, JSON.stringify(data.tileMap));
     }
 

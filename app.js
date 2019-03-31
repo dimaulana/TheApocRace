@@ -131,7 +131,7 @@ io.sockets.on('connection',function(socket) {
 
 		// TODO: Get level for story mode;
 		//var myLevel = getLevelStoppedPreviously();
-		var myLevel = 1;
+		var myLevel = 2;
 
 		startGame({
 			level: myLevel,

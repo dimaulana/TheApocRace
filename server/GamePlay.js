@@ -46,7 +46,7 @@ class GamePlay {
 	}
 
 	spawnEnemy(data) {
-		var enemy = this.entityManager.addEntity("Enemy");
+		var enemy = this.entityManager.addEntity(data.name);
 		enemy.addComponent(components.TRANSFORM, {x: data.x, y: data.y, speedMax: 10});
 		enemy.addComponent(components.GRAVITY);
 		enemy.addComponent(components.STATS);
@@ -92,7 +92,7 @@ class GamePlay {
 				case "Character":
 					if (name == "Player")
 						this.spawnPlayer(levelData[i]);
-					else if (name == "Enemy")
+					else // Other characters are enemies;
 						this.spawnEnemy(levelData[i]);
 				break;
 

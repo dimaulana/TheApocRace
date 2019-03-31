@@ -20,7 +20,7 @@ const assetCollection = [
 							{"type": "Texture", "name": "EnemyJump", "path": "client/images/enemyjump.png"},
 							{"type": "Texture", "name": "Tile1", "path": "/client/images/tile1.png"},
 							{"type": "Texture", "name": "Tile2", "path": "/client/images/tile2.png"},
-							{"type": "Texture", "name": "Tile3", "path": "/client/images/tile2.png"},
+							{"type": "Texture", "name": "Tile3", "path": "/client/images/tile3.png"},
 							{"type": "Texture", "name": "NY1", "path": "/client/images/newyork1.png"},
 							{"type": "Texture", "name": "NY2", "path": "/client/images/newyork2.png"},
 							{"type": "Texture", "name": "NY3", "path": "/client/images/newyork3.png"},

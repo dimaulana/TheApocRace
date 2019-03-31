@@ -24,9 +24,11 @@ function Viewport(x, y, w, h) {
 				} else {
 					this.x = 0; // Return viewport to the original position;
 				}
+			break;
+
 			case "Editor":
 				this.x = entity * 1280;
-				break;
+			break;
 
 				// Add more cases if needed; For example, in the case of Level Editor,
 				// We could have a mock entity where whenever the user clicks next screen button
