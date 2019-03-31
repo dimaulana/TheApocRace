@@ -34,6 +34,9 @@ class Component{
 			case components.SPRITE:
 				return (this instanceof Sprite);
 
+			case components.WEAPON:
+				return (this instanceof Weapon);
+
 			default:
 				console.log("Type: ", type , " not found");
 				return false;
@@ -131,6 +134,17 @@ class Sprite extends Component {
 	}
 }
 
+class Weapon extends Component {
+	constructor(param) {
+		super();
+		this.clock = 0;
+		this.name = "normal";
+		this.map = {"normal": 20}; // Can update coolDown based on this map;
+		this.coolDown = 20;
+		this.imageLoc = param.loc;
+	}
+}
+
 module.exports = {
 	Component: Component,
 	Transform: Transform,
@@ -141,5 +155,6 @@ module.exports = {
 	FollowPlayer: FollowPlayer,
 	Patrol: Patrol,
 	Sprite: Sprite,
-	Gravity: Gravity
+	Gravity: Gravity,
+	Weapon: Weapon,
 }

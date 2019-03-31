@@ -13,7 +13,8 @@ const components = {
 	PATROL: "Patrol",
 	FOLLOWPLAYER: "FollowPlayer",
 	SPRITE: "Sprite",
-	GRAVITY: "Gravity"
+	GRAVITY: "Gravity",
+	WEAPON: "Weapon"
 }
 
 module.exports = components;

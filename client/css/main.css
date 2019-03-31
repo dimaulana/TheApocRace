@@ -106,7 +106,7 @@ input[type=password]:focus {
 
   /*Canvas background*/
   #game {
-	background: url(../images/newyork1.png) top center;
+	/*background: url(../images/newyork1.png) top center;*/
 	height: 720;
 	width: 1280;
   }
@@ -119,6 +119,10 @@ input[type=password]:focus {
 	  color:white;
 	  padding-left:20px;
 	  /* overflow-y:auto; */
+	}
+
+	.profile{
+		color:white;
 	}
 
     .controlObjects {
@@ -137,9 +141,9 @@ input[type=password]:focus {
 		bottom: 0;
 		font-family: 'arcade', arial;
 		font-size: 2.5em;
-		color:blue; 
+		color:blue;
 	}
-		
+
 	.extrasMenu img {
       height: 45px;
       width: 45px;
