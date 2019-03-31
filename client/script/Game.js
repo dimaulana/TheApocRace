@@ -341,9 +341,7 @@ canvas.addEventListener('click', function(event) {
     event.y > resumeButtonY && 
     event.y < resumeButtonY + buttonH
   ) {
-    // Executes if button was clicked!
-		console.log('resume was clicked!');
-		//$('.paused').hide();
+    // Executes if  resume button was clicked!
  		paused=false;
 	}
 	///save button save listener
@@ -353,7 +351,7 @@ canvas.addEventListener('click', function(event) {
     event.y > saveButtonY && 
     event.y < saveButtonY + buttonH
   ) {
-		// Executes if button was clicked!
+		// Executes if  save button was clicked!
 		//TODO:Add SAVE FUNCTION HERE
 	
 	}
@@ -369,7 +367,8 @@ canvas.addEventListener('click', function(event) {
 			//TODO: FIX HERE :Clear all canvas and previous game history
 		$('.star').show();
 		$(".interface").html("");
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		//ctx.clearRect(0, 0, canvas.width, canvas.height);
+		$('#game').clearRect(0, 0, canvas.width, canvas.height);
 		generateMenus('mainMenu');
   }
 
