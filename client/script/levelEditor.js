@@ -516,7 +516,6 @@ function loadEditor() {
         else {
             $('.interface').load("client/levelEditor.html", function () {
                 $('#editor').show();
-                // $('.menu').html("");
                 var editor = new levelEditor(selectedLvl);
             });
         }
