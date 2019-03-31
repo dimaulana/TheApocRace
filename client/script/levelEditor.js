@@ -72,7 +72,7 @@ levelEditor = function () {
     /* Set game screen sizes */
     self.ctx = self.canvas.getContext("2d");
     self.columns = 1280 / self.tileSize;
-    self.rows = 1280 / self.tileSize;
+    self.rows = 720 / self.tileSize;
 
     /* initiate tile map for each screen */
     self.screenArray = [];
@@ -277,10 +277,18 @@ levelEditor = function () {
 
     /* Makes sure no tiles are in the way */
     self.validate = function (targetTile) {
+        console.log("targetTile: "+targetTile);
+        console.log("ROWS*COLUMNS: "+(self.rows * self.columns));
+        console.log("self.rows: "+self.rows);
         if (!self.pickedTile || Object.keys(self.pickedTile).length === 0) {
-            alert("Please elect an object to draw.");
+            alert("Please select an object to draw.");
             return false;
         }
+        if (self.pickedTile.type === "Character" && targetTile + self.columns > (self.columns * self.rows)) {
+            alert("Invalid character position.");
+            return false;
+        }
+
         for (var i = 0; i < self.tileMap.length; i++) {
             if (self.tileMap[i].tilePos === targetTile || self.tileMap[i].tilePos1 === targetTile) {
                 return false;
