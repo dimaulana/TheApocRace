@@ -104,12 +104,7 @@ input[type=password]:focus {
 	to {background-position: -2000px 5000px;}
   }
 
-  /*Canvas background*/
-  #game {
-	/*background: url(../images/newyork1.png) top center;*/
-	height: 720;
-	width: 1280;
-  }
+
 .credits {
       font-family: 'star-jedi', arial;
       font-size: 2.3em;

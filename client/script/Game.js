@@ -367,8 +367,7 @@ startNewGame = function(){
 		//backgroundSound.play();
 	});
 
-	$(".star").hide();
-	$('#game').show();
+  $('#game').show();
 	$('.paused').hide();
 
 }
