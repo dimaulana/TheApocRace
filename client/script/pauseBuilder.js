@@ -16,7 +16,4 @@ function generatePaused() {
 	//	$('.paused').appendTo('#game');
 		//calls div to appear
 		//$('.paused').show();
-		
-
-		console.log("Winner1");
 }
