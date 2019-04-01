@@ -367,6 +367,57 @@ function keyUpHandler(e) {
 function addListener() {
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
+	
+// Add event listener to canvas element
+canvas.addEventListener('click', function(event) {
+  // Control that click event occurred within position of button
+	var buttonX=570;
+	var resumeButtonY = 300;
+	var saveButtonY = 370;
+	var quitButtonY = 440;
+	var buttonW = 160;
+	var buttonH = 50;
+ //Resume button
+	if (
+    event.x > buttonX && 
+    event.x < buttonX + buttonW &&
+    event.y > resumeButtonY && 
+    event.y < resumeButtonY + buttonH
+  ) {
+    // Executes if  resume button was clicked!
+ 		paused=false;
+	}
+	///save button save listener
+	else if (
+    event.x > buttonX && 
+    event.x < buttonX + buttonW &&
+    event.y > saveButtonY && 
+    event.y < saveButtonY + buttonH
+  ) {
+		// Executes if  save button was clicked!
+		//TODO:Add SAVE FUNCTION HERE
+	
+	}
+  //quit button listener
+	else if (
+    event.x > buttonX && 
+    event.x < buttonX + buttonW &&
+    event.y > quitButtonY && 
+    event.y < quitButtonY + buttonH
+  ) {
+    // Executes if button was clicked!
+		gameStarted=false;
+			//TODO: FIX HERE :Clear all canvas and previous game history
+		$('.star').show();
+		$(".interface").html("");
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		$('#game').hide();
+		//$('#game').clearRect(0, 0, canvas.width, canvas.height);
+		generateMenus('mainMenu');
+  }
+
+});
+
 }
 
 startNewGame = function () {
@@ -403,8 +454,9 @@ var leaderButton = false;
 var leaderBoard = function () {
 	//TODO: loop on all scores and find the highest scrore
 	// Then rank accoring to scores
-	var rank = 0
-	var maxRank = 10; // number of player
+	var rank=0
+	var maxRank=10;// number of players
+
 
 	ctx.font = "50px arcade";
 	ctx.beginPath();
@@ -427,14 +479,37 @@ var isPaused = function () {
 	// Move draw to the div paused  using ralative
 	ctx.beginPath();
 	ctx.fillStyle = "red";
-	ctx.fillText('GAME PAUSED', 500, 150);
-	//Add buttons
+	ctx.fillText('GAME PAUSED' ,550, 150);
+		//Add buttons
+	var resumeButtonX = 570;
+	//	var buttonX = 570; to use later
+	var saveButtonX = 570;
+	var quitButtonX = 570;
+	var resumeButtonY = 300;
+	var saveButtonY = 370;
+	var quitButtonY = 440;
+	var buttonW = 160;
+	var buttonH = 50;
+	//Setting up in-game buttons 
+
+	ctx.fillStyle = "blue";
+	//Resume button
+	ctx.fillRect(resumeButtonX, resumeButtonY, buttonW, buttonH);
+	//Save button
+	ctx.fillRect(saveButtonX,saveButtonY, buttonW, buttonH);
+	//Quit button
+	ctx.fillRect(quitButtonX, quitButtonY, buttonW, buttonH);
+	ctx.fillStyle= "yellow";
+	ctx.fillText("RESUME",590,340);
+	ctx.fillText("SAVE",585,410);
+	ctx.fillText("QUIT",585,480);
 
 	ctx.strokeStyle = "blue";
 	ctx.fillStyle = "rgba(0,0,0,0.01)";
 	ctx.rect(100, 50, 1080, 600);
 	ctx.stroke();
 	ctx.fill();
+
 
 }
 

@@ -34,9 +34,6 @@ $(document).ready(function () {
                     break;
                 case "Extras":
                     generateMenus("extraMenu");
-                    // TODO::Fix here
-                    //$('.interface').load('.extras');
-                    //$('.extras').show();
                     break;
                 case "Sign Out":
                     /* Add account signed out function here. */
@@ -45,7 +42,7 @@ $(document).ready(function () {
         } else if (currentPage === "extraMenu") {
             switch (menuClicked) {
                 case "Credits":
-                    $('.interface').load("client/credits.html");
+                   $('.interface').load("client/credits.html");
                     break;
                 case "Profile":
                     $('.interface').load("client/profile.html");
@@ -69,9 +66,8 @@ $(document).ready(function () {
         } else if (currentPage === "optionsMenu") {
             switch (menuClicked) {
                 case "Controls":
-                    $('.interface').load("client/controls.html");
-
-                    break;
+    			          $('.interface').load("client/controls.html");
+                break;
                 case "Sound":
                     $('.interface').load("# Add div container here");
                     break;
