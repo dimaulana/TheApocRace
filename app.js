@@ -137,6 +137,15 @@ io.sockets.on('connection',function(socket) {
 			level: myLevel,
 			socket: socket,
 		});
+
+		fs.readdir('./server/levels/', function (err, files) {
+			if (err) {
+				return console.log('Unable to scan directory: ' + err);
+			} 
+			var pack = {files: files}
+			socket.emit("filesInDirectory", pack);
+		});
+
 	});
 
 	socket.on('playLevel', function(data) {

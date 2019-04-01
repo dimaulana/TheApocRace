@@ -76,7 +76,7 @@ class GamePlay {
 	}
 
 	getLevelData(){
-		let rawdata = fs.readFileSync('server/bin/' + this.file);
+		let rawdata = fs.readFileSync('server/levels/' + this.file);
 		let json = JSON.parse(rawdata);
 		return json;  
 	}

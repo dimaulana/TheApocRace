@@ -13,12 +13,13 @@ ctx.font = "30px arcade";
 // TODO: Make Game.js a class of its own;
 
 // Variables declaration and initialising;
-var player, backgroundSound, level;
+var player, backgroundSound, level, levelName;
 var entityManager = new EntityManager();
 var paused = false;
 var gameStarted = false;
 var spriteBox = false;
 var transition = false;
+var filesInDirectory = [];
 
 var score = {
 	x: canvas.width - 200,
@@ -281,17 +282,12 @@ function canvasDraw() {
 	ctx.fillText(score.text + score.int, score.x, score.y);
 
 	ctx.fillText(username.text + username.name, username.x, username.y);
-<<<<<<< HEAD
 	ctx.fillText('HP: ' + 0 ,20,70);
 
 	if (player.properties.pos.x > 800) {
-		endCurrentLevelAndStartANewOne();
+		endCurrentLevelAndStartANewOne(levelName);
 	}
 	
-=======
-	ctx.fillText('HP: ' + 0, 20, 70);
-
->>>>>>> ea8696027e30f2820cd9c5d4c5f5806363f85826
 
 	// Draw player;
 	/** Not using for now;
@@ -333,9 +329,9 @@ function canvasDraw() {
 
 }
 
-function endCurrentLevelAndStartANewOne(){
+function endCurrentLevelAndStartANewOne(levelName){
 		ctx.font = "100px arcade";
-		ctx.fillText("Level 1 \n finished", 300, 350);
+		ctx.fillText("Level " + levelName + "\n finished", 300, 350);
 		gameStarted = false;
 		setTimeout(function(){startNewGame(2)}, 5000);
 }
@@ -451,7 +447,6 @@ canvas.addEventListener('click', function(event) {
 
 }
 
-<<<<<<< HEAD
 startNewGame = function(level){
 	// DONE : Properly clear the entity manager
 	entityManager.removeAllEntities();
@@ -460,20 +455,13 @@ startNewGame = function(level){
 	socket.emit('storyMode', {level: level});
 	socket.on('levelPack', function(data) {
 		entityManager.removeEntity(player);
-=======
-startNewGame = function () {
-	socket.emit('storyMode', {});
-
-	socket.on('levelPack', function (data) {
->>>>>>> ea8696027e30f2820cd9c5d4c5f5806363f85826
 		username.name = data.username;
 		level = new Level(data);
+		levelName = level.levelName;
 		level.loadLevel();
 
 		entityManager.update(); // Call update for intialization;
 		player = entityManager.getEntityByTag("Player");
-<<<<<<< HEAD
-=======
 
 		if (!player) {
 			alert("Oops, Something went wrong! \nPlease try again");
@@ -481,26 +469,20 @@ startNewGame = function () {
 			return;
 		}
 
->>>>>>> ea8696027e30f2820cd9c5d4c5f5806363f85826
 		if (backgroundSound) backgroundSound.play();
 
 		addListener();
 		gameStarted = true;
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
-<<<<<<< HEAD
-		// backgroundSound = new sound('client/sound/background.mp3');
-		//backgroundSound.play();
-	});
-
-	$('#game').show();
-	$('.paused').hide();
-=======
->>>>>>> ea8696027e30f2820cd9c5d4c5f5806363f85826
 
 		$('.star').hide();
 		$('#game').show();
 		$('.paused').hide();
+	});
+
+	socket.on("filesInDirectory", function(data){
+		filesInDirectory = data.files;
 	});
 }
 
