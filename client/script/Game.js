@@ -10,6 +10,8 @@ var display = document.querySelector('#game').getContext("2d");
 
 ctx.font = "30px arcade";
 
+// TODO: Make Game.js a class of its own;
+
 // Variables declaration and initialising;
 var player, backgroundSound, level;
 var entityManager = new EntityManager();
@@ -77,20 +79,22 @@ function updatePlayer() {
 	// Update speed;
 	if (player.properties.right) {
 		player.properties.speed.x = player.properties.speedMax;
-		player.changeAnimation(2);
+		//player.changeAnimation({index: 2});
 		player.properties.scale.x = 1.0;
 	} else if (player.properties.left) {
 		player.properties.speed.x = -player.properties.speedMax;
-		player.changeAnimation(3);
+		//player.changeAnimation({index: 3});
 		player.properties.scale.x = -1.0;
 	} else {
 		player.properties.speed.x = 0;
-		player.changeAnimation((player.properties.scale.x == -1.0) ? 1 : 0);
+		//var i = (player.properties.scale.x == -1.0) ? 1 : 0;
+		//player.changeAnimation({index: i});
 	}
 
 	if (player.properties.jump && player.properties.state != "jumping") {
 		player.properties.speed.y = -player.properties.speedMax * 12;
 		player.properties.state = "jumping";
+		//player.changeAnimation({state: "jump", index: 0});
 	} else {
 		player.properties.speed.y = 0;
 	}
@@ -105,9 +109,6 @@ function updatePlayer() {
 	player.properties.pos.y -= player.properties.gravity;
 
 	player.properties.weaponClock++; // Update weaponClock;
-
-	// Update player animation;
-	player.animation.update();
 }
 
 function updateEntities() {
@@ -131,6 +132,29 @@ function updateEntities() {
 
 		// TODO: Implement enemy movement here;
 	});
+}
+
+function updateAnimation() {
+
+	// Update player animation;
+	var param = {};
+
+	if (player.properties.state == "jumping")
+		param.state = "jump";
+	else
+		param.state = "run";
+
+	// Check direction;
+	if (player.properties.right)
+		param.index = 2;
+	else if (player.properties.left)
+		param.index = 3;
+	else
+		param.index = (player.properties.scale.x == -1.0) ? 1 : 0;
+
+	player.changeAnimation(param);
+
+	player.animation.update();
 }
 
 // Function to handle collisions;
@@ -241,16 +265,6 @@ function canvasDraw() {
 	// Change background animation;
 	var background = entityManager.getEntityByTag("Background");
 	if (background) { // Check if background exists;
-		// if (player.properties.pos.x >= 200 && player.properties.pos.x < 400) {
-		// 	background.changeAnimation(1);
-		// }
-		// else if (player.properties.pos.x >= 400) {
-		// 	background.changeAnimation(2);
-		// }
-		// else {
-		// 	background.changeAnimation(0);
-		// }
-
 		//background.animation.update();
 		if (player.properties.speed.x > 0 && player.properties.pos.x > canvas.width / 2) background.frame++
 		else if (player.properties.speed.x < 0) {
@@ -432,20 +446,23 @@ startNewGame = function () {
 
 		player = entityManager.getEntityByTag("Player");
 
+		if (!player) {
+			alert("Oops, Something went wrong! \nPlease try again");
+			generateMenus("playMenu");
+			return;
+		}
+
 		if (backgroundSound) backgroundSound.play();
 
 		addListener();
 		gameStarted = true;
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
-		// backgroundSound = new sound('client/sound/background.mp3');
-		//backgroundSound.play();
+
+		$('.star').hide();
+		$('#game').show();
+		$('.paused').hide();
 	});
-
-	$('.star').hide();
-	$('#game').show();
-	$('.paused').hide();
-
 }
 
 var leaderButton = false;
@@ -527,6 +544,7 @@ function update() {
 	}
 
 	updateEntities();
+	updateAnimation();
 
 	testCollisions();
 
