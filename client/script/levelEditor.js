@@ -69,6 +69,7 @@ levelEditor = function (lvlName) {
 
     /* Initiates the first empty canvas */
     self.initiate = function (levelName) {
+
         if (!levelName) levelName = "";
         socket.emit('loadLevel', levelName);
         socket.on('getLevelData', function (data) {
@@ -337,7 +338,7 @@ levelEditor = function (lvlName) {
             /* Save data here */
             if (levelName) {
                 $('#saveModal').modal('hide');
-            }
+            }   
 
             var tileMapToSend = self.tileMap;
             /* Adjust for current screen position offset */
@@ -354,9 +355,14 @@ levelEditor = function (lvlName) {
                 "x" : lastTile.x,
                 "y" : lastTile.y
             }
-            tileMapToSend.push(self.background);
             tileMapToSend.push(endTile);
+
+            if (!jQuery.isEmptyObject(self.background)) {
+                tileMapToSend.push(self.background);
+            }
+
             
+            console.log(tileMapToSend);
 
             var pack = {
                 tileMap: tileMapToSend,
@@ -487,7 +493,6 @@ levelEditor = function (lvlName) {
 function startEditor() {
     $('#editor').show();
     var editor = new levelEditor();
-    editor.initiate();
     return editor;
 }
 
