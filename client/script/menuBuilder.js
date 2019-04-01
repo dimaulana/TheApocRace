@@ -78,7 +78,7 @@ $(document).ready(function () {
         } else {
             switch (menuClicked) {
                 case "Story Mode":
-                    startNewGame();
+                    startNewGame(1);
                     break;
                 case "Custom":
                     $('.interface').load("ENTER PAGE URL HERE");

@@ -13,11 +13,13 @@ ctx.font = "30px arcade";
 // TODO: Make Game.js a class of its own;
 
 // Variables declaration and initialising;
-var player, backgroundSound, level;
+var player, backgroundSound, level, currentLevel, frameCount;
 var entityManager = new EntityManager();
 var paused = false;
 var gameStarted = false;
 var spriteBox = false;
+var transition = false;
+var filesInDirectory = [];
 
 var score = {
 	x: canvas.width - 200,
@@ -280,8 +282,18 @@ function canvasDraw() {
 	ctx.fillText(score.text + score.int, score.x, score.y);
 
 	ctx.fillText(username.text + username.name, username.x, username.y);
-	ctx.fillText('HP: ' + 0, 20, 70);
+	ctx.fillText('HP: ' + 0 ,20,70);
+ 
+	if(frameCount < 50){
+		ctx.fillText("Level " + currentLevel, 600, 100);
+	}
 
+	var endPoint = entityManager.getEntityByTag("End");
+
+	if (player.properties.pos.x >= endPoint.properties.pos.x) {
+			endLevel(currentLevel, filesInDirectory);
+	}
+	
 
 	// Draw player;
 	/** Not using for now;
@@ -308,7 +320,7 @@ function canvasDraw() {
 						e.properties.width, e.properties.height)
 				break;
 
-			case "Player":
+			case "Player":			
 			case "Enemy":
 				ctx.drawImage(e.image, e.animation.frame * e.properties.width, 0, e.properties.width, e.properties.height,
 					Math.floor(e.properties.pos.x - viewport.x), Math.floor(e.properties.pos.y - viewport.y), e.properties.width, e.properties.height);
@@ -321,6 +333,25 @@ function canvasDraw() {
 	});
 
 
+}
+
+function endLevel(currentLevel, levelsInDirectory){
+		var totalLevels = levelsInDirectory.length;
+
+		ctx.font = "100px arcade";
+
+		if(currentLevel === totalLevels){
+			ctx.fillText("Game Over", 400, 350);
+		}
+		else{
+			ctx.fillText("Level " + currentLevel + "\n finished", 300, 350);
+		}
+		gameStarted = false;
+		setTimeout(function(){
+				if(++currentLevel <= totalLevels){
+					startNewGame(currentLevel)
+				}
+		}, 5000);
 }
 
 function keyDownHandler(e) {
@@ -434,16 +465,20 @@ canvas.addEventListener('click', function(event) {
 
 }
 
-startNewGame = function () {
-	socket.emit('storyMode', {});
+startNewGame = function(level){
+	// DONE : Properly clear the entity manager
+	entityManager.removeAllEntities();
+	ctx.font = "30px arcade";
 
-	socket.on('levelPack', function (data) {
+	socket.emit('storyMode', {level: level});
+	socket.on('levelPack', function(data) {
+		entityManager.removeEntity(player);
 		username.name = data.username;
 		level = new Level(data);
+		currentLevel = level.levelName;
 		level.loadLevel();
 
 		entityManager.update(); // Call update for intialization;
-
 		player = entityManager.getEntityByTag("Player");
 
 		if (!player) {
@@ -462,6 +497,10 @@ startNewGame = function () {
 		$('.star').hide();
 		$('#game').show();
 		$('.paused').hide();
+	});
+
+	socket.on("filesInDirectory", function(data){
+		filesInDirectory = data.files;
 	});
 }
 
@@ -532,7 +571,7 @@ var isPaused = function () {
 
 function update() {
 	if (!gameStarted) return; // Stop updates if game is not being played;
-
+	frameCount++;
 	if (paused) {
 		isPaused();
 		return;
