@@ -46,7 +46,7 @@ enemy2.spriteSrc = "client/images/minionenemyrun.png";
 enemy2.name = "Minion";
 enemy2.ai = "Patrol";
 
-var enemyList = [enemy1, enemy2];
+var enemyList = [character, enemy1, enemy2];
 enemyList.name = "Character";
 
 levelEditor = function (lvlName) {
@@ -148,6 +148,9 @@ levelEditor = function (lvlName) {
                         self.ctx.drawImage(asset, data[i].x, data[i].y, 40, 40);
                     }
                 }
+            }
+            if (data[i].type === "Background") {
+                self.canvas.style.background = "url('" + data[i].src + "')";
             }
         });
         self.displayGrid();
@@ -479,7 +482,7 @@ levelEditor = function (lvlName) {
             case "Background":
                 self.background.type = "Background";
                 self.background.name = imageId;
-                self.background.src = imageSrc;
+                self.background.src = imageSrc.substring(22);
                 $(".selectedBg").attr("src", imageSrc);
                 self.setBackground();
                 break;
@@ -500,7 +503,7 @@ function startEditor() {
 
 function loadEditor() {
     /* To Do: get list of levels from directory */
-    var listofLevel = ["level1", "level2", "level3", "level4"];
+    var listofLevel = ["level1", "level2", "level3", "level10"];
     var items = [];
     $.each(listofLevel, function (i) {
         items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + listofLevel[i] + "</button>");
