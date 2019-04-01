@@ -18,6 +18,8 @@ const assetCollection = [
 							{"type": "Texture", "name": "PlayerJump", "path": "client/images/playerjump.png"},
 							{"type": "Texture", "name": "Enemy", "path": "client/images/enemyrun.png"},
 							{"type": "Texture", "name": "EnemyJump", "path": "client/images/enemyjump.png"},
+							{"type" : "Texture", "name": "Minion", "path": "client/images/minionenemyrun.png"},
+							{"type" : "Texture", "name": "MinionJump", "path": "client/images/minionenemyjump.png"},
 							{"type": "Texture", "name": "Tile1", "path": "/client/images/tile1.png"},
 							{"type": "Texture", "name": "Tile2", "path": "/client/images/tile2.png"},
 							{"type": "Texture", "name": "Tile3", "path": "/client/images/tile3.png"},
@@ -27,7 +29,7 @@ const assetCollection = [
 							{"type": "Texture", "name": "LA1", "path": "/client/images/losAngeles1.png"},
 							{"type": "Texture", "name": "LA2", "path": "/client/images/losAngeles2.png"},
 							{"type": "Texture", "name": "LA3", "path": "/client/images/losAngeles3.png"},
-							{"type": "Texture", "name": "NewYork", "path": "/client/images/combinedNY.png"},
+							{"type": "Texture", "name": "NewYork", "path": "/client/images/NewYork.png"},
 							{"type": "Texture", "name": "Bullet", "path": "/client/images/bullet.png"},
 							{"type": "Font", "name": "Helvetica", "path": "client/fonts/helvetica.ttf"},
 							{"type": "Sound", "name": "StoryMode", "path": "client/sound/background.mp3"}

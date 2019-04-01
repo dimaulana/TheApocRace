@@ -34,12 +34,19 @@ character.src = "client/images/charThumbnail.png";
 character.spriteSrc = "client/images/playerrun.png"
 character.name = "Player";
 
-var enemy = new Image();
-enemy.src = "client/images/enemyThumbnail.png";
-enemy.spriteSrc = "client/images/enemyrun.png";
-enemy.name = "Enemy"
+var enemy1 = new Image();
+enemy1.src = "client/images/enemyThumbnail.png";
+enemy1.spriteSrc = "client/images/enemyrun.png";
+enemy1.name = "Enemy";
+enemy1.ai = "Basic";
 
-var enemyList = [character, enemy];
+enemy2 = new Image();
+enemy2.src = "client/images/minionThumbnail.png";
+enemy2.spriteSrc = "client/images/minionenemyrun.png";
+enemy2.name = "Minion";
+enemy2.ai = "Patrol";
+
+var enemyList = [character, enemy1, enemy2];
 enemyList.name = "Character";
 
 levelEditor = function (lvlName) {
@@ -142,6 +149,9 @@ levelEditor = function (lvlName) {
                     }
                 }
             }
+            if (data[i].type === "Background") {
+                self.canvas.style.background = "url('" + data[i].src + "')";
+            }
         });
         self.displayGrid();
     }
@@ -161,10 +171,6 @@ levelEditor = function (lvlName) {
     /* Sets background TODO: Figure out sprite backgrounds */
     self.setBackground = function () {
         self.canvas.style.background = "url('" + self.background.src + "')";
-        // var background = findSprite(self.background.name, self.background.type);
-        // background.onload = function () {
-        //     self.ctx.drawImage(background, self.viewport.x, 0, 1280, 720);
-        // }
     }
 
     /* Translates mouse position from normal coordinates to canvas coordinates */
@@ -361,9 +367,6 @@ levelEditor = function (lvlName) {
                 tileMapToSend.push(self.background);
             }
 
-            
-            console.log(tileMapToSend);
-
             var pack = {
                 tileMap: tileMapToSend,
                 levelName: levelName
@@ -428,6 +431,7 @@ levelEditor = function (lvlName) {
             case "Back":
                 $(".interface").html("");
                 $(".menu").html("");
+                $('.star').removeClass("off");
                 generateMenus('buildMenu');
                 break;
             case "Save":
@@ -491,6 +495,7 @@ levelEditor = function (lvlName) {
 };
 
 function startEditor() {
+    $('.star').addClass("off");
     $('#editor').show();
     var editor = new levelEditor();
     return editor;
@@ -498,7 +503,7 @@ function startEditor() {
 
 function loadEditor() {
     /* To Do: get list of levels from directory */
-    var listofLevel = ["level1", "level2", "level3", "level4"];
+    var listofLevel = ["level1", "level2", "level3", "level10"];
     var items = [];
     $.each(listofLevel, function (i) {
         items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + listofLevel[i] + "</button>");
@@ -508,9 +513,11 @@ function loadEditor() {
 
     $(".menu #loadLevel").on("click", function () {
         var selectedLvl = $(this).text();
+        $('.star').addClass("off");
         if (selectedLvl === "Back") {
             $(".interface").html("");
             $(".menu").html("");
+            $('.star').removeClass("off");
             generateMenus("buildMenu");
         } 
         else {
