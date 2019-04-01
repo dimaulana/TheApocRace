@@ -34,12 +34,19 @@ character.src = "client/images/charThumbnail.png";
 character.spriteSrc = "client/images/playerrun.png"
 character.name = "Player";
 
-var enemy = new Image();
-enemy.src = "client/images/enemyThumbnail.png";
-enemy.spriteSrc = "client/images/enemyrun.png";
-enemy.name = "Enemy"
+var enemy1 = new Image();
+enemy1.src = "client/images/enemyThumbnail.png";
+enemy1.spriteSrc = "client/images/enemyrun.png";
+enemy1.name = "Enemy";
+enemy1.ai = "Basic";
 
-var enemyList = [character, enemy];
+enemy2 = new Image();
+enemy2.src = "client/images/minionThumbnail.png";
+enemy2.spriteSrc = "client/images/minionenemyrun.png";
+enemy2.name = "Minion";
+enemy2.ai = "Patrol";
+
+var enemyList = [enemy1, enemy2];
 enemyList.name = "Character";
 
 levelEditor = function (lvlName) {
@@ -357,9 +364,6 @@ levelEditor = function (lvlName) {
                 tileMapToSend.push(self.background);
             }
 
-            
-            console.log(tileMapToSend);
-
             var pack = {
                 tileMap: tileMapToSend,
                 levelName: levelName
@@ -475,7 +479,7 @@ levelEditor = function (lvlName) {
             case "Background":
                 self.background.type = "Background";
                 self.background.name = imageId;
-                self.background.src = imageSrc.substring(22);
+                self.background.src = imageSrc;
                 $(".selectedBg").attr("src", imageSrc);
                 self.setBackground();
                 break;
