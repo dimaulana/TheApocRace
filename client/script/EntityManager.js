@@ -29,17 +29,20 @@ function Entity(param) {
 
 	self.changeAnimation = function(param) {
 		if (!self.animation) return;
-		var delay = 5;
+		var delay = 7;
 		var frame_sets;
 
-		if (!param.state) frame_sets = self.properties.frame_sets;
-			
-		else if (param.state === "jump")
+		if (param.state === "run") {
+			frame_sets = self.properties.frame_sets;
+			self.image.src = self.properties.fileLocation;
+		}	
+		else if (param.state === "jump") {
 			frame_sets = self.properties.jump_sets;
+			self.image.src = self.properties.jumpImage;
+		}
 
 		self.animation.change(frame_sets[param.index], delay);
 	}
-
 
 	return self;
 }
