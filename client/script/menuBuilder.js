@@ -78,7 +78,6 @@ $(document).ready(function () {
         } else {
             switch (menuClicked) {
                 case "Story Mode":
-                    $('#gameCan').show();
                     startNewGame();
                     break;
                 case "Custom":

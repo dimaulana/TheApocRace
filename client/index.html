@@ -2,23 +2,31 @@
 
 
 <!DOCTYPE html>
+
 <head>
 	<!-- JQuery, Bootstrap CDN -->
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+		integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o" crossorigin="anonymous">
+	</script>
 
 
-	
+
 	<!-- Internal script import -->
 	<script src="client/script/menuBuilder.js"></script>
 	<link rel="stylesheet" type="text/css" href="client/css/main.css" />
 </head>
+
 <body>
-	<!-- Canvas Container -->
-	<div id="wrapper">
-		 <canvas id="game" width="1280" height="720" style="border:1px solid #000000; display:none;"> </canvas>
+
+	<!-- Main Game Container -->
+	<div class="game">
+		<canvas id="game" width="1280" height="720" style="border:1px solid #000000; display: none;"> </canvas>
 	</div>
+
 
 	<div class="star">
 		<div class="container h-100">
@@ -30,14 +38,19 @@
 					<!-- Login Screen -->
 					<div id="account">
 
-						<form method="POST" id="account-info" class="form-signin justify-content-center" onsubmit="validate(); return false;">
-							<input id="account-username" type="text" class="form-control" name="username" placeholder="Username" required="" autofocus="" />
-							<input id="account-password" type="password" class="form-control" name="password" placeholder="Password" required=""/>
+						<form method="POST" id="account-info" class="form-signin justify-content-center"
+							onsubmit="validate(); return false;">
+							<input id="account-username" type="text" class="form-control" name="username"
+								placeholder="Username" required="" autofocus="" />
+							<input id="account-password" type="password" class="form-control" name="password"
+								placeholder="Password" required="" />
 							<div class="btn-group">
 								<button id="signIn" class="btn btn-primary ml-2" type="submit">Sign In</button>
 								<button id="signUp" class="btn btn-primary ml-2" type="submit">Sign Up</button>
-								<button id="forgotPass" class="btn btn-primary ml-2" type="submit">Forgot Password</button>
-								<button id="resetPass" class="btn btn-primary ml-2" type="submit" style="display: none;">Reset Password</button>
+								<button id="forgotPass" class="btn btn-primary ml-2" type="submit">Forgot
+									Password</button>
+								<button id="resetPass" class="btn btn-primary ml-2" type="submit"
+									style="display: none;">Reset Password</button>
 
 							</div>
 						</form>
@@ -45,6 +58,7 @@
 
 					<!-- Interface Container -->
 					<div class="interface">
+						<!-- Canvas Container -->
 
 					</div>
 					<!-- Menu Container -->
@@ -55,46 +69,34 @@
 					<div class="paused btn-group-vertical">
 
 					</div>
-					
+
 					<!--Extras Container-->
 					<div class="extras">
-							
 					</div>
-					
+
 					<!--For controls Container-->
 					<div class="gameControls" >
-									
 					</div>
-					
+
 					<!--Credits container-->
 					<div class="credits">
-										
 					</div>
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
+
+          
 					<!--Bottom controls-->
 					<div class="controls" style="display:none;">
-					<div class="col w-100 justify-content-center">
-                    <ul class="objects">
-                    <ul class="muteButton" id="mute">
-					<img src="client/images/mute.png">
-					<a id="mute" onclick="">MUTE</a>
-					</ul>
-					</ul>
+					  <div class="col w-100 justify-content-center">
+              <ul class="objects">
+                <ul class="muteButton" id="mute">
+					        <img src="client/images/mute.png">
+					        <a id="mute" onclick="">MUTE</a>
+					       </ul>
+					       </ul>
                    					
+					  </div>
 					</div>
-					</div>
-					
-					
+
+
 				</div>
 			</div>
 		</div>
@@ -103,9 +105,10 @@
 	<div hidden="true">
 		<input type="file">
 	</div>
-	
+
 
 </body>
+
 </html>
 
 

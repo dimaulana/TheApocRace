@@ -104,12 +104,7 @@ input[type=password]:focus {
 	to {background-position: -2000px 5000px;}
   }
 
-  /*Canvas background*/
-  #game {
-	/*background: url(../images/newyork1.png) top center;*/
-	height: 720;
-	width: 1280;
-  }
+
 .credits {
       font-family: 'star-jedi', arial;
       font-size: 2.3em;
@@ -119,6 +114,13 @@ input[type=password]:focus {
 	  color:white;
 	  padding-left:20px;
 	  /* overflow-y:auto; */
+	}
+
+	.game {
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.profile{
@@ -149,3 +151,10 @@ input[type=password]:focus {
       width: 45px;
      /*  float: left; */
     }
+
+		.star.off {
+			-moz-animation-name: none;
+		-webkit-animation-name: none;
+		-ms-animation-name: none;
+			animation-name: none;	
+		}
