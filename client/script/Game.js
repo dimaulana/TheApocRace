@@ -59,16 +59,16 @@ function spawnBullet(entity) {
 	param.width = 10;
 	param.height = 10;
 	param.prevPos = param.pos;
-	param.lifespan = 20;
+	param.lifespan = 25;
 	param.speed = {
 		x: 30,
 		y: 0
 	};
 	param.scale = {
-		x: 1.0,
+		x: (entity.properties.scale.x == -1.0) ? -1.0 : 1.0,
 		y: 1.0
 	};
-	if (entity.properties.scale.x == -1.0) param.scale.x = -1.0;
+	//if (entity.properties.scale.x == -1.0) param.scale.x = -1.0;
 	param.alive = true;
 
 	param.fileLocation = entity.properties.weaponFile;
@@ -81,22 +81,16 @@ function updatePlayer() {
 	// Update speed;
 	if (player.properties.right) {
 		player.properties.speed.x = player.properties.speedMax;
-		//player.changeAnimation({index: 2});
 		player.properties.scale.x = 1.0;
 	} else if (player.properties.left) {
-		player.properties.speed.x = -player.properties.speedMax;
-		//player.changeAnimation({index: 3});
 		player.properties.scale.x = -1.0;
 	} else {
 		player.properties.speed.x = 0;
-		//var i = (player.properties.scale.x == -1.0) ? 1 : 0;
-		//player.changeAnimation({index: i});
 	}
 
 	if (player.properties.jump && player.properties.state != "jumping") {
 		player.properties.speed.y = -player.properties.speedMax * 12;
 		player.properties.state = "jumping";
-		//player.changeAnimation({state: "jump", index: 0});
 	} else {
 		player.properties.speed.y = 0;
 	}
@@ -113,12 +107,37 @@ function updatePlayer() {
 	player.properties.weaponClock++; // Update weaponClock;
 }
 
+updateEnemy(enemy) {
+	enemy.properties.prevPos.x = enemy.properties.pos.x;
+	enemy.properties.prevPos.y = enemy.properties.pos.y;
+
+	enemy.properties.pos.y -= enemy.properties.gravity;
+
+	// TODO: Update enemy based on their AI;
+
+	var lineOfSight = 630; // Half canvas width - some offset 640 - 10;
+	// Get direction for shooting;
+	var distance = enemy.properties.pos.x - player.properties.pos.x;
+	if (distance >= 0 && distance < lineOfSight) {
+		enemy.properties.scale.x = -1.0;
+		enemy.changeAnimation({"state": "run", "index": 1});
+		spawnBullet(enemy);
+	}
+	else if (distance >= -lineOfSight && distance < 0)
+	{
+		enemy.properties.scale.x = 1.0;
+		enemy.changeAnimation({"state": "run", "index": 0});
+		spawnBullet(enemy);
+	}
+	enemy.properties.weaponClock++; // Update weapon clock;
+	enemy.animation.update();
+}
+
 function updateEntities() {
 	// First update entityManager;
 	entityManager.update();
 
-	// Update Player;
-	updatePlayer();
+	updatePlayer(); // Update Player;
 
 	entityManager.getEntities().forEach(function (entity) {
 		if (entity.tag == "Bullet") {
@@ -128,11 +147,10 @@ function updateEntities() {
 			} else {
 				entity.properties.prevPos = entity.properties.pos;
 				entity.properties.pos.x += (entity.properties.scale.x == -1.0) ? -entity.properties.speed.x : entity.properties.speed.x;
-				// TODO: Invert the image?
 			}
 		}
 
-		// TODO: Implement enemy movement here;
+		if (entity.tag == "Enemy") updateEnemy(entity);
 	});
 }
 
@@ -161,6 +179,7 @@ function updateAnimation() {
 
 // Function to handle collisions;
 function getOverlap(a, b) {
+
 	var delta = {
 		x: Math.abs((a.properties.pos.x + a.properties.width / 2) - (b.properties.pos.x + b.properties.width / 2)),
 		y: Math.abs((a.properties.pos.y + a.properties.height / 2) - (b.properties.pos.y + b.properties.height / 2))
@@ -216,38 +235,78 @@ var testCollisions = function () {
 
 		// TODO:
 		// Collision of bullets with player, enemies and tiles;
-		if (entity.tag != "Tile1" && entity.tag != "Tile2" && entity.tag != "Tile2") return;
 
-		var currentOverlap = getOverlap(player, entity);
-		var prevOverlap = getPrevOverlap(player, entity);
+		if (entity.tag == "Tile1" || entity.tag == "Tile2" || entity.tag == "Tile3") {
+			// Collision between tiles and player;
+			var currentOverlap = getOverlap(player, entity);
+			var prevOverlap = getPrevOverlap(player, entity);
 
-		if (currentOverlap.x > 0 && currentOverlap.y > 0) {
-			if (prevOverlap.x > 0) {
-				// Collision from top or bottom;
-				if ((player.properties.pos.y - player.properties.prevPos.y) > 0) {
-					// Collision came from top of tile;
-					player.properties.speed.y = 0;
-					player.properties.pos.y -= currentOverlap.y;
-					player.properties.state = "standing"; // Jumping ends as he is now on the tile;
-				} else if (((player.properties.pos.y - player.properties.prevPos.y) < 0)) {
-					// Collision came from bottom of tile;
-					player.properties.speed.y = 0;
-					player.properties.pos.y += currentOverlap.y;
+			if (currentOverlap.x > 0 && currentOverlap.y > 0) {
+				if (prevOverlap.x > 0) {
+					// Collision from top or bottom;
+					if ((player.properties.pos.y - player.properties.prevPos.y) > 0) {
+						// Collision came from top of tile;
+						player.properties.speed.y = 0;
+						player.properties.pos.y -= currentOverlap.y;
+						player.properties.state = "standing"; // Jumping ends as he is now on the tile;
+					} else if (((player.properties.pos.y - player.properties.prevPos.y) < 0)) {
+						// Collision came from bottom of tile;
+						player.properties.speed.y = 0;
+						player.properties.pos.y += currentOverlap.y;
+					}
+				}
+
+				if (prevOverlap.y > 0) {
+					// Collision from right or left;
+					if ((player.properties.pos.x - player.properties.prevPos.x) > 0) {
+						// Collision from right;
+						player.properties.speed.x = 0;
+						player.properties.pos.x += currentOverlap.x;
+					} else if ((player.properties.pos.x - player.properties.prevPos.x) < 0) {
+						// Collision from left;
+						player.properties.speed.x = 0;
+						player.properties.pos.x -= currentOverlap.x;
+					}
 				}
 			}
 
-			if (prevOverlap.y > 0) {
-				// Collision from right or left;
-				if ((player.properties.pos.x - player.properties.prevPos.x) > 0) {
-					// Collision from right;
-					player.properties.speed.x = 0;
-					player.properties.pos.x += currentOverlap.x;
-				} else if ((player.properties.pos.x - player.properties.prevPos.x) < 0) {
-					// Collision from left;
-					player.properties.speed.x = 0;
-					player.properties.pos.x -= currentOverlap.x;
+			var enemyList = entityManager.getEntitiesByTag("Enemy");
+			for (var i = 0; i < enemyList.length; i++) {
+				var enemy = enemyList[i];
+				currentOverlap = getOverlap(enemy, entity);
+				prevOverlap = getOverlap(enemy, entity);
+
+				if (currentOverlap.x > 0 && currentOverlap.y > 0) {
+					if (prevOverlap.x > 0) {
+						// Collision from top or bottom;
+						if ((enemy.properties.pos.y - enemy.properties.prevPos.y) > 0) {
+							// Collision came from top of tile;
+							enemy.properties.speed.y = 0;
+							enemy.properties.pos.y -= currentOverlap.y;
+							enemy.properties.state = "standing";
+						}
+						else if (((enemy.properties.pos.y - enemy.properties.prevPos.y) < 0)) {
+							// Collision came from bottom of tile;
+							enemy.properties.speed.y = 0;
+							enemy.properties.pos.y += currentOverlap.y;
+						}
+					}
+
+					if (prevOverlap.y > 0) {
+							// Collision from right or left;
+							if ((enemy.properties.pos.x - enemy.properties.prevPos.x) > 0) {
+							// Collision from right;
+							enemy.properties.speed.x = 0;
+							enemy.properties.pos.x += currentOverlap.x;
+						} else if ((enemy.properties.pos.x - enemy.properties.prevPos.x) < 0) {
+							// Collision from left;
+							enemy.properties.speed.x = 0;
+							enemy.properties.pos.x -= currentOverlap.x;
+						}
+					}
 				}
 			}
+
 		}
 	});
 
@@ -412,7 +471,7 @@ function keyUpHandler(e) {
 function addListener() {
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
-	
+
 // Add event listener to canvas element
 canvas.addEventListener('click', function(event) {
   // Control that click event occurred within position of button
@@ -424,9 +483,9 @@ canvas.addEventListener('click', function(event) {
 	var buttonH = 50;
  //Resume button
 	if (
-    event.x > buttonX && 
+    event.x > buttonX &&
     event.x < buttonX + buttonW &&
-    event.y > resumeButtonY && 
+    event.y > resumeButtonY &&
     event.y < resumeButtonY + buttonH
   ) {
     // Executes if  resume button was clicked!
@@ -434,20 +493,20 @@ canvas.addEventListener('click', function(event) {
 	}
 	///save button save listener
 	else if (
-    event.x > buttonX && 
+    event.x > buttonX &&
     event.x < buttonX + buttonW &&
-    event.y > saveButtonY && 
+    event.y > saveButtonY &&
     event.y < saveButtonY + buttonH
   ) {
 		// Executes if  save button was clicked!
 		//TODO:Add SAVE FUNCTION HERE
-	
+
 	}
   //quit button listener
 	else if (
-    event.x > buttonX && 
+    event.x > buttonX &&
     event.x < buttonX + buttonW &&
-    event.y > quitButtonY && 
+    event.y > quitButtonY &&
     event.y < quitButtonY + buttonH
   ) {
     // Executes if button was clicked!
@@ -546,7 +605,7 @@ var isPaused = function () {
 	var quitButtonY = 440;
 	var buttonW = 160;
 	var buttonH = 50;
-	//Setting up in-game buttons 
+	//Setting up in-game buttons
 
 	ctx.fillStyle = "blue";
 	//Resume button

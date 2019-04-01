@@ -118,7 +118,7 @@ class Patrol extends Component {
 	constructor(param) {
 		super();
 		this.patrolSpeed = param.speed;
-		this.positions = param.pos;
+		this.positions = param.pos; // TODO: Get current pos and an addition to that;
 	}
 }
 

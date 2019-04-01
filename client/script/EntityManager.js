@@ -66,8 +66,15 @@ function EntityManager() {
 	self.getEntityByTag = function(tag) {
 		var entity = self.entities.find(function(e) {
 			return e.properties.tag == tag;
-		})
+		});
 		return entity;
+	}
+
+	self.getEntitiesByTag = function(tag) {
+		var entities = self.entities.filter(function(e) {
+			return e.properties.tag == tag;
+		});
+		return entities;
 	}
 
 	self.update = function() {

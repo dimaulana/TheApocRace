@@ -55,7 +55,7 @@ class GamePlay {
 		enemy.addComponent(components.DIMENSION, {w: 40, h: 80});
 		enemy.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Enemy"),
 											   jumpLoc: this.assetManager.getTexture("EnemyJump"),
-											   frame_sets: data.frame_sets});
+											   frame_sets: [[0], [1], [2, 3, 4, 5], [6, 7, 8, 9]]});
 
 		if (data.ai === "Basic") {
 			// Do nothing??
