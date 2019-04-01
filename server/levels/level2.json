@@ -354,11 +354,16 @@
     {
         "name": "Tile1",
         "type": "Tile",
-        "x": 1240,
+        "x": 1280,
         "y": 680,
         "tilePos": 575,
         "img": "client/images/tile1.png"
     },
-    {"type": "Background", "name": "NewYork"}
-
+    {"type": "Background", "name": "NewYork"},
+    {
+        "name": "End",
+        "type": "Point",
+        "x": 1280,
+        "y": 680
+    }
 ]

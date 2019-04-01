@@ -102,6 +102,11 @@ class GamePlay {
 					this.spawnTile(levelData[i]);
 				break;
 
+				case "Point":
+					var point = this.entityManager.addEntity(name);
+					point.addComponent(components.TRANSFORM, {x: levelData[i].x, y: levelData[i].y});
+				break;
+
 				case "Background":
 					var background = this.entityManager.addEntity(type);
 					var frame_sets;
@@ -115,7 +120,7 @@ class GamePlay {
 					var sound = this.entityManager.addEntity(type);
 					sound.addComponent(components.SPRITE, {loc: this.assetManager.getSound(name)});
 
- 				break;
+				break;
 
 				default:
 					console.log("Could not find the asset type: " + type);

@@ -13,7 +13,7 @@ ctx.font = "30px arcade";
 // TODO: Make Game.js a class of its own;
 
 // Variables declaration and initialising;
-var player, backgroundSound, level, currentLevel;
+var player, backgroundSound, level, currentLevel, frameCount;
 var entityManager = new EntityManager();
 var paused = false;
 var gameStarted = false;
@@ -283,8 +283,14 @@ function canvasDraw() {
 
 	ctx.fillText(username.text + username.name, username.x, username.y);
 	ctx.fillText('HP: ' + 0 ,20,70);
+ 
+	if(frameCount < 50){
+		ctx.fillText("Level " + currentLevel, 600, 100);
+	}
 
-	if (player.properties.pos.x > 800) {
+	var endPoint = entityManager.getEntityByTag("End");
+
+	if (player.properties.pos.x >= endPoint.properties.pos.x) {
 			endLevel(currentLevel, filesInDirectory);
 	}
 	
@@ -335,7 +341,7 @@ function endLevel(currentLevel, levelsInDirectory){
 		ctx.font = "100px arcade";
 
 		if(currentLevel === totalLevels){
-			ctx.fillText("Game Over", 300, 350);
+			ctx.fillText("Game Over", 400, 350);
 		}
 		else{
 			ctx.fillText("Level " + currentLevel + "\n finished", 300, 350);
@@ -565,7 +571,7 @@ var isPaused = function () {
 
 function update() {
 	if (!gameStarted) return; // Stop updates if game is not being played;
-
+	frameCount++;
 	if (paused) {
 		isPaused();
 		return;
