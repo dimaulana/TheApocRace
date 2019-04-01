@@ -358,5 +358,7 @@
         "y": 680,
         "tilePos": 575,
         "img": "client/images/tile1.png"
-    }
+    },
+    {"type": "Background", "name": "NewYork"}
+
 ]

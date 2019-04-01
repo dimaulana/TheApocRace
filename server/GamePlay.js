@@ -30,7 +30,6 @@ class GamePlay {
 			// Get init pack for all the entities;
 			levelPack.data.push(entity.getInitPack());
 		});
-
 		this.socket.emit('levelPack', levelPack);
 	}
 

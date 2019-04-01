@@ -88,5 +88,9 @@ function EntityManager() {
 		delete entity;
 	}
 
+	self.removeAllEntities = function(){
+		self.entities = [];
+	}
+
 	return self;
 }
