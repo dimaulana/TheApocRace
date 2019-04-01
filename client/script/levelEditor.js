@@ -1,29 +1,15 @@
 /* Load images */
 
 /* Background images */
-var newyork1 = new Image();
-newyork1.src = "client/images/newyork1.png";
-newyork1.name = "NY 1";
-var newyork2 = new Image();
-newyork2.src = "client/images/newyork2.png";
-newyork2.name = "NY 2";
-var newyork3 = new Image();
-newyork3.src = "client/images/newyork3.png";
-newyork3.name = "NY 3";
+var newyork = new Image();
+newyork.src = "client/images/newyork1.png";
+newyork.name = "New York";
 
-var losAngeles1 = new Image();
-losAngeles1.src = "client/images/losAngeles1.png";
-losAngeles1.name = "LA 1";
+var losAngeles = new Image();
+losAngeles.src = "client/images/losAngeles1.png";
+losAngeles.name = "Los Angeles";
 
-var losAngeles2 = new Image();
-losAngeles2.src = "client/images/losAngeles1.png";
-losAngeles2.name = "LA 2";
-
-var losAngeles3 = new Image();
-losAngeles3.src = "client/images/losAngeles3.png";
-losAngeles3.name = "LA 3";
-
-var backgroundList = [newyork1, newyork2, newyork3, losAngeles1, losAngeles2, losAngeles3];
+var backgroundList = [newyork,  losAngeles];
 backgroundList.name = "Background";
 
 /* Tiles */
@@ -83,6 +69,7 @@ levelEditor = function (lvlName) {
 
     /* Initiates the first empty canvas */
     self.initiate = function (levelName) {
+
         if (!levelName) levelName = "";
         socket.emit('loadLevel', levelName);
         socket.on('getLevelData', function (data) {
@@ -351,7 +338,7 @@ levelEditor = function (lvlName) {
             /* Save data here */
             if (levelName) {
                 $('#saveModal').modal('hide');
-            }
+            }   
 
             var tileMapToSend = self.tileMap;
             /* Adjust for current screen position offset */
@@ -368,9 +355,14 @@ levelEditor = function (lvlName) {
                 "x" : lastTile.x,
                 "y" : lastTile.y
             }
-            tileMapToSend.push(self.background);
             tileMapToSend.push(endTile);
+
+            if (!jQuery.isEmptyObject(self.background)) {
+                tileMapToSend.push(self.background);
+            }
+
             
+            console.log(tileMapToSend);
 
             var pack = {
                 tileMap: tileMapToSend,
@@ -501,7 +493,6 @@ levelEditor = function (lvlName) {
 function startEditor() {
     $('#editor').show();
     var editor = new levelEditor();
-    editor.initiate();
     return editor;
 }
 
