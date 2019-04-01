@@ -330,13 +330,10 @@ function canvasDraw() {
 }
 
 function endLevel(currentLevel, levelsInDirectory){
-		// console.log("here");
-		// var count = 1;
 		var totalLevels = levelsInDirectory.length;
 
-		
-
 		ctx.font = "100px arcade";
+
 		if(currentLevel === totalLevels){
 			ctx.fillText("Game Over", 300, 350);
 		}
