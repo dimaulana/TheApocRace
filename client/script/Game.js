@@ -10,12 +10,16 @@ var display = document.querySelector('#game').getContext("2d");
 
 ctx.font = "30px arcade";
 
+// TODO: Make Game.js a class of its own;
+
 // Variables declaration and initialising;
-var player, backgroundSound, level;
+var player, backgroundSound, level, currentLevel, frameCount;
 var entityManager = new EntityManager();
 var paused = false;
 var gameStarted = false;
 var spriteBox = false;
+var transition = false;
+var filesInDirectory = [];
 
 var score = {
 	x: canvas.width - 200,
@@ -77,20 +81,22 @@ function updatePlayer() {
 	// Update speed;
 	if (player.properties.right) {
 		player.properties.speed.x = player.properties.speedMax;
-		player.changeAnimation(2);
+		//player.changeAnimation({index: 2});
 		player.properties.scale.x = 1.0;
 	} else if (player.properties.left) {
 		player.properties.speed.x = -player.properties.speedMax;
-		player.changeAnimation(3);
+		//player.changeAnimation({index: 3});
 		player.properties.scale.x = -1.0;
 	} else {
 		player.properties.speed.x = 0;
-		player.changeAnimation((player.properties.scale.x == -1.0) ? 1 : 0);
+		//var i = (player.properties.scale.x == -1.0) ? 1 : 0;
+		//player.changeAnimation({index: i});
 	}
 
 	if (player.properties.jump && player.properties.state != "jumping") {
 		player.properties.speed.y = -player.properties.speedMax * 12;
 		player.properties.state = "jumping";
+		//player.changeAnimation({state: "jump", index: 0});
 	} else {
 		player.properties.speed.y = 0;
 	}
@@ -105,9 +111,6 @@ function updatePlayer() {
 	player.properties.pos.y -= player.properties.gravity;
 
 	player.properties.weaponClock++; // Update weaponClock;
-
-	// Update player animation;
-	player.animation.update();
 }
 
 function updateEntities() {
@@ -131,6 +134,29 @@ function updateEntities() {
 
 		// TODO: Implement enemy movement here;
 	});
+}
+
+function updateAnimation() {
+
+	// Update player animation;
+	var param = {};
+
+	if (player.properties.state == "jumping")
+		param.state = "jump";
+	else
+		param.state = "run";
+
+	// Check direction;
+	if (player.properties.right)
+		param.index = 2;
+	else if (player.properties.left)
+		param.index = 3;
+	else
+		param.index = (player.properties.scale.x == -1.0) ? 1 : 0;
+
+	player.changeAnimation(param);
+
+	player.animation.update();
 }
 
 // Function to handle collisions;
@@ -241,16 +267,6 @@ function canvasDraw() {
 	// Change background animation;
 	var background = entityManager.getEntityByTag("Background");
 	if (background) { // Check if background exists;
-		// if (player.properties.pos.x >= 200 && player.properties.pos.x < 400) {
-		// 	background.changeAnimation(1);
-		// }
-		// else if (player.properties.pos.x >= 400) {
-		// 	background.changeAnimation(2);
-		// }
-		// else {
-		// 	background.changeAnimation(0);
-		// }
-
 		//background.animation.update();
 		if (player.properties.speed.x > 0 && player.properties.pos.x > canvas.width / 2) background.frame++
 		else if (player.properties.speed.x < 0) {
@@ -266,8 +282,18 @@ function canvasDraw() {
 	ctx.fillText(score.text + score.int, score.x, score.y);
 
 	ctx.fillText(username.text + username.name, username.x, username.y);
-	ctx.fillText('HP: ' + 0, 20, 70);
+	ctx.fillText('HP: ' + 0 ,20,70);
+ 
+	if(frameCount < 50){
+		ctx.fillText("Level " + currentLevel, 600, 100);
+	}
 
+	var endPoint = entityManager.getEntityByTag("End");
+
+	if (player.properties.pos.x >= endPoint.properties.pos.x) {
+			endLevel(currentLevel, filesInDirectory);
+	}
+	
 
 	// Draw player;
 	/** Not using for now;
@@ -294,7 +320,7 @@ function canvasDraw() {
 						e.properties.width, e.properties.height)
 				break;
 
-			case "Player":
+			case "Player":			
 			case "Enemy":
 				ctx.drawImage(e.image, e.animation.frame * e.properties.width, 0, e.properties.width, e.properties.height,
 					Math.floor(e.properties.pos.x - viewport.x), Math.floor(e.properties.pos.y - viewport.y), e.properties.width, e.properties.height);
@@ -307,6 +333,25 @@ function canvasDraw() {
 	});
 
 
+}
+
+function endLevel(currentLevel, levelsInDirectory){
+		var totalLevels = levelsInDirectory.length;
+
+		ctx.font = "100px arcade";
+
+		if(currentLevel === totalLevels){
+			ctx.fillText("Game Over", 400, 350);
+		}
+		else{
+			ctx.fillText("Level " + currentLevel + "\n finished", 300, 350);
+		}
+		gameStarted = false;
+		setTimeout(function(){
+				if(++currentLevel <= totalLevels){
+					startNewGame(currentLevel)
+				}
+		}, 5000);
 }
 
 function keyDownHandler(e) {
@@ -367,19 +412,80 @@ function keyUpHandler(e) {
 function addListener() {
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
+	
+// Add event listener to canvas element
+canvas.addEventListener('click', function(event) {
+  // Control that click event occurred within position of button
+	var buttonX=570;
+	var resumeButtonY = 300;
+	var saveButtonY = 370;
+	var quitButtonY = 440;
+	var buttonW = 160;
+	var buttonH = 50;
+ //Resume button
+	if (
+    event.x > buttonX && 
+    event.x < buttonX + buttonW &&
+    event.y > resumeButtonY && 
+    event.y < resumeButtonY + buttonH
+  ) {
+    // Executes if  resume button was clicked!
+ 		paused=false;
+	}
+	///save button save listener
+	else if (
+    event.x > buttonX && 
+    event.x < buttonX + buttonW &&
+    event.y > saveButtonY && 
+    event.y < saveButtonY + buttonH
+  ) {
+		// Executes if  save button was clicked!
+		//TODO:Add SAVE FUNCTION HERE
+	
+	}
+  //quit button listener
+	else if (
+    event.x > buttonX && 
+    event.x < buttonX + buttonW &&
+    event.y > quitButtonY && 
+    event.y < quitButtonY + buttonH
+  ) {
+    // Executes if button was clicked!
+		gameStarted=false;
+			//TODO: FIX HERE :Clear all canvas and previous game history
+		$('.star').show();
+		$(".interface").html("");
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		$('#game').hide();
+		//$('#game').clearRect(0, 0, canvas.width, canvas.height);
+		generateMenus('mainMenu');
+  }
+
+});
+
 }
 
-startNewGame = function () {
-	socket.emit('storyMode', {});
+startNewGame = function(level){
+	// DONE : Properly clear the entity manager
+	entityManager.removeAllEntities();
+	ctx.font = "30px arcade";
 
-	socket.on('levelPack', function (data) {
+	socket.emit('storyMode', {level: level});
+	socket.on('levelPack', function(data) {
+		entityManager.removeEntity(player);
 		username.name = data.username;
 		level = new Level(data);
+		currentLevel = level.levelName;
 		level.loadLevel();
 
 		entityManager.update(); // Call update for intialization;
-
 		player = entityManager.getEntityByTag("Player");
+
+		if (!player) {
+			alert("Oops, Something went wrong! \nPlease try again");
+			generateMenus("playMenu");
+			return;
+		}
 
 		if (backgroundSound) backgroundSound.play();
 
@@ -387,14 +493,15 @@ startNewGame = function () {
 		gameStarted = true;
 		timeWhenGameStarted = Date.now();
 		frameCount = 0;
-		// backgroundSound = new sound('client/sound/background.mp3');
-		//backgroundSound.play();
+
+		$('.star').hide();
+		$('#game').show();
+		$('.paused').hide();
 	});
 
-	$(".star").addClass("off");
-	$('#game').show();
-	$('.paused').hide();
-
+	socket.on("filesInDirectory", function(data){
+		filesInDirectory = data.files;
+	});
 }
 
 var leaderButton = false;
@@ -403,8 +510,9 @@ var leaderButton = false;
 var leaderBoard = function () {
 	//TODO: loop on all scores and find the highest scrore
 	// Then rank accoring to scores
-	var rank = 0
-	var maxRank = 10; // number of player
+	var rank=0
+	var maxRank=10;// number of players
+
 
 	ctx.font = "50px arcade";
 	ctx.beginPath();
@@ -427,8 +535,30 @@ var isPaused = function () {
 	// Move draw to the div paused  using ralative
 	ctx.beginPath();
 	ctx.fillStyle = "red";
-	ctx.fillText('GAME PAUSED', 500, 150);
-	//Add buttons
+	ctx.fillText('GAME PAUSED' ,550, 150);
+		//Add buttons
+	var resumeButtonX = 570;
+	//	var buttonX = 570; to use later
+	var saveButtonX = 570;
+	var quitButtonX = 570;
+	var resumeButtonY = 300;
+	var saveButtonY = 370;
+	var quitButtonY = 440;
+	var buttonW = 160;
+	var buttonH = 50;
+	//Setting up in-game buttons 
+
+	ctx.fillStyle = "blue";
+	//Resume button
+	ctx.fillRect(resumeButtonX, resumeButtonY, buttonW, buttonH);
+	//Save button
+	ctx.fillRect(saveButtonX,saveButtonY, buttonW, buttonH);
+	//Quit button
+	ctx.fillRect(quitButtonX, quitButtonY, buttonW, buttonH);
+	ctx.fillStyle= "yellow";
+	ctx.fillText("RESUME",590,340);
+	ctx.fillText("SAVE",585,410);
+	ctx.fillText("QUIT",585,480);
 
 	ctx.strokeStyle = "blue";
 	ctx.fillStyle = "rgba(0,0,0,0.01)";
@@ -436,11 +566,12 @@ var isPaused = function () {
 	ctx.stroke();
 	ctx.fill();
 
+
 }
 
 function update() {
 	if (!gameStarted) return; // Stop updates if game is not being played;
-
+	frameCount++;
 	if (paused) {
 		isPaused();
 		return;
@@ -452,6 +583,7 @@ function update() {
 	}
 
 	updateEntities();
+	updateAnimation();
 
 	testCollisions();
 

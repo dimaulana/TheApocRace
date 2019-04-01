@@ -30,7 +30,6 @@ class GamePlay {
 			// Get init pack for all the entities;
 			levelPack.data.push(entity.getInitPack());
 		});
-
 		this.socket.emit('levelPack', levelPack);
 	}
 
@@ -42,7 +41,9 @@ class GamePlay {
 		this.player.addComponent(components.STATS);
 		this.player.addComponent(components.WEAPON, {loc: this.assetManager.getTexture("Bullet")});
 		this.player.addComponent(components.DIMENSION, {w: 40, h: 80});
-		this.player.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Player"), frame_sets: [[0], [1], [2, 3, 4, 5], [6, 7, 8, 9]]});
+		this.player.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Player"), 
+													jumpLoc: this.assetManager.getTexture("PlayerJump"),
+													frame_sets: [[0], [1], [2, 3, 4, 5], [6, 7, 8, 9]]});
 	}
 
 	spawnEnemy(data) {
@@ -53,6 +54,7 @@ class GamePlay {
 		enemy.addComponent(components.WEAPON, {loc: this.assetManager.getTexture("Bullet")});
 		enemy.addComponent(components.DIMENSION, {w: 40, h: 80});
 		enemy.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Enemy"),
+											   jumpLoc: this.assetManager.getTexture("EnemyJump"),
 											   frame_sets: data.frame_sets});
 
 		if (data.ai === "Basic") {
@@ -74,7 +76,7 @@ class GamePlay {
 	}
 
 	getLevelData(){
-		let rawdata = fs.readFileSync('server/bin/' + this.file);
+		let rawdata = fs.readFileSync('server/levels/' + this.file);
 		let json = JSON.parse(rawdata);
 		return json;  
 	}
@@ -100,6 +102,11 @@ class GamePlay {
 					this.spawnTile(levelData[i]);
 				break;
 
+				case "Point":
+					var point = this.entityManager.addEntity(name);
+					point.addComponent(components.TRANSFORM, {x: levelData[i].x, y: levelData[i].y});
+				break;
+
 				case "Background":
 					var background = this.entityManager.addEntity(type);
 					var frame_sets;
@@ -113,7 +120,7 @@ class GamePlay {
 					var sound = this.entityManager.addEntity(type);
 					sound.addComponent(components.SPRITE, {loc: this.assetManager.getSound(name)});
 
- 				break;
+				break;
 
 				default:
 					console.log("Could not find the asset type: " + type);
