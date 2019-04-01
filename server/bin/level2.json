@@ -2,7 +2,7 @@
     {
         "name": "Player",
         "type": "Character",
-        "x": 40,
+        "x": 100,
         "y": 560,
         "tilePos": 449,
         "tilePos1": 481

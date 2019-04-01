@@ -102,10 +102,6 @@ function updatePlayer() {
 
 	// Update player animation;
 	player.animation.update();
-
-	if(player.properties.pos.x > 1500){
-			startNewGame(2);
-	}
 }
 
 function updateEntities() {
@@ -248,6 +244,14 @@ function canvasDraw() {
 	
 	ctx.fillText(username.text + username.name, username.x, username.y);
 	ctx.fillText('HP: ' + 0 ,20,70);
+
+	if (player.properties.pos.x > 1500) {
+		// TODO: call an endLevelFunction;
+		ctx.font = "100px arcade";
+		ctx.fillText("Level 1 \n finished", 300, 350);
+		gameStarted = false;
+		setTimeout(function() { startNewGame(2); }, 5000);
+	}
 	
 
 	// Draw player;
@@ -354,7 +358,7 @@ startNewGame = function(level){
 	// TODO : Properly clear the entity manager
 	console.log(entityManager);
 	entityManager.entities = [];
-	player = {};
+	// player = {};
 	console.log(entityManager);
 	socket.emit('storyMode', {level: level});
 
@@ -366,9 +370,7 @@ startNewGame = function(level){
 		level.loadLevel();
 
 		entityManager.update(); // Call update for intialization;
-
 		player = entityManager.getEntityByTag("Player");
-
 		if (backgroundSound) backgroundSound.play();
 
 		addListener();
@@ -379,7 +381,10 @@ startNewGame = function(level){
 		//backgroundSound.play();
 	});
 
-  $('#game').show();
+	$('#game').show();
+	// ctx.font= "50px arcade";
+	// ctx.fillStyle= "white";
+	// ctx.fillText("level 1 is done", 400,400);
 	$('.paused').hide();
 
 }
