@@ -13,7 +13,7 @@ ctx.font = "30px arcade";
 // TODO: Make Game.js a class of its own;
 
 // Variables declaration and initialising;
-var player, backgroundSound, level, levelName;
+var player, backgroundSound, level, currentLevel;
 var entityManager = new EntityManager();
 var paused = false;
 var gameStarted = false;
@@ -285,7 +285,7 @@ function canvasDraw() {
 	ctx.fillText('HP: ' + 0 ,20,70);
 
 	if (player.properties.pos.x > 800) {
-		endCurrentLevelAndStartANewOne(levelName);
+			endLevel(currentLevel, filesInDirectory);
 	}
 	
 
@@ -329,11 +329,26 @@ function canvasDraw() {
 
 }
 
-function endCurrentLevelAndStartANewOne(levelName){
+function endLevel(currentLevel, levelsInDirectory){
+		// console.log("here");
+		// var count = 1;
+		var totalLevels = levelsInDirectory.length;
+
+		
+
 		ctx.font = "100px arcade";
-		ctx.fillText("Level " + levelName + "\n finished", 300, 350);
+		if(currentLevel === totalLevels){
+			ctx.fillText("Game Over", 300, 350);
+		}
+		else{
+			ctx.fillText("Level " + currentLevel + "\n finished", 300, 350);
+		}
 		gameStarted = false;
-		setTimeout(function(){startNewGame(2)}, 5000);
+		setTimeout(function(){
+				if(++currentLevel <= totalLevels){
+					startNewGame(currentLevel)
+				}
+		}, 5000);
 }
 
 function keyDownHandler(e) {
@@ -457,7 +472,7 @@ startNewGame = function(level){
 		entityManager.removeEntity(player);
 		username.name = data.username;
 		level = new Level(data);
-		levelName = level.levelName;
+		currentLevel = level.levelName;
 		level.loadLevel();
 
 		entityManager.update(); // Call update for intialization;

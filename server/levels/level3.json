@@ -8,30 +8,6 @@
         "tilePos1": 481
     },
     {
-        "name": "Player",
-        "type": "Character",
-        "x": 40,
-        "y": 560,
-        "tilePos": 449,
-        "tilePos1": 481
-    },
-    {
-        "name": "Player",
-        "type": "Character",
-        "x": 40,
-        "y": 560,
-        "tilePos": 449,
-        "tilePos1": 481
-    },
-    {
-        "name": "Player",
-        "type": "Character",
-        "x": 40,
-        "y": 560,
-        "tilePos": 449,
-        "tilePos1": 481
-    },
-    {
         "name": "Tile1",
         "type": "Tile",
         "x": 0,
