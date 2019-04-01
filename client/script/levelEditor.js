@@ -1,29 +1,15 @@
 /* Load images */
 
 /* Background images */
-var newyork1 = new Image();
-newyork1.src = "client/images/newyork1.png";
-newyork1.name = "NY 1";
-var newyork2 = new Image();
-newyork2.src = "client/images/newyork2.png";
-newyork2.name = "NY 2";
-var newyork3 = new Image();
-newyork3.src = "client/images/newyork3.png";
-newyork3.name = "NY 3";
+var newyork = new Image();
+newyork.src = "client/images/newyork1.png";
+newyork.name = "New York";
 
-var losAngeles1 = new Image();
-losAngeles1.src = "client/images/losAngeles1.png";
-losAngeles1.name = "LA 1";
+var losAngeles = new Image();
+losAngeles.src = "client/images/losAngeles1.png";
+losAngeles.name = "Los Angeles";
 
-var losAngeles2 = new Image();
-losAngeles2.src = "client/images/losAngeles1.png";
-losAngeles2.name = "LA 2";
-
-var losAngeles3 = new Image();
-losAngeles3.src = "client/images/losAngeles3.png";
-losAngeles3.name = "LA 3";
-
-var backgroundList = [newyork1, newyork2, newyork3, losAngeles1, losAngeles2, losAngeles3];
+var backgroundList = [newyork,  losAngeles];
 backgroundList.name = "Background";
 
 /* Tiles */
@@ -48,12 +34,19 @@ character.src = "client/images/charThumbnail.png";
 character.spriteSrc = "client/images/playerrun.png"
 character.name = "Player";
 
-var enemy = new Image();
-enemy.src = "client/images/enemyThumbnail.png";
-enemy.spriteSrc = "client/images/enemyrun.png";
-enemy.name = "Enemy"
+var enemy1 = new Image();
+enemy1.src = "client/images/enemyThumbnail.png";
+enemy1.spriteSrc = "client/images/enemyrun.png";
+enemy1.name = "Enemy";
+enemy1.ai = "Basic";
 
-var enemyList = [character, enemy];
+enemy2 = new Image();
+enemy2.src = "client/images/minionThumbnail.png";
+enemy2.spriteSrc = "client/images/minionenemyrun.png";
+enemy2.name = "Minion";
+enemy2.ai = "Patrol";
+
+var enemyList = [character, enemy1, enemy2];
 enemyList.name = "Character";
 
 levelEditor = function (lvlName) {
@@ -83,6 +76,7 @@ levelEditor = function (lvlName) {
 
     /* Initiates the first empty canvas */
     self.initiate = function (levelName) {
+
         if (!levelName) levelName = "";
         socket.emit('loadLevel', levelName);
         socket.on('getLevelData', function (data) {
@@ -155,6 +149,9 @@ levelEditor = function (lvlName) {
                     }
                 }
             }
+            if (data[i].type === "Background") {
+                self.canvas.style.background = "url('" + data[i].src + "')";
+            }
         });
         self.displayGrid();
     }
@@ -174,10 +171,6 @@ levelEditor = function (lvlName) {
     /* Sets background TODO: Figure out sprite backgrounds */
     self.setBackground = function () {
         self.canvas.style.background = "url('" + self.background.src + "')";
-        // var background = findSprite(self.background.name, self.background.type);
-        // background.onload = function () {
-        //     self.ctx.drawImage(background, self.viewport.x, 0, 1280, 720);
-        // }
     }
 
     /* Translates mouse position from normal coordinates to canvas coordinates */
@@ -351,7 +344,7 @@ levelEditor = function (lvlName) {
             /* Save data here */
             if (levelName) {
                 $('#saveModal').modal('hide');
-            }
+            }   
 
             var tileMapToSend = self.tileMap;
             /* Adjust for current screen position offset */
@@ -368,9 +361,11 @@ levelEditor = function (lvlName) {
                 "x" : lastTile.x,
                 "y" : lastTile.y
             }
-            tileMapToSend.push(self.background);
             tileMapToSend.push(endTile);
-            
+
+            if (!jQuery.isEmptyObject(self.background)) {
+                tileMapToSend.push(self.background);
+            }
 
             var pack = {
                 tileMap: tileMapToSend,
@@ -436,6 +431,7 @@ levelEditor = function (lvlName) {
             case "Back":
                 $(".interface").html("");
                 $(".menu").html("");
+                $('.star').removeClass("off");
                 generateMenus('buildMenu');
                 break;
             case "Save":
@@ -499,15 +495,15 @@ levelEditor = function (lvlName) {
 };
 
 function startEditor() {
+    $('.star').addClass("off");
     $('#editor').show();
     var editor = new levelEditor();
-    editor.initiate();
     return editor;
 }
 
 function loadEditor() {
     /* To Do: get list of levels from directory */
-    var listofLevel = ["level1", "level2", "level3", "level4"];
+    var listofLevel = ["level1", "level2", "level3", "level10"];
     var items = [];
     $.each(listofLevel, function (i) {
         items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + listofLevel[i] + "</button>");
@@ -517,9 +513,11 @@ function loadEditor() {
 
     $(".menu #loadLevel").on("click", function () {
         var selectedLvl = $(this).text();
+        $('.star').addClass("off");
         if (selectedLvl === "Back") {
             $(".interface").html("");
             $(".menu").html("");
+            $('.star').removeClass("off");
             generateMenus("buildMenu");
         } 
         else {
