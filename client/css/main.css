@@ -116,6 +116,13 @@ input[type=password]:focus {
 	  /* overflow-y:auto; */
 	}
 
+	.game {
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
 	.profile{
 		color:white;
 	}
@@ -144,3 +151,10 @@ input[type=password]:focus {
       width: 45px;
      /*  float: left; */
     }
+
+		.star.off {
+			-moz-animation-name: none;
+		-webkit-animation-name: none;
+		-ms-animation-name: none;
+			animation-name: none;	
+		}

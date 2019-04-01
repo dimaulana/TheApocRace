@@ -131,6 +131,10 @@ class Sprite extends Component {
 		if (param.frame_sets) {
 			this.frame_sets = param.frame_sets;
 		}
+		if (param.jumpLoc) {
+			this.jumpLoc = param.jumpLoc;
+			this.jump_sets = [[0], [5], [1,2,3,4], [6,7,8,9]];
+		}
 	}
 }
 

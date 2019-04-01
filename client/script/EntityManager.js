@@ -27,12 +27,22 @@ function Entity(param) {
 	}
 	if (self.tag == "Background") self.frame = 0;
 
-	self.changeAnimation = function(index) {
+	self.changeAnimation = function(param) {
 		if (!self.animation) return;
-		var delay = 5;
-		self.animation.change(self.properties.frame_sets[index], delay);
-	}
+		var delay = 7;
+		var frame_sets;
 
+		if (param.state === "run") {
+			frame_sets = self.properties.frame_sets;
+			self.image.src = self.properties.fileLocation;
+		}	
+		else if (param.state === "jump") {
+			frame_sets = self.properties.jump_sets;
+			self.image.src = self.properties.jumpImage;
+		}
+
+		self.animation.change(frame_sets[param.index], delay);
+	}
 
 	return self;
 }

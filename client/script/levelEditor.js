@@ -121,9 +121,6 @@ levelEditor = function (lvlName) {
 
             /* Populate dropdown options */
             self.populateDropdown();
-
-
-
         });
     }
 
@@ -214,7 +211,6 @@ levelEditor = function (lvlName) {
     self.reset = function (e) {
         self.mouseDown = false;
     }
-
 
     /* Find the requested assets */
     self.findSprite = function (name, type) {
@@ -362,6 +358,19 @@ levelEditor = function (lvlName) {
             for (var i = 0; i < tileMapToSend.length; i++) {
                 tileMapToSend[i].x += 1280 * self.currentScreen;
             }
+
+            var lastTile = JSON.parse(JSON.stringify(tileMapToSend.reduce(function(i, e) {
+                return i.x > e.x ? i : e;
+            })));
+            var endTile = {
+                "name" : "End",
+                "type" : "Point",
+                "x" : lastTile.x,
+                "y" : lastTile.y
+            }
+            tileMapToSend.push(self.background);
+            tileMapToSend.push(endTile);
+            
 
             var pack = {
                 tileMap: tileMapToSend,
@@ -519,7 +528,5 @@ function loadEditor() {
                 var editor = new levelEditor(selectedLvl);
             });
         }
-
     });
-
 }
