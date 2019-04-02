@@ -130,22 +130,52 @@ function updateEnemy(enemy) {
 
 	// TODO: Update enemy based on their AI;
 
-	// Basic AI of enemy shooting;
-	var lineOfSight = 630; // Half canvas width - some offset 640 - 10;
-	// Get direction for shooting;
-	var distance = enemy.properties.pos.x - player.properties.pos.x;
-	if (distance >= 0 && distance < lineOfSight) {
-		enemy.properties.scale.x = -1.0;
-		enemy.changeAnimation({state: "run", index: 1});
-		spawnBullet(enemy);
+	var index = 0;
+	if (enemy.properties.followSpeed != null) { // Follow Player AI
+		if (enemy.properties.pos.x + 100 < player.properties.pos.x) {
+			//player.properties.pos.x - enemy.properties.pos.x > 100) {
+			// Only chase if player he is ahead of the front of player;
+			// Leaving a small distance between enemy and player;
+			if (enemy.properties.delay >= 10) {
+				enemy.properties.delay = 0;
+				enemy.properties.pos.x += enemy.properties.followSpeed.x;
+				// enemy.changeAnimation({state: "run", index: 2});
+				index = 2;
+				spawnBullet(enemy);
+			}
+
+		} // else don't chase;
+		else {
+			enemy.properties.pos.x += 0;
+			index = 0;
+		}
+		enemy.properties.delay++;
 	}
-	else if (distance >= -lineOfSight && distance < 0)
-	{
-		enemy.properties.scale.x = 1.0;
-		enemy.changeAnimation({state: "run", index: 0});
-		spawnBullet(enemy);
+	else if (enemy.properties.patrolSpeed != null) {
+		// TODO: Implement patrol ai;
+	}
+	else {
+		// Basic AI of enemy shooting;
+		var lineOfSight = 630; // Half canvas width - some offset 640 - 10;
+		// Get direction for shooting;
+		var distance = enemy.properties.pos.x - player.properties.pos.x;
+		if (distance >= 0 && distance < lineOfSight) {
+			enemy.properties.scale.x = -1.0;
+			// enemy.changeAnimation({state: "run", index: 1});
+			index = 1;
+			spawnBullet(enemy);
+		}
+		else if (distance >= -lineOfSight && distance < 0)
+		{
+			enemy.properties.scale.x = 1.0;
+			//enemy.changeAnimation({state: "run", index: 0});
+			index = 0;
+			spawnBullet(enemy);
+		}
 	}
 	enemy.properties.weaponClock++; // Update weapon clock;
+
+	enemy.changeAnimation({state: "run", index: index});
 	enemy.animation.update();
 }
 
@@ -392,22 +422,22 @@ function canvasDraw() {
 	ctx.fillText(score.text + score.int, score.x, score.y);
 	ctx.fillText(username.text + username.name, username.x, username.y); // Draw players username;
 
-	if(frameCount < 50){
+	if(frameCount < 50){ // Show level name in the beginning;
 		ctx.fillText("Level " + currentLevel, 600, 100);
 	}
 
-	var endPoint = entityManager.getEntityByTag("End");
-
-	if (player.properties.pos.x >= endPoint.properties.pos.x) {
-			endLevel(currentLevel, filesInDirectory);
-	}
-	
 	// Update HP bar;
 	ctx.fillText('HP: ', 20, 70);
 	ctx.fillStyle = (player.properties.hp < player.properties.hpMax * 0.25) ? 'red' : 'green';
 	var w = player.properties.hpMax * player.properties.hp / player.properties.hpMax * 2; // Multiply by 2 to make it a little more visible
 	if (w < 0) w = 0
 	ctx.fillRect(80, 50, w, 20);
+
+	var endPoint = entityManager.getEntityByTag("End");
+
+	if (player.properties.pos.x >= endPoint.properties.pos.x) {
+			endLevel(currentLevel, filesInDirectory);
+	}
 
 	// Draw tiles and all other entities;
 	entityManager.getEntities().forEach(function (e) {
@@ -423,7 +453,7 @@ function canvasDraw() {
 						e.properties.width, e.properties.height)
 				break;
 
-			case "Player":			
+			case "Player":
 			case "Enemy":
 			case "Bullet":
 				ctx.drawImage(e.image, e.animation.frame * e.properties.width, 0, e.properties.width, e.properties.height,
@@ -517,61 +547,60 @@ function addListener() {
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
 
-// Add event listener to canvas element
-canvas.addEventListener('click', function(event) {
-  // Control that click event occurred within position of button
-	var buttonX=570;
-	var resumeButtonY = 300;
-	var saveButtonY = 370;
-	var quitButtonY = 440;
-	var buttonW = 160;
-	var buttonH = 50;
- //Resume button
-	if (
-    event.x > buttonX &&
-    event.x < buttonX + buttonW &&
-    event.y > resumeButtonY &&
-    event.y < resumeButtonY + buttonH
-  ) {
-    // Executes if  resume button was clicked!
- 		paused=false;
-	}
-	///save button save listener
-	else if (
-    event.x > buttonX &&
-    event.x < buttonX + buttonW &&
-    event.y > saveButtonY &&
-    event.y < saveButtonY + buttonH
-  ) {
-		// Executes if  save button was clicked!
-		//TODO:Add SAVE FUNCTION HERE
+	// Add event listener to canvas element
+	canvas.addEventListener('click', function(event) {
+	  // Control that click event occurred within position of button
+		var buttonX=570;
+		var resumeButtonY = 300;
+		var saveButtonY = 370;
+		var quitButtonY = 440;
+		var buttonW = 160;
+		var buttonH = 50;
+	 //Resume button
+		if (
+	    event.x > buttonX &&
+	    event.x < buttonX + buttonW &&
+	    event.y > resumeButtonY &&
+	    event.y < resumeButtonY + buttonH
+	  ) {
+	    // Executes if  resume button was clicked!
+	 		paused=false;
+		}
+		///save button save listener
+		else if (
+	    event.x > buttonX &&
+	    event.x < buttonX + buttonW &&
+	    event.y > saveButtonY &&
+	    event.y < saveButtonY + buttonH
+	  ) {
+			// Executes if  save button was clicked!
+			//TODO:Add SAVE FUNCTION HERE
 
-	}
-  //quit button listener
-	else if (
-    event.x > buttonX &&
-    event.x < buttonX + buttonW &&
-    event.y > quitButtonY &&
-    event.y < quitButtonY + buttonH
-  ) {
-    // Executes if button was clicked!
-		gameStarted=false;
-			//TODO: FIX HERE :Clear all canvas and previous game history
-		$('.star').show();
-		$(".interface").html("");
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		$('#game').hide();
-		//$('#game').clearRect(0, 0, canvas.width, canvas.height);
-		generateMenus('mainMenu');
-  }
+		}
+	  //quit button listener
+		else if (
+	    event.x > buttonX &&
+	    event.x < buttonX + buttonW &&
+	    event.y > quitButtonY &&
+	    event.y < quitButtonY + buttonH
+	  ) {
+	    // Executes if button was clicked!
+			gameStarted=false;
+				//TODO: FIX HERE : Clear all canvas and previous game history
+			$('.star').show();
+			$(".interface").html("");
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			$('#game').hide();
+			//$('#game').clearRect(0, 0, canvas.width, canvas.height);
+			generateMenus('mainMenu');
+	  }
 
-});
+	});
 
 }
 
 startNewGame = function(level){
-	// DONE : Properly clear the entity manager
-	entityManager.removeAllEntities();
+	entityManager.removeAllEntities(); // Properly clear the entity manager
 	ctx.font = "30px arcade";
 
 	socket.emit('storyMode', {level: level});
