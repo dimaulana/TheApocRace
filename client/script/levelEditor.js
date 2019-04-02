@@ -25,7 +25,11 @@ var tile3 = new Image();
 tile3.src = "client/images/tile3.png";
 tile3.name = "Tile 3";
 
-var tileList = [tile1, tile2, tile3];
+var coin = new Image();
+coin.src = "client/images/singlecoin.png";
+coin.name = "Coin";
+
+var tileList = [tile1, tile2, tile3, coin];
 tileList.name = "Tile";
 
 /* Character & Enemies */
@@ -513,7 +517,7 @@ function startEditor() {
 
 function loadEditor() {
     /* To Do: get list of levels from directory */
-    var listofLevel = ["level1", "level2", "level3", "level10"];
+    var listofLevel = ["level1", "level2", "level3"];
     var items = [];
     $.each(listofLevel, function (i) {
         items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + listofLevel[i] + "</button>");

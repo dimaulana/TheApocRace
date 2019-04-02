@@ -23,6 +23,7 @@ const assetCollection = [
 							{"type": "Texture", "name": "Tile1", "path": "/client/images/tile1.png"},
 							{"type": "Texture", "name": "Tile2", "path": "/client/images/tile2.png"},
 							{"type": "Texture", "name": "Tile3", "path": "/client/images/tile3.png"},
+							{"type": "Texture", "name": "Coin", "path": "/client/images/coins.png"},
 							{"type": "Texture", "name": "NY1", "path": "/client/images/newyork1.png"},
 							{"type": "Texture", "name": "NY2", "path": "/client/images/newyork2.png"},
 							{"type": "Texture", "name": "NY3", "path": "/client/images/newyork3.png"},
@@ -30,6 +31,7 @@ const assetCollection = [
 							{"type": "Texture", "name": "LA2", "path": "/client/images/losAngeles2.png"},
 							{"type": "Texture", "name": "LA3", "path": "/client/images/losAngeles3.png"},
 							{"type": "Texture", "name": "NewYork", "path": "/client/images/NewYork.png"},
+							{"type": "Texture", "name": "LosAngeles", "path": "/client/images/LosAngeles.png"},
 							{"type": "Texture", "name": "Bullet", "path": "/client/images/bullets.png"},
 							{"type": "Font", "name": "Helvetica", "path": "client/fonts/helvetica.ttf"},
 							{"type": "Sound", "name": "StoryMode", "path": "client/sound/background.mp3"}
