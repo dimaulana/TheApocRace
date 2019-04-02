@@ -49,7 +49,7 @@ enemy2.src = "client/images/minionThumbnail.png";
 enemy2.spriteSrc = "client/images/minionenemyrun.png";
 enemy2.name = "Minion";
 
-var enemyList = [character, enemy1, enemy2];
+var enemyList = [enemy1, enemy2];
 enemyList.name = "Character";
 
 levelEditor = function (lvlName) {
@@ -213,10 +213,15 @@ levelEditor = function (lvlName) {
     self.findSprite = function (name, type) {
         var sprite = new Image();
         if (type === "Character") {
-            for (var i = 0; i < enemyList.length; i++) {
-                if (enemyList[i].name.replace(/\s/g, '') === name) {
-                    sprite.src = enemyList[i].spriteSrc;
-                    return sprite;
+            if (name === "Player") {
+                sprite.src = character.spriteSrc;
+                return sprite;
+            } else {
+                for (var i = 0; i < enemyList.length; i++) {
+                    if (enemyList[i].name.replace(/\s/g, '') === name) {
+                        sprite.src = enemyList[i].spriteSrc;
+                        return sprite;
+                    }
                 }
             }
         }
