@@ -4,6 +4,16 @@
         $(".interface").html("");
         generateMenus('optionsMenu');
     });
+    // <button onclick="playSound()" type="button">Play Audio</button>
+    var sound = document.getElementById("soundName"); 
+
+    function playSound() { 
+    sound.play(); 
+    }    
+
+    function stopSound() { 
+     sound.pause(); 
+    } 
     
     </script>
     
@@ -11,11 +21,12 @@
     </head>
     <body>
 
+        
     
     
-    
-    
-        <a class='backButton btn btn-primary btn-lg ml-2 type='submit'>Back</a>
+        <center><a class='soundButton btn btn-primary btn-lg ml-2 type='submit'>Background Music ON/OFF</a></center>
+        <br>
+        <center><a class='backButton btn btn-primary btn-lg ml-2 type='submit'>Back</a></center>
     
     
     </body>
