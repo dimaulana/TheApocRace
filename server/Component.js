@@ -84,12 +84,13 @@ class Lifespan extends Component{
 
 class Stats extends Component{
 
-	constructor(){
+	constructor(param){
 		super();
 		this.alive = true;
-		this.score = 0;
-		this.hp = 10;
-		this.lives = 3;
+		this.score = param.score;
+		this.hpMax = param.hp;
+		this.hp = this.hpMax;
+		this.lives = (!param.lives) ? 1 : param.lives;
 	}
 }
 

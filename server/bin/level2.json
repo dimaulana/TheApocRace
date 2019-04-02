@@ -546,15 +546,6 @@
     "tilePos1": 488
   },
   {
-    "name": "Enemy",
-    "type": "Character",
-    "x": 1600,
-    "y": 280,
-    "img": "client/images/enemyrun.png",
-    "tilePos": 232,
-    "tilePos1": 264
-  },
-  {
     "name": "Tile2",
     "type": "Tile",
     "x": 2560,

@@ -18,27 +18,30 @@ function Entity(param) {
 	if (!self.properties.id) {
 		self.properties.id = Math.random().toString(36).substr(2, 9);
 	}
-	
+
 	self.image = new Image();
 	self.image.src = self.properties.fileLocation;
 
-	if (self.tag == "Player" || self.tag == "Enemy" || self.tag == "Background") {
+	if (self.tag == "Player" || self.tag == "Enemy" || self.tag == "Bullet") {
 		self.animation = new Animation();
 	}
 	if (self.tag == "Background") self.frame = 0;
 
 	self.changeAnimation = function(param) {
 		if (!self.animation) return;
-		var delay = 7;
+		var delay = 5;
 		var frame_sets;
 
 		if (param.state === "run") {
 			frame_sets = self.properties.frame_sets;
 			self.image.src = self.properties.fileLocation;
-		}	
+		}
 		else if (param.state === "jump") {
 			frame_sets = self.properties.jump_sets;
 			self.image.src = self.properties.jumpImage;
+		}
+		else {
+			frame_sets = self.properties.frame_sets;
 		}
 
 		self.animation.change(frame_sets[param.index], delay);
