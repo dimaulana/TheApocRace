@@ -37,6 +37,7 @@ class Entity{
             if (component.ofType(components.STATS)) {
                 param.score = component.score;
                 param.hp = component.hp;
+                param.hpMax = component.hpMax;
                 param.lives = component.lives;
                 param.alive = component.alive;
             }
@@ -136,7 +137,7 @@ class Entity{
                 c = new Component.Lifespan(); break;
 
             case components.STATS:
-                c = new Component.Stats(); break;
+                c = new Component.Stats(param); break;
 
             case components.INPUT:
                 c = new Component.Input(); break;
