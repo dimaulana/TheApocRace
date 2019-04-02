@@ -660,6 +660,7 @@ var isPaused = function () {
 	//Quit button
 	ctx.fillRect(quitButtonX, quitButtonY, buttonW, buttonH);
 	ctx.fillStyle= "yellow";
+	
 	ctx.fillText("RESUME",590,340);
 	ctx.fillText("SAVE",585,410);
 	ctx.fillText("QUIT",585,480);
