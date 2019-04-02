@@ -125,16 +125,6 @@ input[type=password]:focus {
 }
 
 
-@keyframes twinkle {
-	from {
-		background-position: 0 0;
-	}
-
-	to {
-		background-position: -2000px 5000px;
-	}
-}
-
 .credits {
 	font-family: 'star-jedi', arial;
 	font-size: 2.3em;

@@ -30,8 +30,8 @@ tileList.name = "Tile";
 
 /* Character & Enemies */
 var character = new Image();
-// character.src = "client/images/charThumbnail.png";
-character.src = "client/images/playerrun.png"
+character.src = "client/images/charThumbnail.png";
+character.spriteSrc = "client/images/playerrun.png"
 character.name = "Player";
 
 var enemy1 = new Image();
@@ -45,7 +45,7 @@ enemy2.src = "client/images/minionThumbnail.png";
 enemy2.spriteSrc = "client/images/minionenemyrun.png";
 enemy2.name = "Minion";
 
-var enemyList = [enemy1, enemy2];
+var enemyList = [character, enemy1, enemy2];
 enemyList.name = "Character";
 
 levelEditor = function (lvlName) {
