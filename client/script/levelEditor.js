@@ -103,6 +103,7 @@ levelEditor = function (lvlName) {
                     "tilePos1": 481
                 }
                 self.tileMap.push(player);
+                self.tileMap.push
                 asset.onload = function () {
                     self.ctx.drawImage(asset, 0, 0, 40, 80, 40, 560, 40, 80);
                 };
