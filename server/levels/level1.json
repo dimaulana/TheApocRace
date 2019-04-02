@@ -6,35 +6,14 @@
         "y": 500
     },
     {
+        "name": "Minion",
         "type": "Character",
-        "name": "Enemy",
-        "x": 500,
-        "y": 500,
-        "ai": "Basic",
-        "frame_sets": [
-            [
-                0
-            ],
-            [
-                1
-            ]
-        ]
-    },
-    {
-        "type": "Character",
-        "name": "Enemy",
         "x": 800,
-        "y": 500,
+        "y": 560,
         "ai": "FollowPlayer",
-        "followSpeed": 5,
-        "frame_sets": [
-            [
-                0
-            ],
-            [
-                1
-            ]
-        ]
+        "followSpeed": {"x": 5, "y": 0},
+        "tilePos": 449,
+        "tilePos1": 481
     },
     {
         "type": "Tile",

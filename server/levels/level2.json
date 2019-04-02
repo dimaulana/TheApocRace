@@ -8,6 +8,16 @@
         "tilePos1": 481
     },
     {
+        "name": "Minion",
+        "type": "Character",
+        "x": 1800,
+        "y": 560,
+        "ai": "FollowPlayer",
+        "followSpeed": {"x": 15, "y": 0},
+        "tilePos": 449,
+        "tilePos1": 481
+    },
+    {
         "name": "Tile1",
         "type": "Tile",
         "x": 0,
