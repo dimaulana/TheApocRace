@@ -9,7 +9,7 @@ var losAngeles = new Image();
 losAngeles.src = "client/images/losAngeles1.png";
 losAngeles.name = "Los Angeles";
 
-var backgroundList = [newyork,  losAngeles];
+var backgroundList = [newyork, losAngeles];
 backgroundList.name = "Background";
 
 /* Tiles */
@@ -30,8 +30,8 @@ tileList.name = "Tile";
 
 /* Character & Enemies */
 var character = new Image();
-character.src = "client/images/charThumbnail.png";
-character.spriteSrc = "client/images/playerrun.png"
+// character.src = "client/images/charThumbnail.png";
+character.src = "client/images/playerrun.png"
 character.name = "Player";
 
 var enemy1 = new Image();
@@ -44,9 +44,8 @@ enemy2 = new Image();
 enemy2.src = "client/images/minionThumbnail.png";
 enemy2.spriteSrc = "client/images/minionenemyrun.png";
 enemy2.name = "Minion";
-enemy2.ai = "Patrol";
 
-var enemyList = [character, enemy1, enemy2];
+var enemyList = [enemy1, enemy2];
 enemyList.name = "Character";
 
 levelEditor = function (lvlName) {
@@ -93,7 +92,8 @@ levelEditor = function (lvlName) {
                 self.loadLevel(data);
             } else {
                 /* Sets up default player position for blank canvas */
-                var asset = self.findSprite("Player", "Character");
+                var character = new Image();
+                character.src = "client/images/playerrun.png"
                 var player = {
                     "name": "Player",
                     "type": "Character",
@@ -103,9 +103,8 @@ levelEditor = function (lvlName) {
                     "tilePos1": 481
                 }
                 self.tileMap.push(player);
-                self.tileMap.push
-                asset.onload = function () {
-                    self.ctx.drawImage(asset, 0, 0, 40, 80, 40, 560, 40, 80);
+                character.onload = function () {
+                    self.ctx.drawImage(character, 0, 0, 40, 80, 40, 560, 40, 80);
                 };
             }
 
@@ -259,6 +258,16 @@ levelEditor = function (lvlName) {
 
                 if (item.type === "Character") {
                     item.tilePos1 = position + self.columns;
+                    if (item.name === "Enemy") {
+                        item.ai = "Basic";
+                    }
+                    if (item.name === "Minion") {
+                        item.ai = "FollowPlayer";
+                        item.followSpeed = {
+                            "x": 5,
+                            "y": 0
+                        };
+                    }
                     self.tileMap.push(item);
                     asset.onload = function () {
                         self.ctx.drawImage(asset, 1 * self.tileSize, 0, 40, 80, gridX, gridY, 40, 80);
@@ -345,7 +354,7 @@ levelEditor = function (lvlName) {
             /* Save data here */
             if (levelName) {
                 $('#saveModal').modal('hide');
-            }   
+            }
 
             var tileMapToSend = self.tileMap;
             /* Adjust for current screen position offset */
@@ -353,14 +362,14 @@ levelEditor = function (lvlName) {
                 tileMapToSend[i].x += 1280 * self.currentScreen;
             }
 
-            var lastTile = JSON.parse(JSON.stringify(tileMapToSend.reduce(function(i, e) {
+            var lastTile = JSON.parse(JSON.stringify(tileMapToSend.reduce(function (i, e) {
                 return i.x > e.x ? i : e;
             })));
             var endTile = {
-                "name" : "End",
-                "type" : "Point",
-                "x" : lastTile.x,
-                "y" : lastTile.y
+                "name": "End",
+                "type": "Point",
+                "x": lastTile.x,
+                "y": lastTile.y
             }
             tileMapToSend.push(endTile);
 
@@ -520,8 +529,7 @@ function loadEditor() {
             $(".menu").html("");
             $('.star').removeClass("off");
             generateMenus("buildMenu");
-        } 
-        else {
+        } else {
             $('.interface').load("client/levelEditor.html", function () {
                 $('#editor').show();
                 var editor = new levelEditor(selectedLvl);
