@@ -102,7 +102,7 @@ function updatePlayer() {
 	}
 
 	if (player.properties.jump && player.properties.state != "jumping") {
-		player.properties.speed.y = -player.properties.speedMax * 12;
+		player.properties.speed.y = -player.properties.speedMax * 16;
 		player.properties.state = "jumping";
 	} else {
 		player.properties.speed.y = 0;
@@ -191,6 +191,9 @@ function updateEntities() {
 	updatePlayer(); // Update Player;
 
 	entityManager.getEntities().forEach(function (entity) {
+		if (entity.tag !== "Background")
+			if (!(entity.properties.pos.x >= viewport.x - 40 && entity.properties.pos.x <= viewport.x + viewport.w + 40)) return;
+
 		if (entity.tag == "Bullet") {
 			entity.properties.clock++;
 			if (entity.properties.clock > entity.properties.lifespan) {
@@ -232,6 +235,7 @@ function updateAnimation() {
 	player.animation.update();
 
 	entityManager.getEntitiesByTag("Coin").forEach(function(c) {
+		if (!(c.properties.pos.x >= viewport.x - 40 && c.properties.pos.x <= viewport.x + viewport.w + 40)) return;
 		c.changeAnimation({index: 0});
 		c.animation.update();
 	});
@@ -291,6 +295,8 @@ function getPrevOverlap(a, b) {
 var testCollisions = function () {
 
 	entityManager.getEntities().forEach(function (entity) {
+		if (entity.tag !== "Background")
+			if (!(entity.properties.pos.x >= viewport.x - 40 && entity.properties.pos.x <= viewport.x + viewport.w + 40)) return;
 
 		// Collision of player with Coins;
 		if (entity.tag == "Coin") {
@@ -428,7 +434,7 @@ function canvasDraw() {
 			background.frame--
 			if (background.frame < 0) background.frame = 0;
 		}
-		ctx.drawImage(background.image, background.frame, 0, 1280, 720, 0, 0, 1280, 720);
+		ctx.drawImage(background.image, background.frame * 5, 0, 1280, 720, 0, 0, 1280, 720);
 		// ctx.drawImage(background.image, viewport.x, 0, 1280, 720, 0, 0, 1280, 720);
 	} // Else just draw default background;
 
@@ -455,7 +461,7 @@ function canvasDraw() {
 
 	var endPoint = entityManager.getEntityByTag("End");
 
-	if (player.properties.pos.x >= endPoint.properties.pos.x) {
+	if (player.properties.pos.x >= endPoint.properties.pos.x - 40) {
 		endLevel(currentLevel, filesInDirectory);
 	}
 
@@ -482,25 +488,35 @@ function canvasDraw() {
 			case "Tile2":
 			case "Tile3":
 			case "Tile4":
+				if (!(e.properties.pos.x >= viewport.x - 40 && e.properties.pos.x <= viewport.x + viewport.w + 40)) return;
 				ctx.drawImage(e.image, e.properties.pos.x - viewport.x, e.properties.pos.y - viewport.y,
 					e.properties.width, e.properties.height);
 
 				if (spriteBox)
 					ctx.strokeRect(e.properties.pos.x - viewport.x, e.properties.pos.y - viewport.y,
 						e.properties.width, e.properties.height)
-				break;
+			break;
 
 			case "Player":
-			case "Enemy":
-			case "Bullet":
-			case "Coin":
 				ctx.drawImage(e.image, e.animation.frame * e.properties.width, 0, e.properties.width, e.properties.height,
 					Math.floor(e.properties.pos.x - viewport.x), Math.floor(e.properties.pos.y - viewport.y), e.properties.width, e.properties.height);
 				if (spriteBox)
 					ctx.strokeRect(Math.floor(e.properties.pos.x - viewport.x), Math.floor(e.properties.pos.y - viewport.y), e.properties.width, e.properties.height);
 
 				display.drawImage(ctx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height, 0, 0, display.canvas.width, display.canvas.height);
-				break;
+			break;
+
+			case "Enemy":
+			case "Bullet":
+			case "Coin":
+				if (!(e.properties.pos.x >= viewport.x - 40 && e.properties.pos.x <= viewport.x + viewport.w + 40)) return;
+				ctx.drawImage(e.image, e.animation.frame * e.properties.width, 0, e.properties.width, e.properties.height,
+					Math.floor(e.properties.pos.x - viewport.x), Math.floor(e.properties.pos.y - viewport.y), e.properties.width, e.properties.height);
+				if (spriteBox)
+					ctx.strokeRect(Math.floor(e.properties.pos.x - viewport.x), Math.floor(e.properties.pos.y - viewport.y), e.properties.width, e.properties.height);
+
+				display.drawImage(ctx.canvas, 0, 0, ctx.canvas.width, ctx.canvas.height, 0, 0, display.canvas.width, display.canvas.height);
+			break;
 		}
 	});
 
