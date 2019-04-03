@@ -433,6 +433,16 @@ function canvasDraw() {
 	if (w < 0) w = 0
 	ctx.fillRect(80, 50, w, 20);
 
+	if(player.properties.hp <= 0){
+		entityManager.removeEntity(player);
+		gameOver();
+		gameStarted = false;
+		if(backgroundSound) backgroundSound.stop();
+
+		setTimeout(function(){
+				startNewGame(1)
+		}, 5000);
+	}
 	var endPoint = entityManager.getEntityByTag("End");
 
 	if (player.properties.pos.x >= endPoint.properties.pos.x) {
@@ -475,7 +485,7 @@ function endLevel(currentLevel, levelsInDirectory){
 		ctx.font = "100px arcade";
 
 		if(currentLevel === totalLevels){
-			ctx.fillText("Game Over", 400, 350);
+			gameOver();
 		}
 		else{
 			ctx.fillText("Level " + currentLevel + "\n finished", 300, 350);
@@ -486,6 +496,10 @@ function endLevel(currentLevel, levelsInDirectory){
 					startNewGame(currentLevel)
 				}
 		}, 5000);
+}
+
+function gameOver(){
+		ctx.fillText("Game Over", 400, 350);
 }
 
 function keyDownHandler(e) {

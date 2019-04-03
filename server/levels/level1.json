@@ -11,7 +11,10 @@
         "x": 800,
         "y": 560,
         "ai": "FollowPlayer",
-        "followSpeed": {"x": 5, "y": 0},
+        "followSpeed": {
+            "x": 5,
+            "y": 0
+        },
         "tilePos": 449,
         "tilePos1": 481
     },
@@ -395,10 +398,12 @@
     },
     {
         "type": "Background",
-        "name": "NewYork"
+        "name": "NewYork",
+        "x": null
     },
     {
         "type": "Sound",
-        "name": "StoryMode"
+        "name": "StoryMode",
+        "x": null
     }
 ]
