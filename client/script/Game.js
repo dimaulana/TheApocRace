@@ -493,13 +493,6 @@ function endLevel(currentLevel, levelsInDirectory) {
 
 	ctx.font = "100px arcade";
 
-<<<<<<< HEAD
-		if(currentLevel === totalLevels){
-			gameOver();
-		}
-		else{
-			ctx.fillText("Level " + currentLevel + "\n finished", 300, 350);
-=======
 	if (currentLevel === totalLevels) {
 		ctx.fillText("Game Over", 400, 350);
 	} else {
@@ -509,7 +502,6 @@ function endLevel(currentLevel, levelsInDirectory) {
 	setTimeout(function () {
 		if (++currentLevel <= totalLevels) {
 			startNewGame(currentLevel)
->>>>>>> 4dac1da578c05bce4f83c0e2a0eeed8f78bc4304
 		}
 	}, 5000);
 }
