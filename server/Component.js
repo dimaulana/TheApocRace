@@ -61,7 +61,7 @@ class Transform extends Component{
 class Gravity extends Component {
 	constructor() {
 		super();
-		this.gravity = -3.75;
+		this.gravity = -7;
 	}
 }
 

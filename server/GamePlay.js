@@ -61,7 +61,7 @@ class GamePlay {
 		}
 		else if (data.ai === "FollowPlayer") {
 			enemy.addComponent(components.FOLLOWPLAYER, data.followSpeed);
-			enemy.addComponent(components.STATS, {hp: 6, score: 30});
+			enemy.addComponent(components.STATS, {hp: 5, score: 30});
 		}
 		else if (data.ai === "Patrol") {
 			enemy.addComponent(components.PATROL, {pos: data.patrolPos, speed: data.patrolSpeed});

@@ -297,7 +297,7 @@ var testCollisions = function () {
 			var currentOverlap = getOverlap(player, entity);
 			if (currentOverlap.x > 0 && currentOverlap.y > 0) {
 				coinCount += entity.properties.score; // Increment coin count;
-				entity.properties.alive = false; 
+				entity.properties.alive = false;
 			}
 
 		}
@@ -324,13 +324,13 @@ var testCollisions = function () {
 				if (prevOverlap.y > 0) {
 					// Collision from right or left;
 					if ((player.properties.pos.x - player.properties.prevPos.x) > 0) {
-						// Collision from right;
-						player.properties.speed.x = 0;
-						player.properties.pos.x += currentOverlap.x;
-					} else if ((player.properties.pos.x - player.properties.prevPos.x) < 0) {
 						// Collision from left;
 						player.properties.speed.x = 0;
 						player.properties.pos.x -= currentOverlap.x;
+					} else if ((player.properties.pos.x - player.properties.prevPos.x) < 0) {
+						// Collision from right;
+						player.properties.speed.x = 0;
+						player.properties.pos.x += currentOverlap.x;
 					}
 				}
 			}
@@ -360,13 +360,13 @@ var testCollisions = function () {
 					if (prevOverlap.y > 0) {
 							// Collision from right or left;
 							if ((enemy.properties.pos.x - enemy.properties.prevPos.x) > 0) {
-							// Collision from right;
-							enemy.properties.speed.x = 0;
-							enemy.properties.pos.x += currentOverlap.x;
-						} else if ((enemy.properties.pos.x - enemy.properties.prevPos.x) < 0) {
 							// Collision from left;
 							enemy.properties.speed.x = 0;
 							enemy.properties.pos.x -= currentOverlap.x;
+						} else if ((enemy.properties.pos.x - enemy.properties.prevPos.x) < 0) {
+							// Collision from right;
+							enemy.properties.speed.x = 0;
+							enemy.properties.pos.x += currentOverlap.x;
 						}
 					}
 				}
@@ -436,30 +436,28 @@ function canvasDraw() {
 	ctx.fillStyle = "white";
 	ctx.fillText(username.text + username.name, username.x, username.y); // Draw players username;
 
-	if (frameCount < 50) {
 	ctx.fillText(score.text + score.int, score.x, score.y);
 
 	// Draw coin and update;
 	ctx.drawImage(coinImage, score.x, score.y + 10, 40, 40);
 	ctx.fillText(": " + coinCount, score.x + 50, score.y + 40);
 
-
 	if(frameCount < 50){ // Show level name in the beginning;
 		ctx.fillText("Level " + currentLevel, 600, 100);
 	}
 
-	var endPoint = entityManager.getEntityByTag("End");
-
-	if (player.properties.pos.x >= endPoint.properties.pos.x) {
-		endLevel(currentLevel, filesInDirectory);
-	}
-	
 	// Update HP bar;
 	ctx.fillText('HP: ', 20, 70);
 	ctx.fillStyle = (player.properties.hp < player.properties.hpMax * 0.25) ? 'red' : 'green';
 	var w = player.properties.hpMax * player.properties.hp / player.properties.hpMax * 2; // Multiply by 2 to make it a little more visible
 	if (w < 0) w = 0
 	ctx.fillRect(80, 50, w, 20);
+
+	var endPoint = entityManager.getEntityByTag("End");
+
+	if (player.properties.pos.x >= endPoint.properties.pos.x) {
+		endLevel(currentLevel, filesInDirectory);
+	}
 
 	if(player.properties.hp <= 0){
 		entityManager.removeEntity(player);
@@ -471,7 +469,7 @@ function canvasDraw() {
 				startNewGame(1)
 		}, 5000);
 	}
-	
+
 	var endPoint = entityManager.getEntityByTag("End");
 	if (player.properties.pos.x >= endPoint.properties.pos.x) {
 			endLevel(currentLevel, filesInDirectory);
@@ -594,7 +592,7 @@ function clickHandler(event) {
 	var quitButtonY = 541;
 	var buttonW = 160;
 	var buttonH = 50;
-	
+
 	//Resume button
 	if (
 		event.x > buttonX &&
@@ -719,7 +717,7 @@ var isPaused = function () {
 	ctx.fillText('GAME PAUSED', 550, 150);
 	//Add buttons
 	var resumeButtonX = 570;
-	// var buttonX = 570; 
+	// var buttonX = 570;
 	var saveButtonX = 570;
 	var quitButtonX = 570;
 	var resumeButtonY = 300;
