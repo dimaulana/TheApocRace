@@ -422,9 +422,6 @@ function canvasDraw() {
 	ctx.fillText(score.text + score.int, score.x, score.y);
 	ctx.fillText(username.text + username.name, username.x, username.y); // Draw players username;
 
-	ctx.fillText(username.text + username.name, username.x, username.y);
-	ctx.fillText('HP: ' + 0, 20, 70);
-
 	if (frameCount < 50) {
 		ctx.fillText("Level " + currentLevel, 600, 100);
 	}
@@ -452,8 +449,8 @@ function canvasDraw() {
 				startNewGame(1)
 		}, 5000);
 	}
+	
 	var endPoint = entityManager.getEntityByTag("End");
-
 	if (player.properties.pos.x >= endPoint.properties.pos.x) {
 			endLevel(currentLevel, filesInDirectory);
 	}
