@@ -4,28 +4,57 @@
         $(".interface").html("");
         generateMenus('optionsMenu');
     });
-    // <button onclick="playSound()" type="button">Play Audio</button>
-    var sound = document.getElementById("soundName"); 
 
-    function playSound() { 
-    sound.play(); 
-    }    
+   var play=false;
+    var soundBttn = document.getElementById("soundButton"); 
+    var audioSound;
 
-    function stopSound() { 
-     sound.pause(); 
-    } 
+    soundBttn.addEventListener('click',soundPlayed);
     
+
+    function soundPlayed() { 
+        audioSound=new Audio();
+        audioSound.src  ="client/sound/main.mp3";
+        audioSound.loop=true;
+        
+        if(!play){
+            playBack();
+        }
+        else{
+            stopBack();
+            play=false;
+        }
+          
+    }
+ 
+        
+    function playBack(){
+        audioSound.play();
+            
+    }
+        
+    function stopBack(){
+        audioSound.pause(); 
+    }  
+      
     </script>
+    <style>
+    .btn .btn {
+        margin-bottom: 10px;
+        width: 500px;
+        color: white;
+    }
+    </style>
     
     
     </head>
     <body>
-
+                
         
-    
-    
-        <center><a class='soundButton btn btn-primary btn-lg ml-2 type='submit'>Background Music ON/OFF</a></center>
-        <br>
+       
+<!--     
+        <center><a class='soundButton btn btn-primary btn-lg ml-2 type='submit' id='soundButton'>Background Music ON/OFF</a></center>
+        <br> -->
         <center><a class='backButton btn btn-primary btn-lg ml-2 type='submit'>Back</a></center>
     
     
