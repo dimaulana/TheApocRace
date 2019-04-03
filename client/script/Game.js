@@ -29,6 +29,11 @@ var score = {
 	topScore: 0 // Later to come from the database taken compared to other players
 }
 
+var coinCount = 0;
+var coinImage = new Image();
+coinImage.src = "/client/images/singlecoin.png";
+
+
 var username = {
 	text: "Player: ",
 	x: 20,
@@ -225,6 +230,11 @@ function updateAnimation() {
 	player.changeAnimation(param);
 
 	player.animation.update();
+
+	entityManager.getEntitiesByTag("Coin").forEach(function(c) {
+		c.changeAnimation({index: 0});
+		c.animation.update();
+	});
 }
 
 // Function to handle collisions;
@@ -280,13 +290,18 @@ function getPrevOverlap(a, b) {
 
 var testCollisions = function () {
 
-	// Collison of player with tiles;
 	entityManager.getEntities().forEach(function (entity) {
 
-		// TODO:
-		// Collision of bullets with player, enemies and tiles;
+		// Collision of player with Coins;
+		if (entity.tag == "Coin") {
+			var currentOverlap = getOverlap(player, entity);
+			if (currentOverlap.x > 0 && currentOverlap.y > 0) {
+				coinCount += entity.properties.score; // Increment coin count;
+				entity.properties.alive = false;
+			}
 
-		if (entity.tag == "Tile1" || entity.tag == "Tile2" || entity.tag == "Tile3") {
+		}
+		else if (entity.tag == "Tile1" || entity.tag == "Tile2" || entity.tag == "Tile3" || entity.tag == "Tile4") {
 			// Collision between tiles and player;
 			var currentOverlap = getOverlap(player, entity);
 			var prevOverlap = getPrevOverlap(player, entity);
@@ -309,17 +324,17 @@ var testCollisions = function () {
 				if (prevOverlap.y > 0) {
 					// Collision from right or left;
 					if ((player.properties.pos.x - player.properties.prevPos.x) > 0) {
-						// Collision from right;
-						player.properties.speed.x = 0;
-						player.properties.pos.x += currentOverlap.x;
-					} else if ((player.properties.pos.x - player.properties.prevPos.x) < 0) {
 						// Collision from left;
 						player.properties.speed.x = 0;
 						player.properties.pos.x -= currentOverlap.x;
+					} else if ((player.properties.pos.x - player.properties.prevPos.x) < 0) {
+						// Collision from right;
+						player.properties.speed.x = 0;
+						player.properties.pos.x += currentOverlap.x;
 					}
 				}
 			}
-
+			// Collision of enemies with tiles;
 			var enemyList = entityManager.getEntitiesByTag("Enemy");
 			for (var i = 0; i < enemyList.length; i++) {
 				var enemy = enemyList[i];
@@ -345,20 +360,20 @@ var testCollisions = function () {
 					if (prevOverlap.y > 0) {
 							// Collision from right or left;
 							if ((enemy.properties.pos.x - enemy.properties.prevPos.x) > 0) {
-							// Collision from right;
-							enemy.properties.speed.x = 0;
-							enemy.properties.pos.x += currentOverlap.x;
-						} else if ((enemy.properties.pos.x - enemy.properties.prevPos.x) < 0) {
 							// Collision from left;
 							enemy.properties.speed.x = 0;
 							enemy.properties.pos.x -= currentOverlap.x;
+						} else if ((enemy.properties.pos.x - enemy.properties.prevPos.x) < 0) {
+							// Collision from right;
+							enemy.properties.speed.x = 0;
+							enemy.properties.pos.x += currentOverlap.x;
 						}
 					}
 				}
 			}
 
 		}
-
+		// Collision of bullets with player and enemies;
 		else if (entity.tag == "Bullet") {
 			if (entity.properties.origin == "Enemy") {
 				var currentOverlap = getOverlap(player, entity);
@@ -419,28 +434,30 @@ function canvasDraw() {
 
 	// Updating the score;
 	ctx.fillStyle = "white";
-	ctx.fillText(score.text + score.int, score.x, score.y);
 	ctx.fillText(username.text + username.name, username.x, username.y); // Draw players username;
 
-	ctx.fillText(username.text + username.name, username.x, username.y);
-	ctx.fillText('HP: ' + 0, 20, 70);
+	ctx.fillText(score.text + score.int, score.x, score.y);
 
-	if (frameCount < 50) {
+	// Draw coin and update;
+	ctx.drawImage(coinImage, score.x, score.y + 10, 40, 40);
+	ctx.fillText(": " + coinCount, score.x + 50, score.y + 40);
+
+	if(frameCount < 50){ // Show level name in the beginning;
 		ctx.fillText("Level " + currentLevel, 600, 100);
 	}
 
-	var endPoint = entityManager.getEntityByTag("End");
-
-	if (player.properties.pos.x >= endPoint.properties.pos.x) {
-		endLevel(currentLevel, filesInDirectory);
-	}
-	
 	// Update HP bar;
 	ctx.fillText('HP: ', 20, 70);
 	ctx.fillStyle = (player.properties.hp < player.properties.hpMax * 0.25) ? 'red' : 'green';
 	var w = player.properties.hpMax * player.properties.hp / player.properties.hpMax * 2; // Multiply by 2 to make it a little more visible
 	if (w < 0) w = 0
 	ctx.fillRect(80, 50, w, 20);
+
+	var endPoint = entityManager.getEntityByTag("End");
+
+	if (player.properties.pos.x >= endPoint.properties.pos.x) {
+		endLevel(currentLevel, filesInDirectory);
+	}
 
 	if(player.properties.hp <= 0){
 		entityManager.removeEntity(player);
@@ -452,8 +469,8 @@ function canvasDraw() {
 				startNewGame(1)
 		}, 5000);
 	}
-	var endPoint = entityManager.getEntityByTag("End");
 
+	var endPoint = entityManager.getEntityByTag("End");
 	if (player.properties.pos.x >= endPoint.properties.pos.x) {
 			endLevel(currentLevel, filesInDirectory);
 	}
@@ -464,6 +481,7 @@ function canvasDraw() {
 			case "Tile1":
 			case "Tile2":
 			case "Tile3":
+			case "Tile4":
 				ctx.drawImage(e.image, e.properties.pos.x - viewport.x, e.properties.pos.y - viewport.y,
 					e.properties.width, e.properties.height);
 
@@ -475,6 +493,7 @@ function canvasDraw() {
 			case "Player":
 			case "Enemy":
 			case "Bullet":
+			case "Coin":
 				ctx.drawImage(e.image, e.animation.frame * e.properties.width, 0, e.properties.width, e.properties.height,
 					Math.floor(e.properties.pos.x - viewport.x), Math.floor(e.properties.pos.y - viewport.y), e.properties.width, e.properties.height);
 				if (spriteBox)
@@ -491,7 +510,8 @@ function canvasDraw() {
 function endLevel(currentLevel, levelsInDirectory) {
 	var totalLevels = levelsInDirectory.length;
 
-	ctx.font = "100px arcade";
+		ctx.font = "100px arcade";
+		ctx.fillStyle = 'white';
 
 	if (currentLevel === totalLevels) {
 		ctx.fillText("Game Over", 400, 350);
@@ -572,7 +592,7 @@ function clickHandler(event) {
 	var quitButtonY = 541;
 	var buttonW = 160;
 	var buttonH = 50;
-	
+
 	//Resume button
 	if (
 		event.x > buttonX &&
@@ -697,7 +717,7 @@ var isPaused = function () {
 	ctx.fillText('GAME PAUSED', 550, 150);
 	//Add buttons
 	var resumeButtonX = 570;
-	// var buttonX = 570; 
+	// var buttonX = 570;
 	var saveButtonX = 570;
 	var quitButtonX = 570;
 	var resumeButtonY = 300;

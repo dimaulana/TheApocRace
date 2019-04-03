@@ -61,7 +61,7 @@ class GamePlay {
 		}
 		else if (data.ai === "FollowPlayer") {
 			enemy.addComponent(components.FOLLOWPLAYER, data.followSpeed);
-			enemy.addComponent(components.STATS, {hp: 6, score: 30});
+			enemy.addComponent(components.STATS, {hp: 5, score: 30});
 		}
 		else if (data.ai === "Patrol") {
 			enemy.addComponent(components.PATROL, {pos: data.patrolPos, speed: data.patrolSpeed});
@@ -73,7 +73,15 @@ class GamePlay {
 		var tile = this.entityManager.addEntity(data.name);
 		tile.addComponent(components.TRANSFORM, {x: data.x, y: data.y});
 		tile.addComponent(components.DIMENSION, {w: 40, h: 40});
-		tile.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(data.name)});
+
+		if (data.name == "Coin") {
+			tile.addComponent(components.STATS, {hp: 0, score: 1});
+			tile.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(data.name),
+													frame_sets: [[0,1,2,3,4,5,6]]});
+		}
+		else {
+			tile.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(data.name)});
+		}
 	}
 
 	getLevelData(){
