@@ -2457,5 +2457,10 @@
         "type": "Background",
         "name": "NewYork",
         "src": "client/images/newyork1.png"
+    },
+    {
+        "type": "Sound",
+        "name": "StoryMode",
+        "src": "client/sound/background.mp3"
     }
 ]
