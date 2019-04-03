@@ -25,9 +25,9 @@ var tile3 = new Image();
 tile3.src = "client/images/tile3.png";
 tile3.name = "Tile 3";
 
-var tile3 = new Image();
-tile3.src = "client/images/tile4.png";
-tile3.name = "Tile 4";
+var tile4 = new Image();
+tile4.src = "client/images/tile4.png";
+tile4.name = "Tile 4";
 
 
 var coin = new Image();
