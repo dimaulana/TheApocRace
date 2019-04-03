@@ -25,7 +25,16 @@ var tile3 = new Image();
 tile3.src = "client/images/tile3.png";
 tile3.name = "Tile 3";
 
-var tileList = [tile1, tile2, tile3];
+var tile4 = new Image();
+tile4.src = "client/images/tile4.png";
+tile4.name = "Tile 4";
+
+
+var coin = new Image();
+coin.src = "client/images/singlecoin.png";
+coin.name = "Coin";
+
+var tileList = [tile1, tile2, tile3, tile4, coin];
 tileList.name = "Tile";
 
 /* Character & Enemies */
@@ -45,7 +54,7 @@ enemy2.src = "client/images/minionThumbnail.png";
 enemy2.spriteSrc = "client/images/minionenemyrun.png";
 enemy2.name = "Minion";
 
-var enemyList = [character, enemy1, enemy2];
+var enemyList = [enemy1, enemy2];
 enemyList.name = "Character";
 
 levelEditor = function (lvlName) {
@@ -209,10 +218,15 @@ levelEditor = function (lvlName) {
     self.findSprite = function (name, type) {
         var sprite = new Image();
         if (type === "Character") {
-            for (var i = 0; i < enemyList.length; i++) {
-                if (enemyList[i].name.replace(/\s/g, '') === name) {
-                    sprite.src = enemyList[i].spriteSrc;
-                    return sprite;
+            if (name === "Player") {
+                sprite.src = character.spriteSrc;
+                return sprite;
+            } else {
+                for (var i = 0; i < enemyList.length; i++) {
+                    if (enemyList[i].name.replace(/\s/g, '') === name) {
+                        sprite.src = enemyList[i].spriteSrc;
+                        return sprite;
+                    }
                 }
             }
         }
@@ -513,7 +527,7 @@ function startEditor() {
 
 function loadEditor() {
     /* To Do: get list of levels from directory */
-    var listofLevel = ["level1", "level2", "level3", "level10"];
+    var listofLevel = ["level1", "level2", "level3"];
     var items = [];
     $.each(listofLevel, function (i) {
         items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + listofLevel[i] + "</button>");
