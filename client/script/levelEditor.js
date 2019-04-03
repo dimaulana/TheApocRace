@@ -9,7 +9,7 @@ var losAngeles = new Image();
 losAngeles.src = "client/images/losAngeles1.png";
 losAngeles.name = "Los Angeles";
 
-var backgroundList = [newyork,  losAngeles];
+var backgroundList = [newyork, losAngeles];
 backgroundList.name = "Background";
 
 /* Tiles */
@@ -25,7 +25,16 @@ var tile3 = new Image();
 tile3.src = "client/images/tile3.png";
 tile3.name = "Tile 3";
 
-var tileList = [tile1, tile2, tile3];
+var tile4 = new Image();
+tile4.src = "client/images/tile4.png";
+tile4.name = "Tile 4";
+
+
+var coin = new Image();
+coin.src = "client/images/singlecoin.png";
+coin.name = "Coin";
+
+var tileList = [tile1, tile2, tile3, tile4, coin];
 tileList.name = "Tile";
 
 /* Character & Enemies */
@@ -44,9 +53,8 @@ enemy2 = new Image();
 enemy2.src = "client/images/minionThumbnail.png";
 enemy2.spriteSrc = "client/images/minionenemyrun.png";
 enemy2.name = "Minion";
-enemy2.ai = "Patrol";
 
-var enemyList = [character, enemy1, enemy2];
+var enemyList = [enemy1, enemy2];
 enemyList.name = "Character";
 
 levelEditor = function (lvlName) {
@@ -93,7 +101,8 @@ levelEditor = function (lvlName) {
                 self.loadLevel(data);
             } else {
                 /* Sets up default player position for blank canvas */
-                var asset = self.findSprite("Player", "Character");
+                var character = new Image();
+                character.src = "client/images/playerrun.png"
                 var player = {
                     "name": "Player",
                     "type": "Character",
@@ -103,8 +112,8 @@ levelEditor = function (lvlName) {
                     "tilePos1": 481
                 }
                 self.tileMap.push(player);
-                asset.onload = function () {
-                    self.ctx.drawImage(asset, 0, 0, 40, 80, 40, 560, 40, 80);
+                character.onload = function () {
+                    self.ctx.drawImage(character, 0, 0, 40, 80, 40, 560, 40, 80);
                 };
             }
 
@@ -209,10 +218,15 @@ levelEditor = function (lvlName) {
     self.findSprite = function (name, type) {
         var sprite = new Image();
         if (type === "Character") {
-            for (var i = 0; i < enemyList.length; i++) {
-                if (enemyList[i].name.replace(/\s/g, '') === name) {
-                    sprite.src = enemyList[i].spriteSrc;
-                    return sprite;
+            if (name === "Player") {
+                sprite.src = character.spriteSrc;
+                return sprite;
+            } else {
+                for (var i = 0; i < enemyList.length; i++) {
+                    if (enemyList[i].name.replace(/\s/g, '') === name) {
+                        sprite.src = enemyList[i].spriteSrc;
+                        return sprite;
+                    }
                 }
             }
         }
@@ -258,6 +272,16 @@ levelEditor = function (lvlName) {
 
                 if (item.type === "Character") {
                     item.tilePos1 = position + self.columns;
+                    if (item.name === "Enemy") {
+                        item.ai = "Basic";
+                    }
+                    if (item.name === "Minion") {
+                        item.ai = "FollowPlayer";
+                        item.followSpeed = {
+                            "x": 5,
+                            "y": 0
+                        };
+                    }
                     self.tileMap.push(item);
                     asset.onload = function () {
                         self.ctx.drawImage(asset, 1 * self.tileSize, 0, 40, 80, gridX, gridY, 40, 80);
@@ -344,7 +368,7 @@ levelEditor = function (lvlName) {
             /* Save data here */
             if (levelName) {
                 $('#saveModal').modal('hide');
-            }   
+            }
 
             var tileMapToSend = self.tileMap;
             /* Adjust for current screen position offset */
@@ -352,14 +376,14 @@ levelEditor = function (lvlName) {
                 tileMapToSend[i].x += 1280 * self.currentScreen;
             }
 
-            var lastTile = JSON.parse(JSON.stringify(tileMapToSend.reduce(function(i, e) {
+            var lastTile = JSON.parse(JSON.stringify(tileMapToSend.reduce(function (i, e) {
                 return i.x > e.x ? i : e;
             })));
             var endTile = {
-                "name" : "End",
-                "type" : "Point",
-                "x" : lastTile.x,
-                "y" : lastTile.y
+                "name": "End",
+                "type": "Point",
+                "x": lastTile.x,
+                "y": lastTile.y
             }
             tileMapToSend.push(endTile);
 
@@ -503,7 +527,7 @@ function startEditor() {
 
 function loadEditor() {
     /* To Do: get list of levels from directory */
-    var listofLevel = ["level1", "level2", "level3", "level10"];
+    var listofLevel = ["level1", "level2", "level3"];
     var items = [];
     $.each(listofLevel, function (i) {
         items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + listofLevel[i] + "</button>");
@@ -519,8 +543,7 @@ function loadEditor() {
             $(".menu").html("");
             $('.star').removeClass("off");
             generateMenus("buildMenu");
-        } 
-        else {
+        } else {
             $('.interface').load("client/levelEditor.html", function () {
                 $('#editor').show();
                 var editor = new levelEditor(selectedLvl);

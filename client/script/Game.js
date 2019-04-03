@@ -29,6 +29,11 @@ var score = {
 	topScore: 0 // Later to come from the database taken compared to other players
 }
 
+var coinCount = 0;
+var coinImage = new Image();
+coinImage.src = "/client/images/singlecoin.png";
+
+
 var username = {
 	text: "Player: ",
 	x: 20,
@@ -130,22 +135,52 @@ function updateEnemy(enemy) {
 
 	// TODO: Update enemy based on their AI;
 
-	// Basic AI of enemy shooting;
-	var lineOfSight = 630; // Half canvas width - some offset 640 - 10;
-	// Get direction for shooting;
-	var distance = enemy.properties.pos.x - player.properties.pos.x;
-	if (distance >= 0 && distance < lineOfSight) {
-		enemy.properties.scale.x = -1.0;
-		enemy.changeAnimation({state: "run", index: 1});
-		spawnBullet(enemy);
+	var index = 0;
+	if (enemy.properties.followSpeed != null) { // Follow Player AI
+		if (enemy.properties.pos.x + 100 < player.properties.pos.x) {
+			//player.properties.pos.x - enemy.properties.pos.x > 100) {
+			// Only chase if player he is ahead of the front of player;
+			// Leaving a small distance between enemy and player;
+			if (enemy.properties.delay >= 10) {
+				enemy.properties.delay = 0;
+				enemy.properties.pos.x += enemy.properties.followSpeed.x;
+				// enemy.changeAnimation({state: "run", index: 2});
+				index = 2;
+				spawnBullet(enemy);
+			}
+
+		} // else don't chase;
+		else {
+			enemy.properties.pos.x += 0;
+			index = 0;
+		}
+		enemy.properties.delay++;
 	}
-	else if (distance >= -lineOfSight && distance < 0)
-	{
-		enemy.properties.scale.x = 1.0;
-		enemy.changeAnimation({state: "run", index: 0});
-		spawnBullet(enemy);
+	else if (enemy.properties.patrolSpeed != null) {
+		// TODO: Implement patrol ai;
+	}
+	else {
+		// Basic AI of enemy shooting;
+		var lineOfSight = 630; // Half canvas width - some offset 640 - 10;
+		// Get direction for shooting;
+		var distance = enemy.properties.pos.x - player.properties.pos.x;
+		if (distance >= 0 && distance < lineOfSight) {
+			enemy.properties.scale.x = -1.0;
+			// enemy.changeAnimation({state: "run", index: 1});
+			index = 1;
+			spawnBullet(enemy);
+		}
+		else if (distance >= -lineOfSight && distance < 0)
+		{
+			enemy.properties.scale.x = 1.0;
+			//enemy.changeAnimation({state: "run", index: 0});
+			index = 0;
+			spawnBullet(enemy);
+		}
 	}
 	enemy.properties.weaponClock++; // Update weapon clock;
+
+	enemy.changeAnimation({state: "run", index: index});
 	enemy.animation.update();
 }
 
@@ -195,6 +230,11 @@ function updateAnimation() {
 	player.changeAnimation(param);
 
 	player.animation.update();
+
+	entityManager.getEntitiesByTag("Coin").forEach(function(c) {
+		c.changeAnimation({index: 0});
+		c.animation.update();
+	});
 }
 
 // Function to handle collisions;
@@ -250,13 +290,18 @@ function getPrevOverlap(a, b) {
 
 var testCollisions = function () {
 
-	// Collison of player with tiles;
 	entityManager.getEntities().forEach(function (entity) {
 
-		// TODO:
-		// Collision of bullets with player, enemies and tiles;
+		// Collision of player with Coins;
+		if (entity.tag == "Coin") {
+			var currentOverlap = getOverlap(player, entity);
+			if (currentOverlap.x > 0 && currentOverlap.y > 0) {
+				coinCount += entity.properties.score; // Increment coin count;
+				entity.properties.alive = false;
+			}
 
-		if (entity.tag == "Tile1" || entity.tag == "Tile2" || entity.tag == "Tile3") {
+		}
+		else if (entity.tag == "Tile1" || entity.tag == "Tile2" || entity.tag == "Tile3" || entity.tag == "Tile4") {
 			// Collision between tiles and player;
 			var currentOverlap = getOverlap(player, entity);
 			var prevOverlap = getPrevOverlap(player, entity);
@@ -279,17 +324,17 @@ var testCollisions = function () {
 				if (prevOverlap.y > 0) {
 					// Collision from right or left;
 					if ((player.properties.pos.x - player.properties.prevPos.x) > 0) {
-						// Collision from right;
-						player.properties.speed.x = 0;
-						player.properties.pos.x += currentOverlap.x;
-					} else if ((player.properties.pos.x - player.properties.prevPos.x) < 0) {
 						// Collision from left;
 						player.properties.speed.x = 0;
 						player.properties.pos.x -= currentOverlap.x;
+					} else if ((player.properties.pos.x - player.properties.prevPos.x) < 0) {
+						// Collision from right;
+						player.properties.speed.x = 0;
+						player.properties.pos.x += currentOverlap.x;
 					}
 				}
 			}
-
+			// Collision of enemies with tiles;
 			var enemyList = entityManager.getEntitiesByTag("Enemy");
 			for (var i = 0; i < enemyList.length; i++) {
 				var enemy = enemyList[i];
@@ -315,20 +360,20 @@ var testCollisions = function () {
 					if (prevOverlap.y > 0) {
 							// Collision from right or left;
 							if ((enemy.properties.pos.x - enemy.properties.prevPos.x) > 0) {
-							// Collision from right;
-							enemy.properties.speed.x = 0;
-							enemy.properties.pos.x += currentOverlap.x;
-						} else if ((enemy.properties.pos.x - enemy.properties.prevPos.x) < 0) {
 							// Collision from left;
 							enemy.properties.speed.x = 0;
 							enemy.properties.pos.x -= currentOverlap.x;
+						} else if ((enemy.properties.pos.x - enemy.properties.prevPos.x) < 0) {
+							// Collision from right;
+							enemy.properties.speed.x = 0;
+							enemy.properties.pos.x += currentOverlap.x;
 						}
 					}
 				}
 			}
 
 		}
-
+		// Collision of bullets with player and enemies;
 		else if (entity.tag == "Bullet") {
 			if (entity.properties.origin == "Enemy") {
 				var currentOverlap = getOverlap(player, entity);
@@ -389,19 +434,18 @@ function canvasDraw() {
 
 	// Updating the score;
 	ctx.fillStyle = "white";
-	ctx.fillText(score.text + score.int, score.x, score.y);
 	ctx.fillText(username.text + username.name, username.x, username.y); // Draw players username;
 
-	if(frameCount < 50){
+	ctx.fillText(score.text + score.int, score.x, score.y);
+
+	// Draw coin and update;
+	ctx.drawImage(coinImage, score.x, score.y + 10, 40, 40);
+	ctx.fillText(": " + coinCount, score.x + 50, score.y + 40);
+
+	if(frameCount < 50){ // Show level name in the beginning;
 		ctx.fillText("Level " + currentLevel, 600, 100);
 	}
 
-	var endPoint = entityManager.getEntityByTag("End");
-
-	if (player.properties.pos.x >= endPoint.properties.pos.x) {
-			endLevel(currentLevel, filesInDirectory);
-	}
-	
 	// Update HP bar;
 	ctx.fillText('HP: ', 20, 70);
 	ctx.fillStyle = (player.properties.hp < player.properties.hpMax * 0.25) ? 'red' : 'green';
@@ -409,12 +453,35 @@ function canvasDraw() {
 	if (w < 0) w = 0
 	ctx.fillRect(80, 50, w, 20);
 
+	var endPoint = entityManager.getEntityByTag("End");
+
+	if (player.properties.pos.x >= endPoint.properties.pos.x) {
+		endLevel(currentLevel, filesInDirectory);
+	}
+
+	if(player.properties.hp <= 0){
+		entityManager.removeEntity(player);
+		gameOver();
+		gameStarted = false;
+		if(backgroundSound) backgroundSound.stop();
+
+		setTimeout(function(){
+				startNewGame(1)
+		}, 5000);
+	}
+
+	var endPoint = entityManager.getEntityByTag("End");
+	if (player.properties.pos.x >= endPoint.properties.pos.x) {
+			endLevel(currentLevel, filesInDirectory);
+	}
+
 	// Draw tiles and all other entities;
 	entityManager.getEntities().forEach(function (e) {
 		switch (e.tag) {
 			case "Tile1":
 			case "Tile2":
 			case "Tile3":
+			case "Tile4":
 				ctx.drawImage(e.image, e.properties.pos.x - viewport.x, e.properties.pos.y - viewport.y,
 					e.properties.width, e.properties.height);
 
@@ -423,9 +490,10 @@ function canvasDraw() {
 						e.properties.width, e.properties.height)
 				break;
 
-			case "Player":			
+			case "Player":
 			case "Enemy":
 			case "Bullet":
+			case "Coin":
 				ctx.drawImage(e.image, e.animation.frame * e.properties.width, 0, e.properties.width, e.properties.height,
 					Math.floor(e.properties.pos.x - viewport.x), Math.floor(e.properties.pos.y - viewport.y), e.properties.width, e.properties.height);
 				if (spriteBox)
@@ -439,23 +507,27 @@ function canvasDraw() {
 
 }
 
-function endLevel(currentLevel, levelsInDirectory){
-		var totalLevels = levelsInDirectory.length;
+function endLevel(currentLevel, levelsInDirectory) {
+	var totalLevels = levelsInDirectory.length;
 
 		ctx.font = "100px arcade";
+		ctx.fillStyle = 'white';
 
-		if(currentLevel === totalLevels){
-			ctx.fillText("Game Over", 400, 350);
+	if (currentLevel === totalLevels) {
+		ctx.fillText("Game Over", 400, 350);
+	} else {
+		ctx.fillText("Level " + currentLevel + "\n finished", 300, 350);
+	}
+	gameStarted = false;
+	setTimeout(function () {
+		if (++currentLevel <= totalLevels) {
+			startNewGame(currentLevel)
 		}
-		else{
-			ctx.fillText("Level " + currentLevel + "\n finished", 300, 350);
-		}
-		gameStarted = false;
-		setTimeout(function(){
-				if(++currentLevel <= totalLevels){
-					startNewGame(currentLevel)
-				}
-		}, 5000);
+	}, 5000);
+}
+
+function gameOver(){
+		ctx.fillText("Game Over", 400, 350);
 }
 
 function keyDownHandler(e) {
@@ -513,69 +585,72 @@ function keyUpHandler(e) {
 	}
 }
 
-function addListener() {
-	document.addEventListener("keydown", keyDownHandler, false);
-	document.addEventListener("keyup", keyUpHandler, false);
-
-// Add event listener to canvas element
-canvas.addEventListener('click', function(event) {
-  // Control that click event occurred within position of button
-	var buttonX=570;
-	var resumeButtonY = 300;
-	var saveButtonY = 370;
-	var quitButtonY = 440;
+function clickHandler(event) {
+	var buttonX = 700;
+	var resumeButtonY = 410;
+	var saveButtonY = 478;
+	var quitButtonY = 541;
 	var buttonW = 160;
 	var buttonH = 50;
- //Resume button
+
+	//Resume button
 	if (
-    event.x > buttonX &&
-    event.x < buttonX + buttonW &&
-    event.y > resumeButtonY &&
-    event.y < resumeButtonY + buttonH
-  ) {
-    // Executes if  resume button was clicked!
- 		paused=false;
+		event.x > buttonX &&
+		event.x < (buttonX + buttonW) &&
+		event.y > (resumeButtonY) &&
+		event.y < (resumeButtonY + buttonH)
+	) {
+		// Executes if  resume button was clicked!
+		paused = false;
 	}
 	///save button save listener
 	else if (
-    event.x > buttonX &&
-    event.x < buttonX + buttonW &&
-    event.y > saveButtonY &&
-    event.y < saveButtonY + buttonH
-  ) {
+		event.x > buttonX &&
+		event.x < buttonX + buttonW &&
+		event.y > saveButtonY &&
+		event.y < saveButtonY + buttonH
+	) {
 		// Executes if  save button was clicked!
 		//TODO:Add SAVE FUNCTION HERE
+		console.log("Save");
 
 	}
-  //quit button listener
+	//quit button listener
 	else if (
-    event.x > buttonX &&
-    event.x < buttonX + buttonW &&
-    event.y > quitButtonY &&
-    event.y < quitButtonY + buttonH
-  ) {
-    // Executes if button was clicked!
-		gameStarted=false;
-			//TODO: FIX HERE :Clear all canvas and previous game history
+		event.x > buttonX &&
+		event.x < buttonX + buttonW &&
+		event.y > quitButtonY &&
+		event.y < quitButtonY + buttonH
+	) {
+		// Executes if button was clicked!
+		paused = false;
+		$('.paused').hide();
+		gameStarted = false;
+		//TODO: FIX HERE :Clear all canvas and previous game history
 		$('.star').show();
 		$(".interface").html("");
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		$('#game').hide();
-		//$('#game').clearRect(0, 0, canvas.width, canvas.height);
-		generateMenus('mainMenu');
-  }
-
-});
-
+		generateMenus('playMenu');
+	}
 }
 
-startNewGame = function(level){
+function addListener() {
+	document.addEventListener("keydown", keyDownHandler, false);
+	document.addEventListener("keyup", keyUpHandler, false);
+	canvas.addEventListener("click", clickHandler, false);
+}
+
+
+startNewGame = function (level) {
 	// DONE : Properly clear the entity manager
 	entityManager.removeAllEntities();
 	ctx.font = "30px arcade";
 
-	socket.emit('storyMode', {level: level});
-	socket.on('levelPack', function(data) {
+	socket.emit('storyMode', {
+		level: level
+	});
+	socket.on('levelPack', function (data) {
 		entityManager.removeEntity(player);
 		username.name = data.username;
 		level = new Level(data);
@@ -603,7 +678,7 @@ startNewGame = function(level){
 		$('.paused').hide();
 	});
 
-	socket.on("filesInDirectory", function(data){
+	socket.on("filesInDirectory", function (data) {
 		filesInDirectory = data.files;
 	});
 }
@@ -614,8 +689,8 @@ var leaderButton = false;
 var leaderBoard = function () {
 	//TODO: loop on all scores and find the highest scrore
 	// Then rank accoring to scores
-	var rank=0
-	var maxRank=10;// number of players
+	var rank = 0
+	var maxRank = 10; // number of players
 
 
 	ctx.font = "50px arcade";
@@ -639,10 +714,10 @@ var isPaused = function () {
 	// Move draw to the div paused  using ralative
 	ctx.beginPath();
 	ctx.fillStyle = "red";
-	ctx.fillText('GAME PAUSED' ,550, 150);
-		//Add buttons
+	ctx.fillText('GAME PAUSED', 550, 150);
+	//Add buttons
 	var resumeButtonX = 570;
-	//	var buttonX = 570; to use later
+	// var buttonX = 570;
 	var saveButtonX = 570;
 	var quitButtonX = 570;
 	var resumeButtonY = 300;
@@ -656,21 +731,19 @@ var isPaused = function () {
 	//Resume button
 	ctx.fillRect(resumeButtonX, resumeButtonY, buttonW, buttonH);
 	//Save button
-	ctx.fillRect(saveButtonX,saveButtonY, buttonW, buttonH);
+	ctx.fillRect(saveButtonX, saveButtonY, buttonW, buttonH);
 	//Quit button
 	ctx.fillRect(quitButtonX, quitButtonY, buttonW, buttonH);
-	ctx.fillStyle= "yellow";
-	ctx.fillText("RESUME",590,340);
-	ctx.fillText("SAVE",585,410);
-	ctx.fillText("QUIT",585,480);
+	ctx.fillStyle = "yellow";
+	ctx.fillText("Resume", 600, 335);
+	ctx.fillText("Save", 620, 405);
+	ctx.fillText("Quit", 620, 475);
 
 	ctx.strokeStyle = "blue";
 	ctx.fillStyle = "rgba(0,0,0,0.01)";
 	ctx.rect(100, 50, 1080, 600);
 	ctx.stroke();
 	ctx.fill();
-
-
 }
 
 function update() {

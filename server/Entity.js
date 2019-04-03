@@ -56,7 +56,8 @@ class Entity{
             }
 
             if (component.ofType(components.FOLLOWPLAYER)) {
-                param.followSpeed = component.speed;
+                param.followSpeed = component.followSpeed;
+                param.delay = 0;
             }
 
             if (component.ofType(components.PATROL)) {

@@ -1,425 +1,1108 @@
 [
     {
-        "type": "Character",
+        "type": "Sound",
+        "name": "StoryMode",
+        "src": "client/sound/background.mp3",
+        "x": null
+    },
+    {
         "name": "Player",
-        "x": 60,
-        "y": 500
-    },
-    {
         "type": "Character",
-        "name": "Enemy",
-        "x": 500,
-        "y": 500,
-        "ai": "Basic",
-        "frame_sets": [
-            [
-                0
-            ],
-            [
-                1
-            ]
-        ]
-    },
-    {
-        "type": "Character",
-        "name": "Enemy",
-        "x": 800,
-        "y": 500,
-        "ai": "FollowPlayer",
-        "followSpeed": 5,
-        "frame_sets": [
-            [
-                0
-            ],
-            [
-                1
-            ]
-        ]
-    },
-    {
-        "type": "Tile",
-        "name": "Tile2",
-        "x": 0,
-        "y": 679
-    },
-    {
-        "type": "Tile",
-        "name": "Tile2",
         "x": 40,
-        "y": 679
+        "y": 560,
+        "tilePos": 449,
+        "tilePos1": 481
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
+        "x": 0,
+        "y": 680,
+        "tilePos": 544,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 40,
+        "y": 680,
+        "tilePos": 545,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
         "x": 80,
-        "y": 679
+        "y": 680,
+        "tilePos": 546,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 120,
-        "y": 679
+        "y": 680,
+        "tilePos": 547,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 160,
-        "y": 679
+        "y": 680,
+        "tilePos": 548,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 200,
-        "y": 679
+        "y": 680,
+        "tilePos": 549,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 240,
-        "y": 679
+        "y": 680,
+        "tilePos": 550,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 280,
-        "y": 679
+        "y": 680,
+        "tilePos": 551,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 320,
-        "y": 679
+        "y": 680,
+        "tilePos": 552,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 360,
-        "y": 679
+        "y": 680,
+        "tilePos": 553,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 400,
-        "y": 679
+        "y": 680,
+        "tilePos": 554,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 440,
-        "y": 679
+        "y": 680,
+        "tilePos": 555,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 480,
-        "y": 679
+        "y": 680,
+        "tilePos": 556,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 520,
-        "y": 679
+        "y": 680,
+        "tilePos": 557,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 560,
-        "y": 679
+        "y": 680,
+        "tilePos": 558,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 600,
-        "y": 500
+        "y": 680,
+        "tilePos": 559,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 640,
-        "y": 500
+        "y": 680,
+        "tilePos": 560,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 680,
-        "y": 500
+        "y": 680,
+        "tilePos": 561,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 720,
-        "y": 400
+        "y": 680,
+        "tilePos": 562,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 760,
-        "y": 400
+        "y": 680,
+        "tilePos": 563,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
-        "x": 600,
-        "y": 679
-    },
-    {
         "type": "Tile",
-        "name": "Tile2",
-        "x": 640,
-        "y": 679
-    },
-    {
-        "type": "Tile",
-        "name": "Tile2",
-        "x": 680,
-        "y": 679
-    },
-    {
-        "type": "Tile",
-        "name": "Tile2",
-        "x": 720,
-        "y": 679
-    },
-    {
-        "type": "Tile",
-        "name": "Tile2",
-        "x": 760,
-        "y": 679
-    },
-    {
-        "type": "Tile",
-        "name": "Tile2",
         "x": 800,
-        "y": 679
+        "y": 680,
+        "tilePos": 564,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 840,
-        "y": 679
+        "y": 680,
+        "tilePos": 565,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
-        "x": 870,
-        "y": 679
-    },
-    {
         "type": "Tile",
-        "name": "Tile2",
-        "x": 900,
-        "y": 679
-    },
-    {
-        "type": "Tile",
-        "name": "Tile2",
         "x": 880,
-        "y": 679
+        "y": 680,
+        "tilePos": 566,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 920,
-        "y": 679
+        "y": 680,
+        "tilePos": 567,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 960,
-        "y": 679
+        "y": 680,
+        "tilePos": 568,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1000,
-        "y": 679
+        "y": 680,
+        "tilePos": 569,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1040,
-        "y": 679
+        "y": 680,
+        "tilePos": 570,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1080,
-        "y": 679
+        "y": 680,
+        "tilePos": 571,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1120,
-        "y": 679
+        "y": 680,
+        "tilePos": 572,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1160,
-        "y": 679
+        "y": 680,
+        "tilePos": 573,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1200,
-        "y": 679
+        "y": 680,
+        "tilePos": 574,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1240,
-        "y": 679
+        "y": 680,
+        "tilePos": 575,
+        "img": "client/images/tile2.png"
     },
     {
+        "name": "Tile3",
         "type": "Tile",
+        "x": 280,
+        "y": 560,
+        "tilePos": 455,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 320,
+        "y": 560,
+        "tilePos": 456,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 360,
+        "y": 560,
+        "tilePos": 457,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 480,
+        "y": 440,
+        "tilePos": 364,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 520,
+        "y": 440,
+        "tilePos": 365,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 560,
+        "y": 440,
+        "tilePos": 366,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 880,
+        "y": 560,
+        "tilePos": 470,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 920,
+        "y": 560,
+        "tilePos": 471,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 960,
+        "y": 560,
+        "tilePos": 472,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Coin",
+        "type": "Tile",
+        "x": 320,
+        "y": 520,
+        "tilePos": 424,
+        "img": "client/images/singlecoin.png"
+    },
+    {
+        "name": "Coin",
+        "type": "Tile",
+        "x": 560,
+        "y": 400,
+        "tilePos": 334,
+        "img": "client/images/singlecoin.png"
+    },
+    {
+        "name": "Coin",
+        "type": "Tile",
+        "x": 880,
+        "y": 520,
+        "tilePos": 438,
+        "img": "client/images/singlecoin.png"
+    },
+    {
         "name": "Tile2",
+        "type": "Tile",
         "x": 1280,
-        "y": 679
+        "y": 680,
+        "tilePos": 1120,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1320,
-        "y": 679
+        "y": 680,
+        "tilePos": 1121,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1360,
-        "y": 679
+        "y": 680,
+        "tilePos": 1122,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1400,
-        "y": 679
+        "y": 680,
+        "tilePos": 1123,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1440,
-        "y": 679
+        "y": 680,
+        "tilePos": 1124,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1480,
-        "y": 679
+        "y": 680,
+        "tilePos": 1125,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1520,
-        "y": 679
+        "y": 680,
+        "tilePos": 1126,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1560,
-        "y": 679
+        "y": 680,
+        "tilePos": 1127,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
-        "x": 1600,
-        "y": 679
-    },
-    {
         "type": "Tile",
-        "name": "Tile2",
-        "x": 1640,
-        "y": 679
-    },
-    {
-        "type": "Tile",
-        "name": "Tile2",
-        "x": 1680,
-        "y": 679
-    },
-    {
-        "type": "Tile",
-        "name": "Tile2",
         "x": 1720,
-        "y": 679
+        "y": 680,
+        "tilePos": 1131,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1760,
-        "y": 679
+        "y": 680,
+        "tilePos": 1132,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1800,
-        "y": 679
+        "y": 680,
+        "tilePos": 1133,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1840,
-        "y": 679
+        "y": 680,
+        "tilePos": 1134,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
+        "type": "Tile",
         "x": 1880,
-        "y": 679
+        "y": 680,
+        "tilePos": 1135,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
-        "x": 1920,
-        "y": 679
-    },
-    {
         "type": "Tile",
-        "name": "Tile2",
-        "x": 1960,
-        "y": 679
-    },
-    {
-        "type": "Tile",
-        "name": "Tile2",
-        "x": 2000,
-        "y": 679
-    },
-    {
-        "type": "Tile",
-        "name": "Tile2",
-        "x": 2040,
-        "y": 679
-    },
-    {
-        "type": "Tile",
-        "name": "Tile2",
         "x": 2080,
-        "y": 679
+        "y": 680,
+        "tilePos": 1140,
+        "img": "client/images/tile2.png"
     },
     {
-        "type": "Tile",
         "name": "Tile2",
-        "x": 2120,
-        "y": 679
-    },
-    {
         "type": "Tile",
-        "name": "Tile2",
         "x": 2160,
-        "y": 679
+        "y": 680,
+        "tilePos": 1142,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2200,
+        "y": 680,
+        "tilePos": 1143,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2240,
+        "y": 680,
+        "tilePos": 1144,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2280,
+        "y": 680,
+        "tilePos": 1145,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2320,
+        "y": 680,
+        "tilePos": 1146,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2120,
+        "y": 680,
+        "tilePos": 1141,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2360,
+        "y": 680,
+        "tilePos": 1147,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2400,
+        "y": 680,
+        "tilePos": 1148,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2440,
+        "y": 680,
+        "tilePos": 1149,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2480,
+        "y": 680,
+        "tilePos": 1150,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2520,
+        "y": 680,
+        "tilePos": 1151,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 1600,
+        "y": 560,
+        "tilePos": 1032,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 1640,
+        "y": 560,
+        "tilePos": 1033,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 1680,
+        "y": 560,
+        "tilePos": 1034,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 1760,
+        "y": 440,
+        "tilePos": 940,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 1800,
+        "y": 440,
+        "tilePos": 941,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 1840,
+        "y": 440,
+        "tilePos": 942,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 1920,
+        "y": 320,
+        "tilePos": 848,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 1960,
+        "y": 320,
+        "tilePos": 849,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 2000,
+        "y": 320,
+        "tilePos": 850,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 2120,
+        "y": 480,
+        "tilePos": 981,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 2160,
+        "y": 480,
+        "tilePos": 982,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 2200,
+        "y": 480,
+        "tilePos": 983,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Coin",
+        "type": "Tile",
+        "x": 1960,
+        "y": 280,
+        "tilePos": 817,
+        "img": "client/images/singlecoin.png"
+    },
+    {
+        "name": "Coin",
+        "type": "Tile",
+        "x": 2200,
+        "y": 440,
+        "tilePos": 951,
+        "img": "client/images/singlecoin.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2560,
+        "y": 680,
+        "tilePos": 1696,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2600,
+        "y": 680,
+        "tilePos": 1697,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2640,
+        "y": 680,
+        "tilePos": 1698,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2680,
+        "y": 680,
+        "tilePos": 1699,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2720,
+        "y": 680,
+        "tilePos": 1700,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2760,
+        "y": 680,
+        "tilePos": 1701,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2800,
+        "y": 680,
+        "tilePos": 1702,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2840,
+        "y": 680,
+        "tilePos": 1703,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2880,
+        "y": 680,
+        "tilePos": 1704,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3200,
+        "y": 680,
+        "tilePos": 1712,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3240,
+        "y": 680,
+        "tilePos": 1713,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3280,
+        "y": 680,
+        "tilePos": 1714,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3320,
+        "y": 680,
+        "tilePos": 1715,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3360,
+        "y": 680,
+        "tilePos": 1716,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3400,
+        "y": 680,
+        "tilePos": 1717,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3680,
+        "y": 680,
+        "tilePos": 1724,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3720,
+        "y": 680,
+        "tilePos": 1725,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3760,
+        "y": 680,
+        "tilePos": 1726,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3800,
+        "y": 680,
+        "tilePos": 1727,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 2920,
+        "y": 520,
+        "tilePos": 1577,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 2960,
+        "y": 520,
+        "tilePos": 1578,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 3000,
+        "y": 520,
+        "tilePos": 1579,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 3040,
+        "y": 400,
+        "tilePos": 1484,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 3080,
+        "y": 400,
+        "tilePos": 1485,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 3160,
+        "y": 280,
+        "tilePos": 1391,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 3200,
+        "y": 280,
+        "tilePos": 1392,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 3480,
+        "y": 560,
+        "tilePos": 1623,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 3520,
+        "y": 560,
+        "tilePos": 1624,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Tile3",
+        "type": "Tile",
+        "x": 3560,
+        "y": 560,
+        "tilePos": 1625,
+        "img": "client/images/tile3.png"
+    },
+    {
+        "name": "Coin",
+        "type": "Tile",
+        "x": 3000,
+        "y": 480,
+        "tilePos": 1547,
+        "img": "client/images/singlecoin.png"
+    },
+    {
+        "name": "Coin",
+        "type": "Tile",
+        "x": 3520,
+        "y": 520,
+        "tilePos": 1592,
+        "img": "client/images/singlecoin.png"
+    },
+    {
+        "name": "Coin",
+        "type": "Tile",
+        "x": 3560,
+        "y": 520,
+        "tilePos": 1593,
+        "img": "client/images/singlecoin.png"
+    },
+    {
+        "type": "Background",
+        "name": "NewYork",
+        "src": "client/images/newyork1.png",
+        "x": null
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 1600,
+        "y": 680,
+        "tilePos": 1128,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 1640,
+        "y": 680,
+        "tilePos": 1129,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 1680,
+        "y": 680,
+        "tilePos": 1130,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 1920,
+        "y": 680,
+        "tilePos": 1136,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 1960,
+        "y": 680,
+        "tilePos": 1137,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2000,
+        "y": 680,
+        "tilePos": 1138,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2040,
+        "y": 680,
+        "tilePos": 1139,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2920,
+        "y": 680,
+        "tilePos": 1705,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 2960,
+        "y": 680,
+        "tilePos": 1706,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3000,
+        "y": 680,
+        "tilePos": 1707,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3040,
+        "y": 680,
+        "tilePos": 1708,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3080,
+        "y": 680,
+        "tilePos": 1709,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3120,
+        "y": 680,
+        "tilePos": 1710,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3160,
+        "y": 680,
+        "tilePos": 1711,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3440,
+        "y": 680,
+        "tilePos": 1718,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3480,
+        "y": 680,
+        "tilePos": 1719,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3520,
+        "y": 680,
+        "tilePos": 1720,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3560,
+        "y": 680,
+        "tilePos": 1721,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3600,
+        "y": 680,
+        "tilePos": 1722,
+        "img": "client/images/tile2.png"
+    },
+    {
+        "name": "Tile2",
+        "type": "Tile",
+        "x": 3640,
+        "y": 680,
+        "tilePos": 1723,
+        "img": "client/images/tile2.png"
     },
     {
         "name": "End",
         "type": "Point",
-        "x": 2160,
-        "y": 679
-    },
-    {
-        "type": "Background",
-        "name": "NewYork"
-    },
-    {
-        "type": "Sound",
-        "name": "StoryMode"
+        "x": 3640,
+        "y": 680
     }
 ]
