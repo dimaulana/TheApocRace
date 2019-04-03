@@ -25,11 +25,16 @@ var tile3 = new Image();
 tile3.src = "client/images/tile3.png";
 tile3.name = "Tile 3";
 
+var tile3 = new Image();
+tile3.src = "client/images/tile4.png";
+tile3.name = "Tile 4";
+
+
 var coin = new Image();
 coin.src = "client/images/singlecoin.png";
 coin.name = "Coin";
 
-var tileList = [tile1, tile2, tile3, coin];
+var tileList = [tile1, tile2, tile3, tile4, coin];
 tileList.name = "Tile";
 
 /* Character & Enemies */
