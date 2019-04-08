@@ -476,11 +476,6 @@ function canvasDraw() {
 		}, 5000);
 	}
 
-	var endPoint = entityManager.getEntityByTag("End");
-	if (player.properties.pos.x >= endPoint.properties.pos.x) {
-			endLevel(currentLevel, filesInDirectory);
-	}
-
 	// Draw tiles and all other entities;
 	entityManager.getEntities().forEach(function (e) {
 		switch (e.tag) {
@@ -662,6 +657,9 @@ startNewGame = function (level) {
 	// DONE : Properly clear the entity manager
 	entityManager.removeAllEntities();
 	ctx.font = "30px arcade";
+
+	var gamePlay = new Game();
+	console.log(gamePlay);
 
 	socket.emit('storyMode', {
 		level: level
