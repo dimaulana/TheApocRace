@@ -4,10 +4,12 @@
         $(".interface").html("");
         generateMenus('optionsMenu');
     });
-  
+    $("#soundTicked").on("click", soundStopped);
+
+
+
     var soundChecked = document.getElementById("main_audio"); 
-    soundBttn.addEventListener('click',soundPlayed);
-    
+        
      // if not checked sound stops 
     function soundStopped() {
       if(this.checked){
@@ -30,6 +32,7 @@
   position: relative;
   padding-left: 35px;
   margin: 12px;
+  color:white;
   cursor: pointer;
   font-size: 22px;
   -webkit-user-select: none;
@@ -99,14 +102,16 @@
     
     </head>
     <body>
+     <br> 
      <center>
-        Background Music
-       <label class="containerSound"> 
-        <input type="checkbox" checked="checked" onclick="if(this.checked){soundStopped()}">
+     
+       <label class="containerSound"> Background Music
+        <input type="checkbox" id="soundTicked" checked="checked">
         <span class="checkmark"></span>
         </label>
         <br/>
-        Volume
+        Volume 
+        <br>
         <br>
         <a class='backButton btn btn-primary btn-lg ml-2 type='submit'>Back</a></center>
     
