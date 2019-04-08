@@ -143,23 +143,27 @@ levelEditor = function (lvlName) {
 
     self.drawToCanvas = function (data) {
         $.each(data, function (i) {
-            if (data[i].type === "Character" || data[i].type === "Tile") {
-                var asset = self.findSprite(data[i].name, data[i].type);
-                asset.onload = function () {
-                    if (data[i].type === "Character") {
-                        if (data[i].name === "Player") {
-                            self.ctx.drawImage(asset, 0 * self.tileSize, 0, 40, 80, data[i].x, data[i].y, 40, 80);
-                        } else {
-                            self.ctx.drawImage(asset, 1 * self.tileSize, 0, 40, 80, data[i].x, data[i].y, 40, 80);
+            if (data[i].x > 1280 || data[i].x < 0) {
+                return;
+            } else {
+                if (data[i].type === "Character" || data[i].type === "Tile") {
+                    var asset = self.findSprite(data[i].name, data[i].type);
+                    asset.onload = function () {
+                        if (data[i].type === "Character") {
+                            if (data[i].name === "Player") {
+                                self.ctx.drawImage(asset, 0 * self.tileSize, 0, 40, 80, data[i].x, data[i].y, 40, 80);
+                            } else {
+                                self.ctx.drawImage(asset, 1 * self.tileSize, 0, 40, 80, data[i].x, data[i].y, 40, 80);
+                            }
+                        }
+                        if (data[i].type === "Tile") {
+                            self.ctx.drawImage(asset, data[i].x, data[i].y, 40, 40);
                         }
                     }
-                    if (data[i].type === "Tile") {
-                        self.ctx.drawImage(asset, data[i].x, data[i].y, 40, 40);
-                    }
                 }
-            }
-            if (data[i].type === "Background") {
-                self.canvas.style.background = "url('" + data[i].src + "')";
+                if (data[i].type === "Background") {
+                    self.canvas.style.background = "url('" + data[i].src + "')";
+                }
             }
         });
         self.displayGrid();
@@ -386,8 +390,6 @@ levelEditor = function (lvlName) {
                 "y": lastTile.y
             }
             tileMapToSend.push(endTile);
-            console.log(tileMapToSend);
-            console.log(levelName);
 
             if (!jQuery.isEmptyObject(self.background)) {
                 tileMapToSend.push(self.background);
