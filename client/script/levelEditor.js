@@ -375,7 +375,7 @@ levelEditor = function (lvlName) {
             for (var i = 0; i < tileMapToSend.length; i++) {
                 tileMapToSend[i].x += 1280 * self.currentScreen;
             }
-
+            /* Find end tile and attach object property */
             var lastTile = JSON.parse(JSON.stringify(tileMapToSend.reduce(function (i, e) {
                 return i.x > e.x ? i : e;
             })));
@@ -386,6 +386,8 @@ levelEditor = function (lvlName) {
                 "y": lastTile.y
             }
             tileMapToSend.push(endTile);
+            console.log(tileMapToSend);
+            console.log(levelName);
 
             if (!jQuery.isEmptyObject(self.background)) {
                 tileMapToSend.push(self.background);
@@ -402,6 +404,13 @@ levelEditor = function (lvlName) {
     /* Load Level */
     self.loadLevel = function (data) {
         var levelData = JSON.parse(data);
+        /* Remove existing end point tile as it most likely will be replaced */
+        for (var i = 0; i < levelData.length; i++) {
+            if (levelData[i].name === "End" && levelData[i].type === "Point") {
+                targetItem = self.tileMap[i];
+                levelData.splice(i, 1);
+            }
+        }
         self.drawToCanvas(levelData);
         self.tileMap = levelData;
     }
@@ -547,6 +556,7 @@ function loadEditor() {
             $('.interface').load("client/levelEditor.html", function () {
                 $('#editor').show();
                 var editor = new levelEditor(selectedLvl);
+                return editor;
             });
         }
     });

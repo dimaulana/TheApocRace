@@ -7,7 +7,16 @@ class LevelEditor{
     }
 
     writeToFile(data){
-        var fileName = this.levelName === "" ? data.levelName : this.levelName;
+        var fileName;
+            if (this.levelName === "") {
+                fileName = data.levelName;
+            }
+            else if (this.levelName !== data.levelName) {
+                fileName = data.levelName;
+            }
+            else {
+                fileName = this.levelName;
+            }
         fileName = "./server/levels/" + fileName + ".json";
         fs.writeFileSync(fileName, JSON.stringify(data.tileMap));
     }
