@@ -1,4 +1,4 @@
-/* Viewport object helps to draw the level assets 
+/* Viewport object helps to draw the level assets
    based on the current position of the screen
 
    Can be relative to player or any other case where needed.
@@ -10,7 +10,7 @@ function Viewport(x, y, w, h) {
 	this.x = x; // Upper left x-position of the viewport
 	this.y = y; // Upper left y-position of the viewport
 	this.w = w; // Width of the viewport
-	this.h = h; // Height of th viewport
+	this.h = h; // Height of the viewport
 
 	// Update the viewport relative to the entity;
 	this.update = function (relativeTo, entity) {
@@ -29,11 +29,12 @@ function Viewport(x, y, w, h) {
 				if (entity === "prev") this.x = 1280;
 				if (entity === "next") this.x = -1280;
 			break;
-
-				// Add more cases if needed; For example, in the case of Level Editor,
-				// We could have a mock entity where whenever the user clicks next screen button
-				// The viewport will be updated based on the desired position;
-				// You can also add your own calculations as well;
 		}
+	}
+
+	// Check if the entity is in the viewport;
+	this.inView = function (entity, margin) {
+		return (entity.properties.pos.x >= this.x - margin &&
+				entity.properties.pos.x <= this.x + this.w + margin);
 	}
 }
