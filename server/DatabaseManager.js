@@ -10,6 +10,7 @@
 var mongojs = require("mongojs");
 var url = 'localhost:27017/apoRun';
 var MongoClient = require('mongodb').MongoClient;
+var passwordHash = require('password-hash');
 
 const collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
 
@@ -23,13 +24,16 @@ const assetCollection = [
 							{"type": "Texture", "name": "Tile1", "path": "/client/images/tile1.png"},
 							{"type": "Texture", "name": "Tile2", "path": "/client/images/tile2.png"},
 							{"type": "Texture", "name": "Tile3", "path": "/client/images/tile3.png"},
+							{"type": "Texture", "name": "Tile4", "path": "/client/images/tile4.png"},
+							{"type": "Texture", "name": "Coin", "path": "/client/images/coins.png"},
 							{"type": "Texture", "name": "NY1", "path": "/client/images/newyork1.png"},
 							{"type": "Texture", "name": "NY2", "path": "/client/images/newyork2.png"},
 							{"type": "Texture", "name": "NY3", "path": "/client/images/newyork3.png"},
 							{"type": "Texture", "name": "LA1", "path": "/client/images/losAngeles1.png"},
 							{"type": "Texture", "name": "LA2", "path": "/client/images/losAngeles2.png"},
 							{"type": "Texture", "name": "LA3", "path": "/client/images/losAngeles3.png"},
-							{"type": "Texture", "name": "NewYork", "path": "/client/images/NewYork.png"},
+							{"type": "Texture", "name": "NewYork", "path": "/client/images/NewYork001.png"},
+							{"type": "Texture", "name": "LosAngeles", "path": "/client/images/LosAngeles.png"},
 							{"type": "Texture", "name": "Bullet", "path": "/client/images/bullets.png"},
 							{"type": "Font", "name": "Helvetica", "path": "client/fonts/helvetica.ttf"},
 							{"type": "Sound", "name": "StoryMode", "path": "client/sound/background.mp3"}
@@ -73,9 +77,13 @@ Database = {};
 
 //------ User adding and modifying functions --------;
 Database.isValidPassword = function(data, cb) {
-	db.user.find({username:data.username, password:data.password}, function(err, res) {
-		if (res.length > 0)
-			cb(true);
+	db.user.find({username:data.username}, function(err, res) {
+		if (res.length > 0){
+			var storedHash = res[0]['password'];
+			if(passwordHash.verify(data.password, storedHash)){
+				cb(true);
+			}
+		}
 		else
 			cb(false);
 
@@ -93,20 +101,20 @@ Database.isUsernameTaken = function(data, cb) {
 }
 
 Database.addUser = function(data, cb) {
-	db.user.insert({username:data.username, password:data.password}, function(err) {
+	db.user.insert({username:data.username, password:data.hashedPassword}, function(err) {
 		cb();
 	});
 }
 
 Database.updatePassword = function(data, cb) {
-
+	var hashedPassword = passwordHash.generate(data.password);
 	db.user.findAndModify({
 		query: { username: data.username},
-		update: { $set: {password: data.password }},
+		update: { $set: {password: hashedPassword }},
 		new: true
 	}, function(err, res) {
 		// check if the password has been updated;
-		if (res.password === data.password)
+		if (res.password === hashedPassword)
 			cb(true);
 		else
 			cb(false);

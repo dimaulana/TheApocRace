@@ -22,10 +22,13 @@ function Entity(param) {
 	self.image = new Image();
 	self.image.src = self.properties.fileLocation;
 
-	if (self.tag == "Player" || self.tag == "Enemy" || self.tag == "Bullet") {
+	if (self.tag == "Player" || self.tag == "Enemy" || self.tag == "Bullet" || self.tag == "Coin") {
 		self.animation = new Animation();
 	}
-	if (self.tag == "Background") self.frame = 0;
+	else if (self.tag == "Background") {
+		self.frame = 0;
+	}
+
 
 	self.changeAnimation = function(param) {
 		if (!self.animation) return;

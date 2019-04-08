@@ -100,6 +100,9 @@ io.sockets.on('connection',function(socket) {
 				socket.emit('signUpResponse', {success:false});
 			}
 			else {
+				var passwordHash = require('password-hash');
+				var hashedPassword = passwordHash.generate(data.password);
+				data.hashedPassword = hashedPassword;
 				Database.addUser(data, function() {
 					socket.emit('signUpResponse', {success:true}); 
 				});

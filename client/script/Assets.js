@@ -4,6 +4,7 @@
 */
 
 // Level class that loads the level assets;
+/** DEPRACATED
 Level = function(data){
 	var self = {
 		levelName: data.name,
@@ -26,6 +27,7 @@ Level = function(data){
 
 	return self;
 }
+**/
 
 //Sound function that helps play sound
 function Sound(src) {

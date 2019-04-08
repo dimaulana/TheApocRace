@@ -47,24 +47,25 @@ class GamePlay {
 	}
 
 	spawnEnemy(data) {
-		var enemy = this.entityManager.addEntity(data.name);
+		var enemy = this.entityManager.addEntity("Enemy");
 		enemy.addComponent(components.TRANSFORM, {x: data.x, y: data.y, speedMax: 10});
 		enemy.addComponent(components.GRAVITY);
-		enemy.addComponent(components.STATS, {hp: 2, score: 10}); // TODO: Get this for specific enemies;
 		enemy.addComponent(components.WEAPON, {loc: this.assetManager.getTexture("Bullet")});
 		enemy.addComponent(components.DIMENSION, {w: 40, h: 80});
-		enemy.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Enemy"),
+		enemy.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(data.name),
 											   jumpLoc: this.assetManager.getTexture("EnemyJump"),
 											   frame_sets: [[0], [1], [2, 3, 4, 5], [6, 7, 8, 9]]});
 
 		if (data.ai === "Basic") {
-			// Do nothing??
+			enemy.addComponent(components.STATS, {hp: 2, score: 10}); 
 		}
 		else if (data.ai === "FollowPlayer") {
 			enemy.addComponent(components.FOLLOWPLAYER, data.followSpeed);
+			enemy.addComponent(components.STATS, {hp: 5, score: 30});
 		}
 		else if (data.ai === "Patrol") {
 			enemy.addComponent(components.PATROL, {pos: data.patrolPos, speed: data.patrolSpeed});
+			enemy.addComponent(components.STATS, {hp: 4, score: 50});
 		}
 	}
 
@@ -72,7 +73,15 @@ class GamePlay {
 		var tile = this.entityManager.addEntity(data.name);
 		tile.addComponent(components.TRANSFORM, {x: data.x, y: data.y});
 		tile.addComponent(components.DIMENSION, {w: 40, h: 40});
-		tile.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(data.name)});
+
+		if (data.name == "Coin") {
+			tile.addComponent(components.STATS, {hp: 0, score: 1});
+			tile.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(data.name),
+													frame_sets: [[0,1,2,3,4,5,6]]});
+		}
+		else {
+			tile.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(data.name)});
+		}
 	}
 
 	getLevelData(){
