@@ -741,7 +741,8 @@ document.getElementById("main_audio").play();
 		for (var i = 0; i < levelData.length; i++) {
 
     		if (levelData[i].tag == "Sound") {
-    			self.backgroundSound = new Sound(levelData[i].fileLocation);
+					self.backgroundSound = new Sound(levelData[i].fileLocation);
+					document.getElementById("main_audio").pause();
     			self.backgroundSound.play();
     			continue;
     		}
