@@ -26,7 +26,7 @@ function Game() {
 	self.filesInDirectory = [];
 
 	self.score = {
-		x: canvas.width - 200, y: 40,
+		x: self.canvas.width - 200, y: 40,
 		text: "SCORE: ",
 		int: 0,
 		topScore: 0 // Later to come from the database taken compared to other players
@@ -41,7 +41,7 @@ function Game() {
 
 	self.coins = {
 		count: 0,
-		x: canvas.width - 200, y: 50,
+		x: self.canvas.width - 200, y: 50,
 		w: 40, h: 40,
 		image: new Image()
 	}
@@ -423,7 +423,7 @@ function Game() {
 
 		if (self.player.properties.pos.y < 0) self.player.properties.pos.y = 0;
 
-		if (self.player.properties.pos.y > canvas.height) {
+		if (self.player.properties.pos.y > self.canvas.height) {
 			self.player.properties.alive = false;
 			self.gameOver(true);
 		}
@@ -460,7 +460,7 @@ function Game() {
 		self.ctx.fillText(self.username.text + self.username.name, self.username.x, self.username.y);
 
 		// Updating the score;
-		self.ctx.fillText(score.text + score.int, score.x, score.y);
+		self.ctx.fillText(self.score.text + self.score.int, self.score.x, self.score.y);
 
 		// Draw coin and update;
 		self.ctx.drawImage(self.coins.image, self.coins.x, self.coins.y, self.coins.w, self.coins.h);
@@ -471,7 +471,7 @@ function Game() {
 		self.ctx.fillStyle = (self.player.properties.hp < self.player.properties.hpMax * 0.25) ? 'red' : 'green';
 		var w = self.player.properties.hpMax * self.player.properties.hp / self.player.properties.hpMax * 2; // Multiply by 2 to make it a little more visible
 		if (w < 0) w = 0
-			ctx.fillRect(80, 50, w, 20);
+			self.ctx.fillRect(80, 50, w, 20);
 
 
 		// Check if game has ended;
