@@ -143,23 +143,27 @@ levelEditor = function (lvlName) {
 
     self.drawToCanvas = function (data) {
         $.each(data, function (i) {
-            if (data[i].type === "Character" || data[i].type === "Tile") {
-                var asset = self.findSprite(data[i].name, data[i].type);
-                asset.onload = function () {
-                    if (data[i].type === "Character") {
-                        if (data[i].name === "Player") {
-                            self.ctx.drawImage(asset, 0 * self.tileSize, 0, 40, 80, data[i].x, data[i].y, 40, 80);
-                        } else {
-                            self.ctx.drawImage(asset, 1 * self.tileSize, 0, 40, 80, data[i].x, data[i].y, 40, 80);
+            if (data[i].x > 1280 || data[i].x < 0) {
+                return;
+            } else {
+                if (data[i].type === "Character" || data[i].type === "Tile") {
+                    var asset = self.findSprite(data[i].name, data[i].type);
+                    asset.onload = function () {
+                        if (data[i].type === "Character") {
+                            if (data[i].name === "Player") {
+                                self.ctx.drawImage(asset, 0 * self.tileSize, 0, 40, 80, data[i].x, data[i].y, 40, 80);
+                            } else {
+                                self.ctx.drawImage(asset, 1 * self.tileSize, 0, 40, 80, data[i].x, data[i].y, 40, 80);
+                            }
+                        }
+                        if (data[i].type === "Tile") {
+                            self.ctx.drawImage(asset, data[i].x, data[i].y, 40, 40);
                         }
                     }
-                    if (data[i].type === "Tile") {
-                        self.ctx.drawImage(asset, data[i].x, data[i].y, 40, 40);
-                    }
                 }
-            }
-            if (data[i].type === "Background") {
-                self.canvas.style.background = "url('" + data[i].src + "')";
+                if (data[i].type === "Background") {
+                    self.canvas.style.background = "url('" + data[i].src + "')";
+                }
             }
         });
         self.displayGrid();
@@ -375,7 +379,7 @@ levelEditor = function (lvlName) {
             for (var i = 0; i < tileMapToSend.length; i++) {
                 tileMapToSend[i].x += 1280 * self.currentScreen;
             }
-
+            /* Find end tile and attach object property */
             var lastTile = JSON.parse(JSON.stringify(tileMapToSend.reduce(function (i, e) {
                 return i.x > e.x ? i : e;
             })));
@@ -402,6 +406,13 @@ levelEditor = function (lvlName) {
     /* Load Level */
     self.loadLevel = function (data) {
         var levelData = JSON.parse(data);
+        /* Remove existing end point tile as it most likely will be replaced */
+        for (var i = 0; i < levelData.length; i++) {
+            if (levelData[i].name === "End" && levelData[i].type === "Point") {
+                targetItem = self.tileMap[i];
+                levelData.splice(i, 1);
+            }
+        }
         self.drawToCanvas(levelData);
         self.tileMap = levelData;
     }
@@ -547,6 +558,7 @@ function loadEditor() {
             $('.interface').load("client/levelEditor.html", function () {
                 $('#editor').show();
                 var editor = new levelEditor(selectedLvl);
+                return editor;
             });
         }
     });
