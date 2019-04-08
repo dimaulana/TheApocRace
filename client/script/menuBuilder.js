@@ -66,7 +66,7 @@ $(document).ready(function () {
         } else if (currentPage === "optionsMenu") {
             switch (menuClicked) {
                 case "Controls":
-    			          $('.interface').load("client/controls.html");
+                    $('.interface').load("client/controls.html");
                 break;
                 case "Sound":
                     $('.interface').load("# Add div container here");
@@ -78,7 +78,7 @@ $(document).ready(function () {
         } else {
             switch (menuClicked) {
                 case "Story Mode":
-                    startNewGame(1);
+                    loadGame(1); // Start game level 1;
                     break;
                 case "Custom":
                     $('.interface').load("ENTER PAGE URL HERE");
