@@ -38,6 +38,9 @@ var username = {
 
 var viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
 
+window.onload=function(){
+document.getElementById("main_audio").play();
+}
 
 function spawnBullet(entity) {
 	// Check weaponClock;
@@ -591,7 +594,9 @@ startNewGame = function(level){
 			return;
 		}
 
-		if (backgroundSound) backgroundSound.play();
+		if (backgroundSound) 
+		document.getElementById("main_audio").pause();
+		backgroundSound.play();
 
 		addListener();
 		gameStarted = true;
