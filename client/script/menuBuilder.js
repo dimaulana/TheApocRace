@@ -7,6 +7,7 @@ var buildMenu = ["New Level", "Load Level", "Back"];
 var playMenu = ["Story Mode", "Custom", "Back"];
 var extraMenu = ["Credits", "Profile", "Back"];
 var optionsMenu = ["Controls", "Sound", "Back"];
+
 var currentPage;
 
 var MenuBuilder = function (socket) {
@@ -69,7 +70,7 @@ $(document).ready(function () {
                     $('.interface').load("client/controls.html");
                 break;
                 case "Sound":
-                    $('.interface').load("# Add div container here");
+                    $('.interface').load("client/sounds.html");
                     break;
                 case "Back":
                     generateMenus("mainMenu");
