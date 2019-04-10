@@ -10,6 +10,7 @@
 var mongojs = require("mongojs");
 var url = 'localhost:27017/apoRun';
 var MongoClient = require('mongodb').MongoClient;
+var passwordHash = require('password-hash');
 
 const collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
 
@@ -76,9 +77,13 @@ Database = {};
 
 //------ User adding and modifying functions --------;
 Database.isValidPassword = function(data, cb) {
-	db.user.find({username:data.username, password:data.password}, function(err, res) {
-		if (res.length > 0)
-			cb(true);
+	db.user.find({username:data.username}, function(err, res) {
+		if (res.length > 0){
+			var storedHash = res[0]['password'];
+			if(passwordHash.verify(data.password, storedHash)){
+				cb(true);
+			}
+		}
 		else
 			cb(false);
 
@@ -96,20 +101,20 @@ Database.isUsernameTaken = function(data, cb) {
 }
 
 Database.addUser = function(data, cb) {
-	db.user.insert({username:data.username, password:data.password}, function(err) {
+	db.user.insert({username:data.username, password:data.hashedPassword}, function(err) {
 		cb();
 	});
 }
 
 Database.updatePassword = function(data, cb) {
-
+	var hashedPassword = passwordHash.generate(data.password);
 	db.user.findAndModify({
 		query: { username: data.username},
-		update: { $set: {password: data.password }},
+		update: { $set: {password: hashedPassword }},
 		new: true
 	}, function(err, res) {
 		// check if the password has been updated;
-		if (res.password === data.password)
+		if (res.password === hashedPassword)
 			cb(true);
 		else
 			cb(false);
