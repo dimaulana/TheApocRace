@@ -35,6 +35,14 @@ class LevelEditor{
         }
         this.socket.emit('getLevelData', data);
     }
+
+    readFromDatabase(){
+        var data = {};
+        if(this.levelName !== ""){
+            data = Database.readFromDatabase(this.levelName);
+        }
+        this.socket.emit('getLevelData', data);
+    }
 }
 
 module.exports = LevelEditor;
