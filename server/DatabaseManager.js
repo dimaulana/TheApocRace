@@ -148,11 +148,15 @@ Database.writeToDatabase = function(data){
 	});
 }
 
-Database.readFromDatabase = function(levelName){
+Database.readFromDatabase = function(levelName, cb){
 	db.level.findOne({levelName : levelName}, function(err, res){
-		if(res){
-			console.log(res);
-			return res;
+		if(res)
+		{
+			cb(res);
+		}
+		else
+		{
+			cb();
 		}
 	});
 }

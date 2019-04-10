@@ -1,48 +1,60 @@
 var fs = require('fs');
 require('./DatabaseManager.js');
 
-class LevelEditor{
-    constructor(param){
-        this.levelName = param.levelName;
-        this.socket = param.socket;
+function LevelEditor(param) {
+    var self = {
+        levelName: param.levelName,
+        socket: param.socket
     }
 
-    writeToFile(data){
+    /* DEPRACATED - FILE READING
+    self.writeToFile = function(data){
         var fileName;
-            if (this.levelName === "") {
-                fileName = data.levelName;
-            }
-            else if (this.levelName !== data.levelName) {
-                fileName = data.levelName;
-            }
-            else {
-                fileName = this.levelName;
-            }
+        if (self.levelName === "") {
+            fileName = data.levelName;
+        }
+        else if (self.levelName !== data.levelName) {
+            fileName = data.levelName;
+        }
+        else {
+            fileName = self.levelName;
+        }
         fileName = "./server/levels/" + fileName + ".json";
         fs.writeFileSync(fileName, JSON.stringify(data.tileMap));
     }
 
-    writeToDatabase(data){
-        DatabaseManager();
+    self.readSavedFile = function(){
+        var data = {};
+        if(self.levelName !== "") {
+            var fileName =  './server/levels/' + self.levelName + ".json";
+            data = fs.readFileSync(fileName, 'utf8');
+        }
+        self.socket.emit('getLevelData', data);
+    }
+    */
+
+    self.writeToDatabase = function(data){
         Database.writeToDatabase(data);
     }
 
-    readSavedFile(){
+    self.readLevel = function() {
         var data = {};
-        if(this.levelName !== ""){
-            var fileName =  './server/levels/' + this.levelName + ".json";
-            data = fs.readFileSync(fileName, 'utf8');
+        if(self.levelName !== ""){
+            data = Database.readFromDatabase(self.levelName, function(levelData){
+                if(!levelData)
+                {
+                    console.log("ERROR! No Level Data");
+                    return;
+                }
+                self.socket.emit('getLevelData', levelData.tileMap);
+            });
         }
-        this.socket.emit('getLevelData', data);
+        else {
+            self.socket.emit('getLevelData', {});
+        }
     }
 
-    readFromDatabase(){
-        var data = {};
-        if(this.levelName !== ""){
-            data = Database.readFromDatabase(this.levelName);
-        }
-        this.socket.emit('getLevelData', data);
-    }
+    return self;
 }
 
 module.exports = LevelEditor;

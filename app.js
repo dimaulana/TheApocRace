@@ -65,7 +65,7 @@ var startGame = function(data) {
 
 var newLevelEditor = function(data){
 	var levelEditor = new LevelEditor(data);
-	levelEditor.readFromDatabase();
+	levelEditor.readLevel();
 
 	data.socket.on('saveNewLevel', function(data){
 		data.user = currentUser.name;
