@@ -68,7 +68,8 @@ var newLevelEditor = function(data){
 	levelEditor.readSavedFile();
 
 	data.socket.on('saveNewLevel', function(data){
-		levelEditor.writeToFile(data);
+		data.user = currentUser.name;
+		levelEditor.writeToDatabase(data);
 	});
 }
 

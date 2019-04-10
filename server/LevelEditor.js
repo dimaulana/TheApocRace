@@ -1,4 +1,5 @@
 var fs = require('fs');
+require('./DatabaseManager.js');
 
 class LevelEditor{
     constructor(param){
@@ -19,6 +20,11 @@ class LevelEditor{
             }
         fileName = "./server/levels/" + fileName + ".json";
         fs.writeFileSync(fileName, JSON.stringify(data.tileMap));
+    }
+
+    writeToDatabase(data){
+        DatabaseManager();
+        Database.writeToDatabase(data);
     }
 
     readSavedFile(){

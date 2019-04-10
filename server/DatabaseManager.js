@@ -140,3 +140,11 @@ Database.getAllAssets = function(cb) {
 	});
 }
 
+Database.writeToDatabase = function(data){
+	db.collection("level").insert(data, function(err, res) {
+		if (err) throw err;
+			console.log("1 document inserted");
+		db.close();
+	});
+}
+
