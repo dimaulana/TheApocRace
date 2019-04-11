@@ -2,6 +2,7 @@ var fs = require('fs');
 
 var EntityManager = require('./EntityManager');
 const components = require('./ComponentEnum.js');
+require('./DatabaseManager.js');
 
 class GamePlay {
 	constructor(param) {
@@ -24,7 +25,7 @@ class GamePlay {
 		levelPack.file = this.file;
 		levelPack.data = [];
 
-		this.loadLevelData(this.getLevelData());
+		this.loadLevelData(this.getLevelData(levelPack.name));
 
 		this.entityManager.getEntities().forEach(function(entity) {
 			// Get init pack for all the entities;
@@ -84,10 +85,32 @@ class GamePlay {
 		}
 	}
 
-	getLevelData(){
-		let rawdata = fs.readFileSync('server/levels/' + this.file);
-		let json = JSON.parse(rawdata);
-		return json;  
+	// DEPRECATED:
+	// getLevelData(){
+	// 	let rawdata = fs.readFileSync('server/levels/' + this.file);
+	// 	let json = JSON.parse(rawdata);
+	// 	return json;  
+	// }
+
+	getLevelData(levelName){
+		var tiles;
+		Database.readFromDatabase(levelName, function(levelData){
+			// if(!levelData)
+			// {
+			// 	console.log("ERROR! No Level Data");
+			// 	tiles = levelData.tileMap;
+			// }
+			return new Promise(function(resolve, reject){
+				if(!levelData)
+				{
+					resolve(levelData);
+				}
+				else
+				{
+					reject();
+				}
+			});
+		});
 	}
 
 	loadLevelData(levelData){
