@@ -93,12 +93,11 @@ class GamePlay {
 	loadLevelData(levelData){
 		var locationsMap = {}
 		var loc;
-		var type, name;
 
 		for (var i = 0; i < levelData.length; i++) {
 			// Get all the types checked;
-			type = levelData[i].type;
-			name = levelData[i].name;
+			var type = levelData[i].type;
+			var name = levelData[i].name;
 			switch(type) {
 				case "Character":
 					if (name == "Player")

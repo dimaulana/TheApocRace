@@ -188,6 +188,6 @@ io.sockets.on('connection',function(socket) {
 	});
 });
 
-// Update player and bullet
+// Update the game engine;
 setInterval(function() {
 },1000/30);
