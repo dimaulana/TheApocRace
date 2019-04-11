@@ -389,7 +389,14 @@ levelEditor = function (lvlName) {
                 "x": lastTile.x,
                 "y": lastTile.y
             }
+            var sound = {
+                "type": "Sound",
+                "name": "StoryMode",
+                "src": "client/sound/background.mp3",
+                "x": 0
+            }
             tileMapToSend.push(endTile);
+            tileMapToSend.push(sound);
 
             if (!jQuery.isEmptyObject(self.background)) {
                 tileMapToSend.push(self.background);
@@ -405,14 +412,20 @@ levelEditor = function (lvlName) {
 
     /* Load Level */
     self.loadLevel = function (data) {
+        var endPointPos, soundPos;
         var levelData = JSON.parse(data);
+        console.log(levelData);
         /* Remove existing end point tile as it most likely will be replaced */
         for (var i = 0; i < levelData.length; i++) {
             if (levelData[i].name === "End" && levelData[i].type === "Point") {
-                targetItem = self.tileMap[i];
-                levelData.splice(i, 1);
+                endPointPos = i;
+            }
+            if (levelData[i].type === "Sound") {
+                soundPos = i;
             }
         }
+        levelData.splice(endPointPos, 1);
+        levelData.splice(soundPos, 1);
         self.drawToCanvas(levelData);
         self.tileMap = levelData;
     }
