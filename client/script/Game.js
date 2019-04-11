@@ -535,6 +535,15 @@ document.getElementById("main_audio").play();
 				// TODO:
 				// Quit game;
 				// Save progress;
+				self.paused = false;
+				$('.paused').hide();
+				self.gameStarted = false;
+				//TODO: FIX HERE :Clear all canvas and previous game history
+				$('.star').show();
+				$(".interface").html("");
+				self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
+				$('#game').hide();
+				generateMenus('playMenu');
 			break;
 
 			case 68: // d key
@@ -586,6 +595,7 @@ document.getElementById("main_audio").play();
 
 	function clickHandler(event) {
 		var buttonX = 700;
+		var buttonXR=700;
 		var resumeButtonY = 410;
 		var saveButtonY = 478;
 		var quitButtonY = 541;
@@ -594,13 +604,14 @@ document.getElementById("main_audio").play();
 
 		//Resume button
 		if (
-			event.x > buttonX &&
-			event.x < (buttonX + buttonW) &&
+			event.x > buttonXR &&
+			event.x < (buttonXR + buttonW) &&
 			event.y > (resumeButtonY) &&
 			event.y < (resumeButtonY + buttonH)
 		) {
 			// Executes if  resume button was clicked!
 			paused = false;
+			console.log(" Resume POSITION Clicked");
 		}
 		///save button save listener
 		else if (
@@ -697,6 +708,17 @@ document.getElementById("main_audio").play();
 	}
 	**/
 
+	self.quitGame = function(){
+		$('.star').show();
+		$('#game').hide();
+		$('.paused').hide();
+		paused=false;
+		gameStarted=false;
+		generateMenus("playMenu");
+
+
+	}
+
 	self.isPaused = function() {
 		// TODO:
 		// Move draw to the div paused  using ralative
@@ -718,6 +740,7 @@ document.getElementById("main_audio").play();
 		self.ctx.fillStyle = "blue";
 		//Resume button
 		self.ctx.fillRect(resumeButtonX, resumeButtonY, buttonW, buttonH);
+		console.log(" Resume POSITION HERE");
 		//Save button
 		self.ctx.fillRect(saveButtonX, saveButtonY, buttonW, buttonH);
 		//Quit button
