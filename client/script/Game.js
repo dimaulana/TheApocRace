@@ -252,22 +252,23 @@ document.getElementById("main_audio").play();
 	// Function to handle collisions;
 	self.getOverlap = function(a, b) {
 
+		var halfSizeA = {
+			w: a.properties.width / 2,
+			h: a.properties.height / 2
+		};
+
+		var halfSizeB = {
+			w: b.properties.width / 2,
+			h: b.properties.height / 2
+		};
+
 		var delta = {
-			x: Math.abs((a.properties.pos.x + a.properties.width / 2) - (b.properties.pos.x + b.properties.width / 2)),
-			y: Math.abs((a.properties.pos.y + a.properties.height / 2) - (b.properties.pos.y + b.properties.height / 2))
+			x: Math.abs((a.properties.pos.x + halfSizeA.w) - (b.properties.pos.x + halfSizeB.w)),
+			y: Math.abs((a.properties.pos.y + halfSizeA.h) - (b.properties.pos.y + halfSizeB.h))
 		}
 
-		var halfSizeA = {
-			x: a.properties.width / 2,
-			y: a.properties.height / 2
-		};
-		var halfSizeB = {
-			x: b.properties.width / 2,
-			y: b.properties.height / 2
-		};
-
-		var overlapX = halfSizeA.x + halfSizeB.x - delta.x;
-		var overlapY = halfSizeA.y + halfSizeB.y - delta.y;
+		var overlapX = halfSizeA.w + halfSizeB.w - delta.x;
+		var overlapY = halfSizeA.h + halfSizeB.h - delta.y;
 
 		return {
 			x: overlapX,
@@ -277,22 +278,23 @@ document.getElementById("main_audio").play();
 
 	self.getPrevOverlap = function(a, b) {
 
+		var halfSizeA = {
+			w: a.properties.width / 2,
+			h: a.properties.height / 2
+		};
+
+		var halfSizeB = {
+			w: b.properties.width / 2,
+			h: b.properties.height / 2
+		};
+
 		var delta = {
-			x: Math.abs((a.properties.prevPos.x + a.properties.width / 2) - (b.properties.prevPos.x + b.properties.width / 2)),
-			y: Math.abs((a.properties.prevPos.y + a.properties.height / 2) - (b.properties.prevPos.y + b.properties.height / 2))
+			x: Math.abs((a.properties.prevPos.x + halfSizeA.w) - (b.properties.prevPos.x + halfSizeB.w)),
+			y: Math.abs((a.properties.prevPos.y + halfSizeA.h) - (b.properties.prevPos.y + halfSizeB.h))
 		}
 
-		var halfSizeA = {
-			x: a.properties.width / 2,
-			y: a.properties.height / 2
-		};
-		var halfSizeB = {
-			x: b.properties.width / 2,
-			y: b.properties.height / 2
-		};
-
-		var overlapX = halfSizeA.x + halfSizeB.x - delta.x;
-		var overlapY = halfSizeA.y + halfSizeB.y - delta.y;
+		var overlapX = halfSizeA.w + halfSizeB.w - delta.x;
+		var overlapY = halfSizeA.h + halfSizeB.h - delta.y;
 
 		return {
 			x: overlapX,
@@ -330,11 +332,13 @@ document.getElementById("main_audio").play();
 							// Collision came from top of tile;
 							self.player.properties.speed.y = 0;
 							self.player.properties.pos.y -= currentOverlap.y;
+							self.player.properties.prevPos.y -= currentOverlap.y;
 							self.player.properties.state = "standing"; // Jumping ends as he is now on the tile;
-						} else if (((self.player.properties.pos.y - self.player.properties.prevPos.y) <= 0)) {
+						} else if (((self.player.properties.pos.y - self.player.properties.prevPos.y) < 0)) {
 							// Collision came from bottom of tile;
 							self.player.properties.speed.y = 0;
 							self.player.properties.pos.y += currentOverlap.y;
+							self.player.properties.prevPos.y += self.player.properties.pos.y;
 						}
 					}
 
@@ -765,8 +769,7 @@ document.getElementById("main_audio").play();
 
 		socket.on('levelPack', function(data) {
 			// Explicitly removing player;
-			if (!self.player)
-				self.entityManager.removeEntity(self.player);
+			self.entityManager.removeEntity(self.player);
 
 			self.username.name = data.username;
 			self.loadLevel(data);
