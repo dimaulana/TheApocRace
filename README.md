@@ -30,9 +30,9 @@ Before you can start and enjoy our game we ask you to follow the simple steps li
 
 This covers the information needed for you to have the game up and running in a few seconds. <br/>
 
-If you would like to get more information about this project we would love to help you. You can contact any of us via email:
-Sahil Anand - sa7437@mun.ca
-Dido Maulana - dmaulana@mun.ca
-Hussein Parpia - hparpia@mun.ca
-Victor Mutandwa - vtm806@mun.ca
+If you would like to get more information about this project we would love to talk to you. You can contact any of us via email:<br/>
+Sahil Anand - sa7437@mun.ca <br/>
+Dido Maulana - dmaulana@mun.ca<br/>
+Hussein Parpia - hparpia@mun.ca<br/>
+Victor Mutandwa - vtm806@mun.ca<br/>
 Michelle Mushaninga - tbd
