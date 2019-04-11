@@ -535,15 +535,18 @@ document.getElementById("main_audio").play();
 				// TODO:
 				// Quit game;
 				// Save progress;
+				
 				self.paused = false;
 				$('.paused').hide();
 				self.gameStarted = false;
 				//TODO: FIX HERE :Clear all canvas and previous game history
 				$('.star').show();
 				$(".interface").html("");
-				self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
+				self.backgroundSound.stop();
+				document.getElementById("main_audio").play();
+    			self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
 				$('#game').hide();
-				generateMenus('playMenu');
+				generateMenus('mainMenu');
 			break;
 
 			case 68: // d key
