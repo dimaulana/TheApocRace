@@ -23,7 +23,7 @@ Before you can start and enjoy our game we ask you to follow the simple steps li
 
 ![loginpage](https://github.com/hparpia8/COMP4770/blob/master/client/images/loginpage.png)
 
-This covers the information needed for you to have the game up and running in a few seconds. <br/>
+This covers all the necessary information required to have the game up and running in a few seconds. <br/>
 
 **`Extra Information:`**
 
