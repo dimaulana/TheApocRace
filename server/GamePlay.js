@@ -4,61 +4,63 @@ var EntityManager = require('./EntityManager');
 const components = require('./ComponentEnum.js');
 require('./DatabaseManager.js');
 
-class GamePlay {
-	constructor(param) {
-		this.name = param.level;
-		this.file = 'level' + param.level + '.json';
-		this.username = param.username;
-		this.socket = param.socket;
-		this.entityManager = new EntityManager();
-		this.player = "";
+function GamePlay(param) {
+	var self = {}
+	self.name = param.level;
+	self.file = param.level + '.json';
+	self.username = param.username;
+	self.socket = param.socket;
+	self.entityManager = new EntityManager();
+	self.player = "";
 
-		this.assetManager = param.assetManager;
+	self.assetManager = param.assetManager;
 
-		this.init();
-	}
-
-	init() {
+	self.init = function() {
 		var levelPack = {};
-		levelPack.username = this.username;
-		levelPack.name = this.name;
-		levelPack.file = this.file;
+		levelPack.username = self.username;
+		levelPack.name = self.name;
+		levelPack.file = self.file;
 		levelPack.data = [];
 
-		this.loadLevelData(this.getLevelData(levelPack.name));
+		Database.readFromDatabase(self.name, function(levelData) {
+			self.loadLevelData(levelData.tileMap); // load level data;
 
-		this.entityManager.getEntities().forEach(function(entity) {
-			// Get init pack for all the entities;
-			levelPack.data.push(entity.getInitPack());
+			self.entityManager.getEntities().forEach(function(entity) {
+				// Get init pack for all the entities;
+				levelPack.data.push(entity.getInitPack());
+			});
+
+			self.socket.emit('levelPack', levelPack);
 		});
-		this.socket.emit('levelPack', levelPack);
+
+		//self.loadLevelData(self.getLevelData(levelPack.name));
 	}
 
-	spawnPlayer(data) {
-		this.player = this.entityManager.addEntity("Player");
-		this.player.addComponent(components.TRANSFORM, {x: data.x, y: data.y, speedMax: 10});
-		this.player.addComponent(components.GRAVITY);
-		this.player.addComponent(components.INPUT);
-		this.player.addComponent(components.STATS, {hp: 100, score: 0}); // TODO: Get score from db, incase of continuing game;
-		this.player.addComponent(components.WEAPON, {loc: this.assetManager.getTexture("Bullet")});
-		this.player.addComponent(components.DIMENSION, {w: 40, h: 80});
-		this.player.addComponent(components.SPRITE, {loc: this.assetManager.getTexture("Player"), 
-													jumpLoc: this.assetManager.getTexture("PlayerJump"),
+	self.spawnPlayer = function(data) {
+		self.player = self.entityManager.addEntity("Player");
+		self.player.addComponent(components.TRANSFORM, {x: data.x, y: data.y, speedMax: 10});
+		self.player.addComponent(components.GRAVITY);
+		self.player.addComponent(components.INPUT);
+		self.player.addComponent(components.STATS, {hp: 100, score: 0}); // TODO: Get score from db, incase of continuing game;
+		self.player.addComponent(components.WEAPON, {loc: self.assetManager.getTexture("Bullet")});
+		self.player.addComponent(components.DIMENSION, {w: 40, h: 80});
+		self.player.addComponent(components.SPRITE, {loc: self.assetManager.getTexture("Player"),
+													jumpLoc: self.assetManager.getTexture("PlayerJump"),
 													frame_sets: [[0], [1], [2, 3, 4, 5], [6, 7, 8, 9]]});
 	}
 
-	spawnEnemy(data) {
-		var enemy = this.entityManager.addEntity("Enemy");
+	self.spawnEnemy = function(data) {
+		var enemy = self.entityManager.addEntity("Enemy");
 		enemy.addComponent(components.TRANSFORM, {x: data.x, y: data.y, speedMax: 10});
 		enemy.addComponent(components.GRAVITY);
-		enemy.addComponent(components.WEAPON, {loc: this.assetManager.getTexture("Bullet")});
+		enemy.addComponent(components.WEAPON, {loc: self.assetManager.getTexture("Bullet")});
 		enemy.addComponent(components.DIMENSION, {w: 40, h: 80});
-		enemy.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(data.name),
-											   jumpLoc: this.assetManager.getTexture("EnemyJump"),
+		enemy.addComponent(components.SPRITE, {loc: self.assetManager.getTexture(data.name),
+											   jumpLoc: self.assetManager.getTexture("EnemyJump"),
 											   frame_sets: [[0], [1], [2, 3, 4, 5], [6, 7, 8, 9]]});
 
 		if (data.ai === "Basic") {
-			enemy.addComponent(components.STATS, {hp: 2, score: 10}); 
+			enemy.addComponent(components.STATS, {hp: 2, score: 10});
 		}
 		else if (data.ai === "FollowPlayer") {
 			enemy.addComponent(components.FOLLOWPLAYER, data.followSpeed);
@@ -70,50 +72,22 @@ class GamePlay {
 		}
 	}
 
-	spawnTile(data) {
-		var tile = this.entityManager.addEntity(data.name);
+	self.spawnTile = function(data) {
+		var tile = self.entityManager.addEntity(data.name);
 		tile.addComponent(components.TRANSFORM, {x: data.x, y: data.y});
 		tile.addComponent(components.DIMENSION, {w: 40, h: 40});
 
 		if (data.name == "Coin") {
 			tile.addComponent(components.STATS, {hp: 0, score: 1});
-			tile.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(data.name),
+			tile.addComponent(components.SPRITE, {loc: self.assetManager.getTexture(data.name),
 													frame_sets: [[0,1,2,3,4,5,6]]});
 		}
 		else {
-			tile.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(data.name)});
+			tile.addComponent(components.SPRITE, {loc: self.assetManager.getTexture(data.name)});
 		}
 	}
 
-	// DEPRECATED:
-	// getLevelData(){
-	// 	let rawdata = fs.readFileSync('server/levels/' + this.file);
-	// 	let json = JSON.parse(rawdata);
-	// 	return json;  
-	// }
-
-	getLevelData(levelName){
-		var tiles;
-		Database.readFromDatabase(levelName, function(levelData){
-			// if(!levelData)
-			// {
-			// 	console.log("ERROR! No Level Data");
-			// 	tiles = levelData.tileMap;
-			// }
-			return new Promise(function(resolve, reject){
-				if(!levelData)
-				{
-					resolve(levelData);
-				}
-				else
-				{
-					reject();
-				}
-			});
-		});
-	}
-
-	loadLevelData(levelData){
+	self.loadLevelData = function(levelData){
 		var locationsMap = {}
 		var loc;
 
@@ -124,32 +98,32 @@ class GamePlay {
 			switch(type) {
 				case "Character":
 					if (name == "Player")
-						this.spawnPlayer(levelData[i]);
+						self.spawnPlayer(levelData[i]);
 					else // Other characters are enemies;
-						this.spawnEnemy(levelData[i]);
+						self.spawnEnemy(levelData[i]);
 				break;
 
 				case "Tile":
-					this.spawnTile(levelData[i]);
+					self.spawnTile(levelData[i]);
 				break;
 
 				case "Point":
-					var point = this.entityManager.addEntity(name);
+					var point = self.entityManager.addEntity(name);
 					point.addComponent(components.TRANSFORM, {x: levelData[i].x, y: levelData[i].y});
 				break;
 
 				case "Background":
-					var background = this.entityManager.addEntity(type);
+					var background = self.entityManager.addEntity(type);
 					var frame_sets;
 					if (name == "NewYork") frame_sets = [[0], [1], [2]];
 					else frame_sets = [[0]];
 
-					background.addComponent(components.SPRITE, {loc: this.assetManager.getTexture(name), frame_sets: frame_sets});
+					background.addComponent(components.SPRITE, {loc: self.assetManager.getTexture(name), frame_sets: frame_sets});
 				break;
 
 				case "Sound":
-					var sound = this.entityManager.addEntity(type);
-					sound.addComponent(components.SPRITE, {loc: this.assetManager.getSound(name)});
+					var sound = self.entityManager.addEntity(type);
+					sound.addComponent(components.SPRITE, {loc: self.assetManager.getSound(name)});
 
 				break;
 
@@ -159,6 +133,10 @@ class GamePlay {
 			}
 		};
 	}
-};
+
+	self.init();  // initialise the GamePlay;
+
+	return self;
+}
 
 module.exports = GamePlay;

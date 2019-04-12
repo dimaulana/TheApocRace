@@ -61,6 +61,7 @@ var startGame = function(data) {
 			socket: data.socket,
 			assetManager: assetManager
 		});
+	//game.init();
 }
 
 var newLevelEditor = function(data){

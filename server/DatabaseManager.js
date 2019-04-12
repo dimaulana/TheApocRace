@@ -140,24 +140,19 @@ Database.getAllAssets = function(cb) {
 	});
 }
 
+//--------- Level functions ---------------------------;
 Database.writeToDatabase = function(data){
-	db.collection("level").insert(data, function(err, res) {
+	db.level.insert(data, function(err) {
 		if (err) throw err;
-			console.log("1 document inserted");
-		db.close();
 	});
 }
 
 Database.readFromDatabase = function(levelName, cb){
 	db.level.findOne({levelName : levelName}, function(err, res){
 		if(res)
-		{
 			cb(res);
-		}
 		else
-		{
 			cb();
-		}
 	});
 }
 
