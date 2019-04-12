@@ -8,8 +8,12 @@
 
 
 var mongojs = require("mongojs");
-var url = 'localhost:27017/apoRun';
+// var url = 'localhost:27017/apoRun';
+const mongoose = require('mongoose');
+
 var MongoClient = require('mongodb').MongoClient;
+const url = "mongodb+srv://admin:admin@aporun-l1ht9.mongodb.net/test?retryWrites=true";
+
 var passwordHash = require('password-hash');
 
 const collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
@@ -46,25 +50,39 @@ const assetCollection = [
 */
 
 DatabaseManager = function () {
-	this.url = "mongodb://" + url;
+	console.log("hererererkjewsfrhf");
+	mongoose.connect('mongodb://' + url, {useNewUrlParser: true});
+	var db = mongoose.connection;
+	var Schema = mongoose.Schema;
 
-	MongoClient.connect(this.url, async function(err, db) {
-		if (err) throw err;
-
-		// Create collections
-		collections.forEach(async function(col) {
-			let res = await db.createCollection(col);
-			console.log(res.collectionName, " - Collection created");
-		});
-
-		// Inserting the asset collection pre hand to the database;
-		await db.collection('asset').insertMany(assetCollection);
-
-		// Close database after write
-		db.close();
-
+	var userShema = new Schema({
+		username: String,
+		password: String
 	});
 
+	var assetSchema = new Schema({
+		type: String,
+		name: String,
+		path: String
+	});
+
+	var levelSchema = new Schema({
+		tileMap: Array,
+		levelName: String,
+		user: String
+	});
+
+	var user = mongoose.model('user', userShema);
+	var asset = mongoose.model('asset', assetSchema);
+	var level = mongoose.model('level', levelSchema);
+
+	console.log('Connection successful');
+	
+	var user1 = new user({username: 'admin', password: 'admin'});
+	user1.save(function(err, book) {
+		if(err) throw err;
+		console.log("think it worked");
+	})
 };
 
 
@@ -72,7 +90,10 @@ DatabaseManager = function () {
 // data in the database using mongojs
 
 // db handles the read and write to database using mongojs
-var db = mongojs(url, collections);
+// var db = mongojs(url, collections);
+
+mongoose.connect('mongodb://' + url, {useNewUrlParser: true});
+var db = mongoose.connection;
 Database = {};
 
 //------ User adding and modifying functions --------;
