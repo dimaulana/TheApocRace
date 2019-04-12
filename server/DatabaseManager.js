@@ -166,11 +166,13 @@ Database.getAllAssets = function(cb) {
 
 //--------- Level functions ---------------------------;
 Database.writeToDatabase = function(data){
-	Level.findOne({levelName: data.levelName}, function(err, res){
+	// Check for user specific level names;
+	Level.findOne({levelName: data.levelName, user: data.user}, function(err, res) {
+		console.log(res);
 		if (res) {
 			// Level exists, then update tileMap;
 			Level.findOneAndUpdate(
-				{levelName: data.levelName},
+				{levelName: data.levelName, user: data.user}, // user specific level names;
 				{$set: {tileMap: data.tileMap }},
 				{new: true},
 				function(err, res) {
@@ -187,7 +189,8 @@ Database.writeToDatabase = function(data){
 }
 
 Database.readFromDatabase = function(levelName, cb){
-	Level.findOne({levelName : levelName}, function(err, res){
+	// Get user specific levels;
+	Level.findOne({levelName : levelName, user: data.user}, function(err, res){
 		if(res)
 			cb(res);
 		else
@@ -195,7 +198,8 @@ Database.readFromDatabase = function(levelName, cb){
 	});
 }
 
-Database.readLevelBasedOnUser = function(username, cb){
+// Get the names of user made levels;
+Database.getUserLevelNames = function(username, cb){
 	Level.find({user: username}, function(err, res){
 		if(res){
 			var levelNames = new Array();

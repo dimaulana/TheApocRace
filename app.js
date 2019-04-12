@@ -65,6 +65,7 @@ var startGame = function(data) {
 }
 
 var newLevelEditor = function(data){
+	data.username: currentUser.name;
 	var levelEditor = new LevelEditor(data);
 	levelEditor.readLevel();
 
@@ -177,6 +178,17 @@ io.sockets.on('connection',function(socket) {
 	socket.on('loadLevel', function(levelName){
 		newLevelEditor({levelName: levelName, socket: socket});
 	});
+
+	socket.on('getLevelNames', function() {
+		Database.getUserLevelNames(currentUser.name, function(levelList) {
+			if (!levelList) {
+				socket.emit('receiveLevelNamesFromDb', {});
+			}
+			else {
+				socket.emit('receiveLevelNamesFromDb', levelList);
+			}
+		})
+	})
 
 	socket.on('evalServer',function(data) {
 		if (!DEBUG)
