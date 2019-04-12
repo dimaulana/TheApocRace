@@ -54,6 +54,7 @@ function LevelEditor(param) {
         }
     }
 
+
     return self;
 }
 

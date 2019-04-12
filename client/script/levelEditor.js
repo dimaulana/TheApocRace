@@ -57,7 +57,7 @@ enemy2.name = "Minion";
 var enemyList = [enemy1, enemy2];
 enemyList.name = "Character";
 
-levelEditor = function (lvlName) {
+levelEditor = function () {
     var self = {};
     /* Set game total sizes */
     self.canvasWidth = 12800;
@@ -84,47 +84,41 @@ levelEditor = function (lvlName) {
 
     /* Initiates the first empty canvas */
     self.initiate = function (levelName) {
-
         if (!levelName) levelName = "";
         socket.emit('loadLevel', levelName);
         socket.on('getLevelData', function (data) {
-
-            /* Attach event listeners */
-            self.canvas.addEventListener('click', self.clicked);
-            document.addEventListener('contextmenu', event => event.preventDefault());
-            self.canvas.addEventListener('mousedown', self.down);
-            self.canvas.addEventListener('mousemove', self.move);
-            self.canvas.addEventListener('mouseup', self.reset);
-
             /* If we are loading an existing level, load level */
             if (!jQuery.isEmptyObject(data)) {
-                self.loadLevel(data);
+                self.tileMap = data;
+                self.drawToCanvas(data);
             } else {
-                /* Sets up default player position for blank canvas */
-                var character = new Image();
-                character.src = "client/images/playerrun.png"
-                var player = {
-                    "name": "Player",
-                    "type": "Character",
-                    "x": 40,
-                    "y": 560,
-                    "tilePos": 449,
-                    "tilePos1": 481
-                }
-                self.tileMap.push(player);
-                character.onload = function () {
-                    self.ctx.drawImage(character, 0, 0, 40, 80, 40, 560, 40, 80);
-                };
+                self.defaultCanvas();
             }
-
-            self.displayGrid();
-
-            /* Adds screen number indicator */
-            $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
-
-            /* Populate dropdown options */
-            self.populateDropdown();
         });
+        self.displayGrid();
+        /* Adds screen number indicator */
+        $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
+        /* Populate dropdown options */
+        self.populateDropdown();
+    }
+
+    self.defaultCanvas = function () {
+
+        /* Sets up default player position for blank canvas */
+        var character = new Image();
+        character.src = "client/images/playerrun.png"
+        var player = {
+            "name": "Player",
+            "type": "Character",
+            "x": 40,
+            "y": 560,
+            "tilePos": 449,
+            "tilePos1": 481
+        }
+        self.tileMap.push(player);
+        character.onload = function () {
+            self.ctx.drawImage(character, 0, 0, 40, 80, 40, 560, 40, 80);
+        };
     }
 
     /* Shows the grid */
@@ -401,9 +395,9 @@ levelEditor = function (lvlName) {
             }
 
             // Check if End tile already exists;
-            var oldEnd = tileMapToSend.find(function(e) {
-                            return e.name === "End"
-                        });
+            var oldEnd = tileMapToSend.find(function (e) {
+                return e.name === "End"
+            });
 
             if (oldEnd) {
                 tileMapToSend.splice(tileMapToSend.indexOf(oldEnd), 1);
@@ -411,9 +405,9 @@ levelEditor = function (lvlName) {
             tileMapToSend.push(endTile);
 
             // Check if sound already exists;
-            var soundOld = tileMapToSend.find(function(e) {
-                            return e.name === 'StoryMode'
-                        });
+            var soundOld = tileMapToSend.find(function (e) {
+                return e.name === 'StoryMode'
+            });
 
             if (!soundOld)
                 tileMapToSend.push(sound);
@@ -431,10 +425,8 @@ levelEditor = function (lvlName) {
     }
 
     /* Load Level */
-    self.loadLevel = function (levelData) {
-        console.log(levelData);
-        self.drawToCanvas(levelData);
-        self.tileMap = levelData;
+    self.loadLevel = function (levelName) {
+        socket.emit('loadLevel', levelName);
     }
 
 
@@ -484,10 +476,20 @@ levelEditor = function (lvlName) {
         var selectedOption = $(this).attr("id");
         switch (selectedOption) {
             case "Back":
-                alert('Exiting will remove unsave changes. Are you sure ?');
-                $(".interface").html("");
-                $(".menu").html("");
+            
+                /* Reset all listeners */
+                self.canvas.removeEventListener('click', self.clicked, false);
+                self.canvas.removeEventListener('mousedown', self.down, false);
+                self.canvas.removeEventListener('mousemove', self.move, false);
+                self.canvas.removeEventListener('mouseup', self.reset, false);
+                $(document).off("mousemove", self.menuMov);
+                $(".saveLevel").off("click", self.saveLevel);
+
+                // alert('Exiting will remove unsave changes. Are you sure ?');
+                $(".interface").empty();
+                $(".menu").empty();
                 $('.star').removeClass("off");
+                /* Create previous menu */
                 generateMenus('buildMenu');
                 break;
             case "Save":
@@ -545,43 +547,49 @@ levelEditor = function (lvlName) {
         }
     });
 
+    
+    /* Attach event listeners */
+    self.canvas.addEventListener('click', self.clicked);
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    self.canvas.addEventListener('mousedown', self.down);
+    self.canvas.addEventListener('mousemove', self.move);
+    self.canvas.addEventListener('mouseup', self.reset);
+
     /* Starters */
-    self.initiate(lvlName)
     return self;
 };
 
 function startEditor() {
     $('.star').addClass("off");
     $('#editor').show();
-    var editor = new levelEditor();
-    return editor;
+    editor.loadLevel();
 }
 
 function loadEditor() {
     /* To Do: get list of levels from directory */
-    socket.on('getLevelsFromDb', function (levels) {
-        var items = [];
-        $.each(levels, function (i) {
-            items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + levels[i] + "</button>");
-        });
-        items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>Back</button>")
-        $(items.join('')).appendTo(".menu");
+    // socket.on('getLevelsFromDb', function (levels) {
+    var levels = ["level1", "level2", "level3"];
+    var items = [];
+    $.each(levels, function (i) {
+        items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + levels[i] + "</button>");
+    });
+    items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>Back</button>")
+    $(items.join('')).appendTo(".menu");
 
-        $(".menu #loadLevel").on("click", function () {
-            var selectedLvl = $(this).text();
-            $('.star').addClass("off");
-            if (selectedLvl === "Back") {
-                $(".interface").html("");
-                $(".menu").html("");
-                $('.star').removeClass("off");
-                generateMenus("buildMenu");
-            } else {
-                $('.interface').load("client/levelEditor.html", function () {
-                    $('#editor').show();
-                    var editor = new levelEditor(selectedLvl);
-                    return editor;
-                });
-            }
-        });
+    $(".menu #loadLevel").on("click", function () {
+        var selectedLvl = $(this).text();
+        $('.star').addClass("off");
+        if (selectedLvl === "Back") {
+            $(".interface").html("");
+            $(".menu").html("");
+            $('.star').removeClass("off");
+            generateMenus("buildMenu");
+        } else {
+            $('.interface').load("client/levelEditor.html", function () {
+                $('#editor').show();
+                editor.loadLevel(selectedLvl);
+            });
+        }
+        // });
     });
 }
