@@ -70,8 +70,9 @@
 			$('.paused').hide();
 			generateMenus("mainMenu");
 		}
-		else
+		else {
 			alert("Sign in failed.");
+		}
 	});
 
 	socket.on('signUpResponse', function(data) {

@@ -83,6 +83,9 @@ Database.isValidPassword = function(data, cb) {
 			if(passwordHash.verify(data.password, storedHash)){
 				cb(true);
 			}
+			else {
+				cb(false);
+			}
 		}
 		else
 			cb(false);
@@ -142,8 +145,22 @@ Database.getAllAssets = function(cb) {
 
 //--------- Level functions ---------------------------;
 Database.writeToDatabase = function(data){
-	db.level.insert(data, function(err) {
-		if (err) throw err;
+	db.level.find({levelName: data.levelName}, function(err, res){
+		if (res.length > 0) {
+			// Level exists, then update tileMap;
+			db.level.findAndModify({
+				query: {levelName: data.levelName},
+				update: {$set: {tileMap: data.tileMap }},
+				new: true
+			}, function(err, res) {
+				// TODO: Check if the level was updated properly;
+			});
+		}
+		else { // Insert new level data;
+			db.level.insert(data, function(err) {
+				if (err) throw err;
+			});
+		}
 	});
 }
 

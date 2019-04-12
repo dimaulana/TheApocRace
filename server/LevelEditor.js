@@ -39,8 +39,8 @@ function LevelEditor(param) {
 
     self.readLevel = function() {
         var data = {};
-        if(self.levelName !== ""){
-            data = Database.readFromDatabase(self.levelName, function(levelData){
+        if(self.levelName !== "") {
+            data = Database.readFromDatabase(self.levelName, function(levelData) {
                 if(!levelData)
                 {
                     console.log("ERROR! No Level Data");
