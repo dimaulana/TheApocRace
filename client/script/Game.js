@@ -29,7 +29,7 @@ function Game() {
 		x: self.canvas.width - 200, y: 40,
 		text: "SCORE: ",
 		int: 0,
-		topScore: 0 // Later to come from the database taken compared to other players
+		topScore: 0 // TODO: Later to come from the database taken compared to other players
 	}
 
 	self.username = {
@@ -48,7 +48,7 @@ function Game() {
 	self.coins.image.src = "/client/images/singlecoin.png";
 
 window.onload=function(){
-document.getElementById("main_audio").play();
+	document.getElementById("main_audio").play();
 }
 
 	self.spawnBullet = function(entity) {
@@ -111,7 +111,7 @@ document.getElementById("main_audio").play();
 		}
 
 		if (self.player.properties.jump && self.player.properties.state != "jumping") {
-			self.player.properties.speed.y = -self.player.properties.speedMax * 16;
+			self.player.properties.speed.y = -self.player.properties.speedMax * 10;
 			self.player.properties.state = "jumping";
 		} else {
 			self.player.properties.speed.y = 0;

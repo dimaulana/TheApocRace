@@ -395,8 +395,24 @@ levelEditor = function (lvlName) {
                 "src": "client/sound/background.mp3",
                 "x": 0
             }
+
+            // Check if End tile already exists;
+            var oldEnd = tileMapToSend.find(function(e) {
+                            return e.name === "End"
+                        });
+
+            if (oldEnd) {
+                tileMapToSend.splice(tileMapToSend.indexOf(oldEnd), 1);
+            }
             tileMapToSend.push(endTile);
-            tileMapToSend.push(sound);
+
+            // Check if sound already exists;
+            var soundOld = tileMapToSend.find(function(e) {
+                            return e.name === 'StoryMode'
+                        });
+
+            if (!soundOld)
+                tileMapToSend.push(sound);
 
             if (!jQuery.isEmptyObject(self.background)) {
                 tileMapToSend.push(self.background);
@@ -411,19 +427,8 @@ levelEditor = function (lvlName) {
     }
 
     /* Load Level */
-    self.loadLevel = function (data) {
+    self.loadLevel = function (levelData) {
         console.log(levelData);
-        /* Remove existing end point tile as it most likely will be replaced */
-        for (var i = 0; i < levelData.length; i++) {
-            if (levelData[i].name === "End" && levelData[i].type === "Point") {
-                endPointPos = i;
-            }
-            if (levelData[i].type === "Sound") {
-                soundPos = i;
-            }
-        }
-        levelData.splice(endPointPos, 1);
-        levelData.splice(soundPos, 1);
         self.drawToCanvas(levelData);
         self.tileMap = levelData;
     }

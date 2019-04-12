@@ -82,7 +82,7 @@ io.sockets.on('connection',function(socket) {
 	socket.on('signIn',function(data) {
 		Database.isValidPassword(data, function(res) {
 			if (res) {
-				socket.emit('signInResponse', {success:true});
+				socket.emit('signInResponse', {success: true});
 
 				// Create User once signed In;
 				currentUser = User({
@@ -91,7 +91,7 @@ io.sockets.on('connection',function(socket) {
 				});
 			}
 			else {
-				socket.emit('signInResponse', {success:false});
+				socket.emit('signInResponse', {success: false});
 			}
 		});
 	});
