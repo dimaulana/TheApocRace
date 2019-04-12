@@ -47,4 +47,4 @@ Sahil Anand - sa7437@mun.ca <br/>
 Dido Maulana - dmaulana@mun.ca <br/>
 Hussein Parpia - hparpia@mun.ca <br/>
 Victor Mutandwa - vtm806@mun.ca <br/>
-Michelle Mushaninga - tbd
+Michelle Mushaninga - mm5047@mun.ca <br/>
