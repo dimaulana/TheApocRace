@@ -27,7 +27,7 @@ This covers the information needed for you to have the game up and running in a 
 
 **`Extra Information:`**
 
-Once you have signed up as a user there will be a record inserted for you directly into the MongoDb cloud which will help you in saving and reading the levels based on your username and the story levels (created by an admin user) successfully and with little trouble. When the game begins, all the assets are loaded directly from the cloud in real time.
+Once you have signed up as a user there will be a record inserted for you directly into the MongoDB cloud which will help you in saving and reading the levels based on your username and the story levels (created by an admin user) successfully and with little trouble. When the game begins, all the assets are loaded directly from the cloud in real time.
 
 The following screenshot shows how the user, level and asset data are stored in the cloud for ease of use:
 1. **`User Data`**: <br/>
