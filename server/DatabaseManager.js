@@ -173,3 +173,19 @@ Database.readFromDatabase = function(levelName, cb){
 	});
 }
 
+Database.readLevelBasedOnUser = function(username, cb){
+	db.level.find({user: username}, function(err, res){
+		if(res){
+			var levelNames = new Array();
+			for(var i = 0; i < res.length; i++)
+			{
+				levelNames.push(res[i].levelName);
+			}
+			console.log(levelNames);
+			cb(levelNames);
+		}
+		else
+			cb();
+	});
+}
+
