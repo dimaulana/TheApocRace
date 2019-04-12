@@ -369,6 +369,10 @@ levelEditor = function (lvlName) {
             var levelName = $("#levelName").val();
             self.tileMap.name = levelName;
 
+            if (levelName.includes('story')) {
+                alert('Invalid user, cannot save story mode levels!');
+                return;
+            }
             /* Save data here */
             if (levelName) {
                 $('#saveModal').modal('hide');
@@ -480,6 +484,7 @@ levelEditor = function (lvlName) {
         var selectedOption = $(this).attr("id");
         switch (selectedOption) {
             case "Back":
+                alert('Exiting will remove unsave changes. Are you sure ?');
                 $(".interface").html("");
                 $(".menu").html("");
                 $('.star').removeClass("off");
@@ -554,28 +559,29 @@ function startEditor() {
 
 function loadEditor() {
     /* To Do: get list of levels from directory */
-    var listofLevel = ["level1", "level2", "level3"];
-    var items = [];
-    $.each(listofLevel, function (i) {
-        items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + listofLevel[i] + "</button>");
-    });
-    items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>Back</button>")
-    $(items.join('')).appendTo(".menu");
+    socket.on('getLevelsFromDb', function (levels) {
+        var items = [];
+        $.each(levels, function (i) {
+            items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + levels[i] + "</button>");
+        });
+        items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>Back</button>")
+        $(items.join('')).appendTo(".menu");
 
-    $(".menu #loadLevel").on("click", function () {
-        var selectedLvl = $(this).text();
-        $('.star').addClass("off");
-        if (selectedLvl === "Back") {
-            $(".interface").html("");
-            $(".menu").html("");
-            $('.star').removeClass("off");
-            generateMenus("buildMenu");
-        } else {
-            $('.interface').load("client/levelEditor.html", function () {
-                $('#editor').show();
-                var editor = new levelEditor(selectedLvl);
-                return editor;
-            });
-        }
+        $(".menu #loadLevel").on("click", function () {
+            var selectedLvl = $(this).text();
+            $('.star').addClass("off");
+            if (selectedLvl === "Back") {
+                $(".interface").html("");
+                $(".menu").html("");
+                $('.star').removeClass("off");
+                generateMenus("buildMenu");
+            } else {
+                $('.interface').load("client/levelEditor.html", function () {
+                    $('#editor').show();
+                    var editor = new levelEditor(selectedLvl);
+                    return editor;
+                });
+            }
+        });
     });
 }
