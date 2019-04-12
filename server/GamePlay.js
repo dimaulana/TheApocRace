@@ -22,7 +22,7 @@ function GamePlay(param) {
 		levelPack.file = self.file;
 		levelPack.data = [];
 
-		Database.readFromDatabase(self.name, function(levelData) {
+		Database.readFromDatabase({levelName: self.name, user: 'admin'}, function(levelData) {
 			self.loadLevelData(levelData.tileMap); // load level data;
 
 			self.entityManager.getEntities().forEach(function(entity) {

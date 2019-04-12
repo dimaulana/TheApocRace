@@ -65,7 +65,7 @@ var startGame = function(data) {
 }
 
 var newLevelEditor = function(data){
-	data.username: currentUser.name;
+	data.username = currentUser.name;
 	var levelEditor = new LevelEditor(data);
 	levelEditor.readLevel();
 

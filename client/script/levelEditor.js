@@ -103,7 +103,7 @@ levelEditor = function () {
 
         socket.on('receiveLevelNamesFromDb', function (levels) {
             loadCustomLevels(levels);
-        }
+        });
     }
 
     self.defaultCanvas = function () {
@@ -571,7 +571,7 @@ function startEditor() {
 
 function loadEditor() {
     /* To Do: get list of levels from directory */
-    // socket.on('getLevelsFromDb', function (levels) {
+    // socket.on('getLevelsFromDb', function (levels) ;
     socket.emit('getLevelNames', {});
 }
 

@@ -188,9 +188,9 @@ Database.writeToDatabase = function(data){
 	});
 }
 
-Database.readFromDatabase = function(levelName, cb){
+Database.readFromDatabase = function(data, cb){
 	// Get user specific levels;
-	Level.findOne({levelName : levelName, user: data.user}, function(err, res){
+	Level.findOne({levelName : data.levelName, user: data.user}, function(err, res){
 		if(res)
 			cb(res);
 		else
@@ -207,7 +207,6 @@ Database.getUserLevelNames = function(username, cb){
 			{
 				levelNames.push(res[i].levelName);
 			}
-			console.log(levelNames);
 			cb(levelNames);
 		}
 		else
