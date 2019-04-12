@@ -595,16 +595,6 @@ window.onload=function(){
 			break;
 		}
 	}
-	self.mousePosition = function (canvas, e) {
-        var rect = canvas.getBoundingClientRect();
-            scaleX =canvas.width / rect.width,
-            scaleY = canvas.height / rect.height;
-        return {
-            x: (e.clientX - rect.left) * scaleX,
-            y: (e.clientY - rect.top) * scaleY
-        }
-    }
-
 
 		//Handler function
 	function clickHandler(event) {
@@ -626,7 +616,6 @@ window.onload=function(){
 		) {
 			// Executes if  resume button was clicked!
 			paused = false;
-			console.log(" Resume POSITION Clicked");
 		}
 		///save button save listener
 		else if (
@@ -637,28 +626,32 @@ window.onload=function(){
 		) {
 			// Executes if  save button was clicked!
 			//TODO:Add SAVE FUNCTION HERE
-			console.log("Save");
+			//console.log("Save");
 			self.saveProgress();
+			alert("Game was saved");
 
 		}
 		//quit button listener
 		else if (
-				event.x > buttonX &&
-				event.x < buttonX + buttonW &&
-				event.y > quitButtonY &&
-				event.y < quitButtonY + buttonH
+				x > buttonX &&
+				x < buttonX + buttonW &&
+				y > quitButtonY &&
+				y < quitButtonY + buttonH
 		) {
-			console.log(" Quit POSITION HERE");
+			//console.log(" Quit POSITION HERE");
 			self.quitGame();
-			
+			alert("Quit game!");
+				
 		}
 	}
+	
 
 	self.addListener = function() {
 		document.addEventListener("keydown", self.keyDownHandler, false);
 		document.addEventListener("keyup", self.keyUpHandler, false);
 		self.canvas.addEventListener("click", clickHandler, false);
 	}
+
 
 	self.endLevel = function() {
 		var totalLevels = self.filesInDirectory.length;
