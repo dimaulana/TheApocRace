@@ -762,7 +762,7 @@ document.getElementById("main_audio").play();
 
 		if (!level) {
 			console.log("WARNING: LEVEL NOT SUPPLIED, PLAYING LEVEL 1")
-			level = 1;
+			level = 'level1';
 		}
 
 		socket.emit('storyMode', {level: level});

@@ -61,14 +61,16 @@ var startGame = function(data) {
 			socket: data.socket,
 			assetManager: assetManager
 		});
+	//game.init();
 }
 
 var newLevelEditor = function(data){
 	var levelEditor = new LevelEditor(data);
-	levelEditor.readSavedFile();
+	levelEditor.readLevel();
 
 	data.socket.on('saveNewLevel', function(data){
-		levelEditor.writeToFile(data);
+		data.user = currentUser.name;
+		levelEditor.writeToDatabase(data);
 	});
 }
 

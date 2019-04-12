@@ -412,8 +412,7 @@ levelEditor = function (lvlName) {
 
     /* Load Level */
     self.loadLevel = function (data) {
-        var endPointPos, soundPos;
-        var levelData = JSON.parse(data);
+        console.log(levelData);
         /* Remove existing end point tile as it most likely will be replaced */
         for (var i = 0; i < levelData.length; i++) {
             if (levelData[i].name === "End" && levelData[i].type === "Point") {
