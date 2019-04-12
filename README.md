@@ -1,6 +1,6 @@
 # COMP4770
 
-This repo contains the implementation of a customized single-player platformer game called **`The Apocolyptic Race`** from scratch using Node JS, Express, HTML5 and Socket.io. Everything from asset creation, level editor and the game engine is customized and easily extendable to a multiplayer platform game.
+This repository contains the implementation of a customized single-player platformer game called **`The Apocolyptic Race`** from scratch using Node JS, Express, HTML5 and Socket.io. Everything from asset creation, level editor and the game engine is customized and easily extendable to a multiplayer platform game.
 
 **Technology Stack Installation:**
 * We are using MongoDB Atlas for storing everything that the game needs to have. All you need to do is sign up as a user from the game.
