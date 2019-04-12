@@ -4,7 +4,7 @@ This repo contains the implementation of a customized single-player platformer g
 
 **Technology Stack Installation:**
 * We are using MongoDB Atlas for storing everything that the game needs to have. All you need to do is sign up as a user from the game.
-* All node packages will be installed using NPM which is Node's package installer and manager. NPM can be installed on windows using this link (https://www.npmjs.com/get-npm) and on Mac OS type "**brew install node**" in terminal and finally, if you are running linux run the following commands:
+* All node packages will be installed using NPM which is Node's package installer and manager. NPM can be installed on Windows using this link (https://www.npmjs.com/get-npm) and on Mac OS type "**brew install node**" in the terminal and finally, if you are running Linux run the following commands:
 1. sudo apt-get update
 2. sudo apt-get install nodejs
 
