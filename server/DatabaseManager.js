@@ -196,7 +196,7 @@ Database.readFromDatabase = function(levelName, cb){
 }
 
 Database.readLevelBasedOnUser = function(username, cb){
-	db.level.find({user: username}, function(err, res){
+	Level.find({user: username}, function(err, res){
 		if(res){
 			var levelNames = new Array();
 			for(var i = 0; i < res.length; i++)
