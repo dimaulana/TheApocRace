@@ -19,7 +19,7 @@ Before you can start and enjoy our game we ask you to follow the simple steps li
 
 5. Now, please type **`node app.js`** from the project directory (COMP4770) to start the game. To make the user experience as easy as possible and to have the game running quickly we setup all the collections needed by the database to add values to, automatically when this command is run. This is shown in the screenshot below:
 ![serverstarted](https://github.com/hparpia8/COMP4770/blob/master/client/images/serverstarted.png)
-6. Open up your favourite browser and go to http://localhost:8080. This will bring you to the login page of the game as seen here:
+6. Open up your favourite web browser(i.e Google Chrome) and enter your URL as http://localhost:8080. This will bring you to the login page of the game as seen below:
 
 ![loginpage](https://github.com/hparpia8/COMP4770/blob/master/client/images/loginpage.png)
 
