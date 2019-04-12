@@ -23,9 +23,9 @@ app.get('/', function(req,res) {
 app.use('/client',express.static(__dirname + '/client'));
 
 // Initialize the database;
-DatabaseManager();
+//DatabaseManager();
 
-//PORT from the server host 
+//PORT from the server host
 serv.listen(process.env.PORT || 8080);
 console.log('Server started');
 
@@ -106,9 +106,9 @@ io.sockets.on('connection',function(socket) {
 				var hashedPassword = passwordHash.generate(data.password);
 				data.hashedPassword = hashedPassword;
 				Database.addUser(data, function() {
-					socket.emit('signUpResponse', {success:true}); 
+					socket.emit('signUpResponse', {success:true});
 				});
-			}		
+			}
 		});
 	});
 
@@ -146,7 +146,7 @@ io.sockets.on('connection',function(socket) {
 		fs.readdir('./server/levels/', function (err, files) {
 			if (err) {
 				return console.log('Unable to scan directory: ' + err);
-			} 
+			}
 			var pack = {files: files}
 			socket.emit("filesInDirectory", pack);
 		});
@@ -160,7 +160,7 @@ io.sockets.on('connection',function(socket) {
 		});
 	});
 
-	
+
 	socket.on('disconnect',function() {
 		delete SOCKET_LIST[socket.id];
 		//Player.onDisconnect(socket);
@@ -181,7 +181,7 @@ io.sockets.on('connection',function(socket) {
 	socket.on('evalServer',function(data) {
 		if (!DEBUG)
 			return;
-		
+
 		var res = eval(data)
 		for (var i in SOCKET_LIST) {
 			SOCKET_LIST[i].emit('evalAnswer', res);

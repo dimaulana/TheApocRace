@@ -1,5 +1,5 @@
 /* 	Database Manager
-	
+
 	Initializes the database as well as allows to write, read, modify,
 	and delete data to the collections using mongojs;
 
@@ -7,11 +7,11 @@
 */
 
 
-var mongojs = require("mongojs");
-var url = 'localhost:27017/apoRun';
-var MongoClient = require('mongodb').MongoClient;
-var passwordHash = require('password-hash');
+/**  -------------- DEPRACATED --------------------------
 
+// var mongojs = require("mongojs");
+// var url = 'localhost:27017/apoRun';
+// var MongoClient = require('mongodb').MongoClient;
 const collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
 
 const assetCollection = [
@@ -39,47 +39,66 @@ const assetCollection = [
 							{"type": "Sound", "name": "StoryMode", "path": "client/sound/background.mp3"}
 						];
 
-
-/* This function manages the creation of database for a every new user
-   Creates collections that are used in our game.
-   Also inserts the asset collection to the database;
+//Database manager used to insert assets in our db;
+DatabaseManager = function () {
+	console.log('Connection successful');
+	for (var i = 0; i < assetCollection.length; i++) {
+		var asset = new Asset(assetCollection[i]);
+		asset.save(function(err, a){
+			if (err) throw err;
+		})
+	};
+};
+-----------------------------------------------------------------------
 */
 
-DatabaseManager = function () {
-	this.url = "mongodb://" + url;
+const mongoose = require('mongoose');
+const url = "mongodb+srv://admin:admin@aporun-l1ht9.mongodb.net/apoRun?retryWrites=true";
+var passwordHash = require('password-hash');
 
-	MongoClient.connect(this.url, async function(err, db) {
-		if (err) throw err;
 
-		// Create collections
-		collections.forEach(async function(col) {
-			let res = await db.createCollection(col);
-			console.log(res.collectionName, " - Collection created");
-		});
+/* This manages the creation of database schema
+   Creates models that are used in our game;
+*/
+mongoose.connect(url, {useNewUrlParser: true});
+const db = mongoose.connection;
+let Schema = mongoose.Schema;
 
-		// Inserting the asset collection pre hand to the database;
-		await db.collection('asset').insertMany(assetCollection);
+// User schema;
+const userShema = new Schema({
+	username: String,
+	password: String
+});
 
-		// Close database after write
-		db.close();
+// Asset schema;
+const assetSchema = new Schema({
+	type: String,
+	name: String,
+	path: String
+});
 
-	});
+// Level Schema;
+const levelSchema = new Schema({
+	tileMap: Array,
+	levelName: String,
+	user: String
+});
 
-};
+let User = mongoose.model('user', userShema);
+let Asset = mongoose.model('asset', assetSchema);
+let Level = mongoose.model('level', levelSchema);
+
 
 
 // Database functions which handle the writing, reading, deleting and modifying of
-// data in the database using mongojs
-
-// db handles the read and write to database using mongojs
-var db = mongojs(url, collections);
+// data in the database using mongoose;
 Database = {};
 
 //------ User adding and modifying functions --------;
 Database.isValidPassword = function(data, cb) {
-	db.user.find({username:data.username}, function(err, res) {
-		if (res.length > 0){
-			var storedHash = res[0]['password'];
+	User.findOne({username:data.username}, function(err, res) {
+		if (res){
+			var storedHash = res.password;
 			if(passwordHash.verify(data.password, storedHash)){
 				cb(true);
 			}
@@ -87,46 +106,48 @@ Database.isValidPassword = function(data, cb) {
 				cb(false);
 			}
 		}
-		else
+		else {
 			cb(false);
-
+		}
 	});
 }
 
 Database.isUsernameTaken = function(data, cb) {
-	db.user.find({username:data.username}, function(err, res) {
-		if (res.length > 0)
+	User.findOne({username:data.username}, function(err, res) {
+		if (res)
 			cb(true);
 		else
 			cb(false);
-
 	});
 }
 
 Database.addUser = function(data, cb) {
-	db.user.insert({username:data.username, password:data.hashedPassword}, function(err) {
+	var user = new User({username: data.username, password: data.hashedPassword});
+	user.save(function(err) {
+		if(err) throw err;
 		cb();
 	});
 }
 
+
 Database.updatePassword = function(data, cb) {
 	var hashedPassword = passwordHash.generate(data.password);
-	db.user.findAndModify({
-		query: { username: data.username},
-		update: { $set: {password: hashedPassword }},
-		new: true
-	}, function(err, res) {
-		// check if the password has been updated;
-		if (res.password === hashedPassword)
-			cb(true);
-		else
-			cb(false);
-	});
+	User.findOneAndUpdate(
+		{ username: data.username},
+		{ $set: {password: hashedPassword }},
+		{new: true},
+		function(err, res) {
+			// check if the password has been updated;
+			if (res.password === hashedPassword)
+				cb(true);
+			else
+				cb(false);
+		});
 }
 
 //--------- Asset functions -----------------------------;
 Database.getAsset = function(data, cb) {
-	db.asset.findOne({name: data.name}, function(err, res) {
+	Asset.findOne({name: data.name}, function(err, res) {
 		if (res)
 			cb(res);
 		else
@@ -135,7 +156,7 @@ Database.getAsset = function(data, cb) {
 }
 
 Database.getAllAssets = function(cb) {
-	db.asset.find(function(err, res) {
+	Asset.find(function(err, res) {
 		if (res)
 			cb(res);
 		else
@@ -145,27 +166,28 @@ Database.getAllAssets = function(cb) {
 
 //--------- Level functions ---------------------------;
 Database.writeToDatabase = function(data){
-	db.level.find({levelName: data.levelName}, function(err, res){
-		if (res.length > 0) {
+	Level.findOne({levelName: data.levelName}, function(err, res){
+		if (res) {
 			// Level exists, then update tileMap;
-			db.level.findAndModify({
-				query: {levelName: data.levelName},
-				update: {$set: {tileMap: data.tileMap }},
-				new: true
-			}, function(err, res) {
+			Level.findOneAndUpdate(
+				{levelName: data.levelName},
+				{$set: {tileMap: data.tileMap }},
+				{new: true},
+				function(err, res) {
 				// TODO: Check if the level was updated properly;
-			});
+				});
 		}
 		else { // Insert new level data;
-			db.level.insert(data, function(err) {
-				if (err) throw err;
+			var level = new Level({tileMap: data.tileMap, levelName: data.levelName, user: data.user});
+			level.save(function(err) {
+				if(err) throw err;
 			});
 		}
 	});
 }
 
 Database.readFromDatabase = function(levelName, cb){
-	db.level.findOne({levelName : levelName}, function(err, res){
+	Level.findOne({levelName : levelName}, function(err, res){
 		if(res)
 			cb(res);
 		else
@@ -174,7 +196,7 @@ Database.readFromDatabase = function(levelName, cb){
 }
 
 Database.readLevelBasedOnUser = function(username, cb){
-	db.level.find({user: username}, function(err, res){
+	Level.find({user: username}, function(err, res){
 		if(res){
 			var levelNames = new Array();
 			for(var i = 0; i < res.length; i++)
@@ -188,4 +210,5 @@ Database.readLevelBasedOnUser = function(username, cb){
 			cb();
 	});
 }
+
 
