@@ -59,6 +59,7 @@ var startGame = function(data) {
 			level: data.level,
 			username: currentUser.name,
 			socket: data.socket,
+			mode: data.mode,
 			assetManager: assetManager
 		});
 	//game.init();
@@ -137,10 +138,11 @@ io.sockets.on('connection',function(socket) {
 
 		// TODO: Get level for story mode;
 		//var myLevel = getLevelStoppedPreviously();
-		var myLevel = data.level;
+		//var myLevel = data.level
 
 		startGame({
-			level: myLevel,
+			level: data.level,
+			mode: data.mode,
 			socket: socket,
 		});
 
@@ -187,8 +189,19 @@ io.sockets.on('connection',function(socket) {
 			else {
 				socket.emit('receiveLevelNamesFromDb', levelList);
 			}
-		})
-	})
+		});
+	});
+
+	socket.on('getGameLevelNames', function() {
+		Database.getUserLevelNames(currentUser.name, function(levelList) {
+			if (!levelList) {
+				socket.emit('receiveCustomLevel', {});
+			}
+			else {
+				socket.emit('receiveCustomLevel', levelList);
+			}
+		});
+	});
 
 	socket.on('evalServer',function(data) {
 		if (!DEBUG)

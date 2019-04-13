@@ -79,10 +79,11 @@ $(document).ready(function () {
         } else {
             switch (menuClicked) {
                 case "Story Mode":
-                    loadGame('story1'); // Start game level 1;
+                    loadGame('story', 'story1'); // Start game level 1;
                     break;
                 case "Custom":
-                    $('.interface').load("ENTER PAGE URL HERE");
+                    //$('.interface').load("ENTER PAGE URL HERE");
+                    getCustom();
                     break;
                 case "Back":
                     generateMenus("mainMenu");

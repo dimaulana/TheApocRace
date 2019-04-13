@@ -4,7 +4,6 @@
    					Sahil Anand,
    					Victor Mutandwa
 */
-
 function Game() {
 	var self = {}
 
@@ -394,6 +393,14 @@ window.onload=function(){
 					}
 				}
 
+				var bullets = self.entityManager.getEntitiesByTag("Bullet");
+				for (var i = 0; i < bullets.length; i++) {
+					currentOverlap = self.getOverlap(bullets[i], entity);
+					if (currentOverlap.x > 0 && currentOverlap.y > 0) {
+						bullets[i].properties.alive = false;
+					}
+				}
+
 			}
 
 			// Collision of bullets with self.player and enemies;
@@ -756,8 +763,33 @@ window.onload=function(){
     	}
 
 	}
+	self.setupLevel = function(data) {
+		// Explicitly removing player;
+		self.entityManager.removeEntity(self.player);
 
-	self.startNewGame = function(level) {
+		self.username.name = data.username;
+		self.loadLevel(data);
+
+		// Get new player object;
+		self.player = self.entityManager.getEntityByTag("Player");
+
+		if (!self.player) {
+			alert("Oops, Something went wrong! \nPlease try again");
+			generateMenus("playMenu");
+			return;
+		}
+
+		self.addListener(); // Add user buttons listener;
+
+		self.gameStarted = true;
+		self.frameCount = 0;
+
+		$('.star').hide();
+		$('#game').show();
+		$('.paused').hide();
+	}
+
+	self.startNewGame = function(mode, level) {
 		self.entityManager.removeAllEntities(); // Clear all entities if any;
 
 		if (!level) {
@@ -765,38 +797,7 @@ window.onload=function(){
 			level = 'level1';
 		}
 
-		socket.emit('storyMode', {level: level});
-
-		socket.on('levelPack', function(data) {
-			// Explicitly removing player;
-			self.entityManager.removeEntity(self.player);
-
-			self.username.name = data.username;
-			self.loadLevel(data);
-
-			// Get new player object;
-			self.player = self.entityManager.getEntityByTag("Player");
-
-			if (!self.player) {
-				alert("Oops, Something went wrong! \nPlease try again");
-				generateMenus("playMenu");
-				return;
-			}
-
-			self.addListener(); // Add user buttons listener;
-
-			self.gameStarted = true;
-			self.frameCount = 0;
-
-			$('.star').hide();
-			$('#game').show();
-			$('.paused').hide();
-
-		});
-
-		socket.on("filesInDirectory", function (data) {
-			self.filesInDirectory = data.files;
-		});
+		socket.emit('storyMode', {mode: mode, level: level});
 	}
 
 	self.update = function() {
@@ -827,10 +828,58 @@ window.onload=function(){
 
 // Load a new game given a level;
 var game;
-function loadGame(level) {
+function loadGame(mode, level) {
 
 	game = new Game();
-	game.startNewGame(level);
+	game.startNewGame(mode, level);
 
 	setInterval(game.update, 1000/30);
+}
+
+function getCustom() {
+	socket.emit('getGameLevelNames', {});
+}
+
+// Setting up the socket functions;
+socket.on('receiveCustomLevel', function(levels) {
+	loadGameCustom(levels);
+});
+
+socket.on('levelPack', function(data) {
+	if (!game) return;
+	game.setupLevel(data);
+});
+
+// TODO: Do we still need this;
+socket.on("filesInDirectory", function (data) {
+	if (!game) return;
+	game.filesInDirectory = data.files;s
+});
+
+function loadGameCustom(levels) {
+    if (!levels) {
+        alert("No level found");
+        generateMenus("buildMenu");
+        return;
+    }
+    var items = [];
+    $.each(levels, function (i) {
+        items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + levels[i] + "</button>");
+    });
+    items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>Back</button>")
+    $(items.join('')).appendTo(".menu");
+
+    $(".menu #loadLevel").on("click", function () {
+        var selectedLvl = $(this).text();
+        $('.star').addClass("off");
+        if (selectedLvl === "Back") {
+            $(".interface").html("");
+            $(".menu").html("");
+            $('.star').removeClass("off");
+            generateMenus("buildMenu");
+        } else {
+            // Load custom levels created by the user;
+            loadGame('custom', selectedLvl);
+        }
+    });
 }

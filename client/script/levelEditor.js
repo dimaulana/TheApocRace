@@ -578,6 +578,8 @@ function loadEditor() {
 function loadCustomLevels(levels) {
     if (!levels) {
         alert("No level found");
+        generateMenus("buildMenu");
+        return;
     }
     var items = [];
     $.each(levels, function (i) {
