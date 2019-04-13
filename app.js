@@ -23,7 +23,7 @@ app.get('/', function(req,res) {
 app.use('/client',express.static(__dirname + '/client'));
 
 // Initialize the database;
-//DatabaseManager();
+DatabaseManager();
 
 //PORT from the server host
 serv.listen(process.env.PORT || 8080);
@@ -145,15 +145,25 @@ io.sockets.on('connection',function(socket) {
 			mode: data.mode,
 			socket: socket,
 		});
-
-		fs.readdir('./server/levels/', function (err, files) {
-			if (err) {
-				return console.log('Unable to scan directory: ' + err);
+		//Deprecated for now: Will be brought back in the PR that brings offline mode for stories
+		// fs.readdir('./server/levels/', function (err, files) {
+		// 	if (err) {
+		// 		return console.log('Unable to scan directory: ' + err);
+		// 	}
+		// 	var pack = {files: files}
+		// 	socket.emit("filesInDirectory", pack);
+		// });
+	
+		Database.readLevelsForStoryMode(function(data){
+			if(!data)
+			{
+				socket.emit("storyModeFromDb", {});
 			}
-			var pack = {files: files}
-			socket.emit("filesInDirectory", pack);
+			else
+			{
+				socket.emit("storyModeFromDb", data);
+			}
 		});
-
 	});
 
 	socket.on('playLevel', function(data) {
