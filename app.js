@@ -59,12 +59,14 @@ var startGame = function(data) {
 			level: data.level,
 			username: currentUser.name,
 			socket: data.socket,
+			mode: data.mode,
 			assetManager: assetManager
 		});
 	//game.init();
 }
 
 var newLevelEditor = function(data){
+	data.username = currentUser.name;
 	var levelEditor = new LevelEditor(data);
 	levelEditor.readLevel();
 
@@ -136,10 +138,11 @@ io.sockets.on('connection',function(socket) {
 
 		// TODO: Get level for story mode;
 		//var myLevel = getLevelStoppedPreviously();
-		var myLevel = data.level;
+		//var myLevel = data.level
 
 		startGame({
-			level: myLevel,
+			level: data.level,
+			mode: data.mode,
 			socket: socket,
 		});
 
@@ -176,6 +179,28 @@ io.sockets.on('connection',function(socket) {
 
 	socket.on('loadLevel', function(levelName){
 		newLevelEditor({levelName: levelName, socket: socket});
+	});
+
+	socket.on('getLevelNames', function() {
+		Database.getUserLevelNames(currentUser.name, function(levelList) {
+			if (!levelList) {
+				socket.emit('receiveLevelNamesFromDb', {});
+			}
+			else {
+				socket.emit('receiveLevelNamesFromDb', levelList);
+			}
+		});
+	});
+
+	socket.on('getGameLevelNames', function() {
+		Database.getUserLevelNames(currentUser.name, function(levelList) {
+			if (!levelList) {
+				socket.emit('receiveCustomLevel', {});
+			}
+			else {
+				socket.emit('receiveCustomLevel', levelList);
+			}
+		});
 	});
 
 	socket.on('evalServer',function(data) {

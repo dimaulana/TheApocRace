@@ -100,6 +100,10 @@ levelEditor = function () {
         $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
         /* Populate dropdown options */
         self.populateDropdown();
+
+        socket.on('receiveLevelNamesFromDb', function (levels) {
+            loadCustomLevels(levels);
+        });
     }
 
     self.defaultCanvas = function () {
@@ -567,8 +571,16 @@ function startEditor() {
 
 function loadEditor() {
     /* To Do: get list of levels from directory */
-    // socket.on('getLevelsFromDb', function (levels) {
-    var levels = ["level1", "level2", "level3"];
+    // socket.on('getLevelsFromDb', function (levels) ;
+    socket.emit('getLevelNames', {});
+}
+
+function loadCustomLevels(levels) {
+    if (!levels) {
+        alert("No level found");
+        generateMenus("buildMenu");
+        return;
+    }
     var items = [];
     $.each(levels, function (i) {
         items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + levels[i] + "</button>");
@@ -590,6 +602,5 @@ function loadEditor() {
                 editor.loadLevel(selectedLvl);
             });
         }
-        // });
     });
 }

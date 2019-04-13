@@ -7,6 +7,7 @@ require('./DatabaseManager.js');
 function GamePlay(param) {
 	var self = {}
 	self.name = param.level;
+	self.mode = param.mode;
 	self.file = param.level + '.json';
 	self.username = param.username;
 	self.socket = param.socket;
@@ -22,7 +23,15 @@ function GamePlay(param) {
 		levelPack.file = self.file;
 		levelPack.data = [];
 
-		Database.readFromDatabase(self.name, function(levelData) {
+		var username; // To get the story mode levels;
+		if (self.mode === 'story') {
+			username = 'admin';
+		}
+		else {
+			username = self.username;
+		}
+
+		Database.readFromDatabase({levelName: self.name, user: username}, function(levelData) {
 			self.loadLevelData(levelData.tileMap); // load level data;
 
 			self.entityManager.getEntities().forEach(function(entity) {

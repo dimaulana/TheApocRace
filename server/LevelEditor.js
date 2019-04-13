@@ -4,7 +4,8 @@ require('./DatabaseManager.js');
 function LevelEditor(param) {
     var self = {
         levelName: param.levelName,
-        socket: param.socket
+        socket: param.socket,
+        user: param.username
     }
 
     /* DEPRACATED - FILE READING
@@ -40,7 +41,7 @@ function LevelEditor(param) {
     self.readLevel = function() {
         var data = {};
         if(self.levelName !== "") {
-            data = Database.readFromDatabase(self.levelName, function(levelData) {
+            data = Database.readFromDatabase({levelName: self.levelName, user: self.user} , function(levelData) {
                 if(!levelData)
                 {
                     console.log("ERROR! No Level Data");
