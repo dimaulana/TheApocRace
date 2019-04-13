@@ -23,9 +23,9 @@ app.get('/', function(req,res) {
 app.use('/client',express.static(__dirname + '/client'));
 
 // Initialize the database;
-DatabaseManager();
+//DatabaseManager();
 
-//PORT from the server host 
+//PORT from the server host
 serv.listen(process.env.PORT || 8080);
 console.log('Server started');
 
@@ -61,14 +61,16 @@ var startGame = function(data) {
 			socket: data.socket,
 			assetManager: assetManager
 		});
+	//game.init();
 }
 
 var newLevelEditor = function(data){
 	var levelEditor = new LevelEditor(data);
-	levelEditor.readSavedFile();
+	levelEditor.readLevel();
 
 	data.socket.on('saveNewLevel', function(data){
-		levelEditor.writeToFile(data);
+		data.user = currentUser.name;
+		levelEditor.writeToDatabase(data);
 	});
 }
 
@@ -80,7 +82,7 @@ io.sockets.on('connection',function(socket) {
 	socket.on('signIn',function(data) {
 		Database.isValidPassword(data, function(res) {
 			if (res) {
-				socket.emit('signInResponse', {success:true});
+				socket.emit('signInResponse', {success: true});
 
 				// Create User once signed In;
 				currentUser = User({
@@ -89,7 +91,7 @@ io.sockets.on('connection',function(socket) {
 				});
 			}
 			else {
-				socket.emit('signInResponse', {success:false});
+				socket.emit('signInResponse', {success: false});
 			}
 		});
 	});
@@ -104,9 +106,9 @@ io.sockets.on('connection',function(socket) {
 				var hashedPassword = passwordHash.generate(data.password);
 				data.hashedPassword = hashedPassword;
 				Database.addUser(data, function() {
-					socket.emit('signUpResponse', {success:true}); 
+					socket.emit('signUpResponse', {success:true});
 				});
-			}		
+			}
 		});
 	});
 
@@ -144,7 +146,7 @@ io.sockets.on('connection',function(socket) {
 		fs.readdir('./server/levels/', function (err, files) {
 			if (err) {
 				return console.log('Unable to scan directory: ' + err);
-			} 
+			}
 			var pack = {files: files}
 			socket.emit("filesInDirectory", pack);
 		});
@@ -158,7 +160,7 @@ io.sockets.on('connection',function(socket) {
 		});
 	});
 
-	
+
 	socket.on('disconnect',function() {
 		delete SOCKET_LIST[socket.id];
 		//Player.onDisconnect(socket);
@@ -179,7 +181,7 @@ io.sockets.on('connection',function(socket) {
 	socket.on('evalServer',function(data) {
 		if (!DEBUG)
 			return;
-		
+
 		var res = eval(data)
 		for (var i in SOCKET_LIST) {
 			SOCKET_LIST[i].emit('evalAnswer', res);
@@ -188,6 +190,6 @@ io.sockets.on('connection',function(socket) {
 	});
 });
 
-// Update player and bullet
+// Update the game engine;
 setInterval(function() {
 },1000/30);
