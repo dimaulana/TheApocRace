@@ -14,6 +14,8 @@
 // var MongoClient = require('mongodb').MongoClient;
 const collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
 
+*/
+
 const assetCollection = [
 							{"type": "Texture", "name": "Player", "path": "client/images/playerrun.png"},
 							{"type": "Texture", "name": "PlayerJump", "path": "client/images/playerjump.png"},
@@ -39,6 +41,8 @@ const assetCollection = [
 							{"type": "Sound", "name": "StoryMode", "path": "client/sound/background.mp3"}
 						];
 
+						
+
 //Database manager used to insert assets in our db;
 DatabaseManager = function () {
 	console.log('Connection successful');
@@ -49,8 +53,6 @@ DatabaseManager = function () {
 		})
 	};
 };
------------------------------------------------------------------------
-*/
 
 const mongoose = require('mongoose');
 const url = "mongodb+srv://admin:admin@aporun-l1ht9.mongodb.net/apoRun?retryWrites=true";
@@ -207,7 +209,24 @@ Database.getUserLevelNames = function(username, cb){
 			{
 				levelNames.push(res[i].levelName);
 			}
+			// console.log(res);
 			cb(levelNames);
+		}
+		else
+			cb();
+	});
+}
+
+Database.readLevelsForStoryMode = function(cb){
+	Level.find({levelName : {$regex: /story/}}, function(err, res){
+		if(res)
+		{
+			var storyLevels = new Array();
+			for(var i = 0; i < res.length; i++)
+			{
+				storyLevels.push(res[i].levelName);
+			}
+			cb(storyLevels);
 		}
 		else
 			cb();

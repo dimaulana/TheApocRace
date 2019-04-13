@@ -657,16 +657,22 @@ window.onload=function(){
 		self.ctx.font = "100px arcade";
 		self.ctx.fillStyle = 'white';
 
-		if (self.currentLevel === totalLevels) {
-			self.gameOver(false);
-		} else {
-			self.ctx.fillText("Level " + self.currentLevel + "\n finished", 300, 350);
+		var levelNumber = self.currentLevel.substring(5);
+		var newLevelName = "story";
+
+		if (levelNumber >= totalLevels) 
+		{
+			self.gameOver(true);
+		} else 
+		{
+			self.ctx.fillText("Level " + levelNumber + "\n finished", 300, 350);
 		}
 		self.gameStarted = false;
 
 		setTimeout(function () {
-			if (++self.currentLevel <= totalLevels) {
-				self.startNewGame(self.currentLevel)
+			if (++levelNumber <= totalLevels) {
+				newLevelName += levelNumber;
+				self.startNewGame('story', newLevelName);
 			}
 		}, 5000);
 	}
@@ -677,7 +683,7 @@ window.onload=function(){
 
 		if (repeat) {
 			setTimeout(function() {
-						self.startNewGame(1)
+						self.startNewGame('story', 'story1')
 						}, 5000);
 		}
 	}
@@ -851,9 +857,9 @@ socket.on('levelPack', function(data) {
 });
 
 // TODO: Do we still need this;
-socket.on("filesInDirectory", function (data) {
+socket.on("storyModeFromDb", function (data) {
 	if (!game) return;
-	game.filesInDirectory = data.files;s
+	game.filesInDirectory = data;
 });
 
 function loadGameCustom(levels) {
