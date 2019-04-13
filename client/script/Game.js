@@ -546,6 +546,21 @@ window.onload=function(){
 				// TODO:
 				// Quit game;
 				// Save progress;
+				self.quitGame();
+				/*
+				self.paused = false;
+				$('.paused').hide();
+				self.gameStarted = false;
+				//TODO: FIX HERE :Clear all canvas and previous game history
+				$('.star').show();
+				$(".interface").html("");
+				$(".btn-group-vertical").html("");
+				self.backgroundSound.stop();
+				document.getElementById("main_audio").play();
+    			self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
+				$('#game').hide();
+				generateMenus('mainMenu');
+				*/
 			break;
 
 			case 68: // d key
@@ -597,6 +612,7 @@ window.onload=function(){
 
 	function clickHandler(event) {
 		var buttonX = 700;
+		var buttonXR=700;
 		var resumeButtonY = 410;
 		var saveButtonY = 478;
 		var quitButtonY = 541;
@@ -605,13 +621,14 @@ window.onload=function(){
 
 		//Resume button
 		if (
-			event.x > buttonX &&
-			event.x < (buttonX + buttonW) &&
+			event.x > buttonXR &&
+			event.x < (buttonXR + buttonW) &&
 			event.y > (resumeButtonY) &&
 			event.y < (resumeButtonY + buttonH)
 		) {
 			// Executes if  resume button was clicked!
 			paused = false;
+			console.log(" Resume POSITION Clicked");
 		}
 		///save button save listener
 		else if (
@@ -714,6 +731,22 @@ window.onload=function(){
 	}
 	**/
 
+	self.quitGame = function(){
+		
+		self.paused = false;
+		$('.paused').hide();
+		self.gameStarted = false;
+		//TODO: FIX HERE :Clear all canvas and previous game history
+		$('.star').show();
+		$(".interface").html("");
+		$(".btn-group-vertical").html("");
+		self.backgroundSound.stop();
+		document.getElementById("main_audio").play();
+		self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
+		$('#game').hide();
+		generateMenus('mainMenu');
+	}
+
 	self.isPaused = function() {
 		// TODO:
 		// Move draw to the div paused  using ralative
@@ -735,6 +768,7 @@ window.onload=function(){
 		self.ctx.fillStyle = "blue";
 		//Resume button
 		self.ctx.fillRect(resumeButtonX, resumeButtonY, buttonW, buttonH);
+		console.log(" Resume POSITION HERE");
 		//Save button
 		self.ctx.fillRect(saveButtonX, saveButtonY, buttonW, buttonH);
 		//Quit button
