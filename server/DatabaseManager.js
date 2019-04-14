@@ -48,6 +48,8 @@ mongoose.connect(url, {useNewUrlParser: true});
 const db = mongoose.connection;
 let Schema = mongoose.Schema;
 
+console.log('USING MONGO DB ATLAS', url);
+
 // User schema;
 const userShema = new Schema({
 	username: String,
