@@ -9,7 +9,11 @@ var losAngeles = new Image();
 losAngeles.src = "client/images/losAngeles1.png";
 losAngeles.name = "Los Angeles";
 
-var backgroundList = [newyork, losAngeles];
+var florida = new Image();
+florida.src = "client/images/florida1.png";
+florida.name = "Florida"
+
+var backgroundList = [newyork, losAngeles, florida];
 backgroundList.name = "Background";
 
 /* Tiles */
@@ -29,13 +33,20 @@ var tile4 = new Image();
 tile4.src = "client/images/tile4.png";
 tile4.name = "Tile 4";
 
+var tileList = [tile1, tile2, tile3, tile4];
+tileList.name = "Tile";
 
+/* Items & Pickups */
 var coin = new Image();
 coin.src = "client/images/singlecoin.png";
 coin.name = "Coin";
 
-var tileList = [tile1, tile2, tile3, tile4, coin];
-tileList.name = "Tile";
+var health = new Image();
+health.src = "client/images/healthPack.png";
+health.name = "Health"
+
+var itemList = [coin, health];
+itemList.name = "Item";
 
 /* Character & Enemies */
 var character = new Image();
@@ -54,7 +65,17 @@ enemy2.src = "client/images/minionThumbnail.png";
 enemy2.spriteSrc = "client/images/minionenemyrun.png";
 enemy2.name = "Minion";
 
-var enemyList = [enemy1, enemy2];
+boss1 = new Image();
+boss1.src = "client/images/bossThumbnail.png";
+boss1.spriteSrc = "client/images/boss1.png";
+boss1.name = "Boss 1";
+
+boss2 = new Image();
+boss2.src = "client/images/boss2Thumbnail.png";
+boss2.spriteSrc = "client/images/boss2.png";
+boss2.name = "Boss 2";
+
+var enemyList = [enemy1, enemy2, boss1, boss2];
 enemyList.name = "Character";
 
 levelEditor = function () {
@@ -239,6 +260,12 @@ levelEditor = function () {
                     return sprite;
                 }
             }
+            for (var i = 0; i < itemList.length; i++) {
+                if (itemList[i].name.replace(/\s/g, '') === name) {
+                    sprite.src = itemList[i].src;
+                    return sprite;
+                }
+            }
         }
         if (type === "Background") {
             for (var i = 0; i < backgroundList.length; i++) {
@@ -298,7 +325,6 @@ levelEditor = function () {
             }
         }
         self.displayGrid();
-
     }
 
     /* Makes sure no tiles are in the way */
@@ -436,7 +462,7 @@ levelEditor = function () {
 
     /* Populate level editor dropdown menu from array of assets */
     self.populateDropdown = function () {
-        var items = [tileList, enemyList, backgroundList];
+        var items = [tileList, itemList, enemyList, backgroundList];
         $.each(items, function (i) {
             var dropdown = [];
             var assetType = items[i];
@@ -480,7 +506,7 @@ levelEditor = function () {
         var selectedOption = $(this).attr("id");
         switch (selectedOption) {
             case "Back":
-            
+
                 /* Reset all listeners */
                 self.canvas.removeEventListener('click', self.clicked, false);
                 self.canvas.removeEventListener('mousedown', self.down, false);
@@ -499,9 +525,6 @@ levelEditor = function () {
             case "Save":
                 self.saveLevel();
                 break;
-            case "Play":
-                console.log("play game");
-                break;
         }
     });
 
@@ -510,20 +533,21 @@ levelEditor = function () {
         var imageSrc = $("img", this).attr("src");
         var selectedDropdown = $(this).closest("li").attr("id");
         var imageId = $(this).closest("a").attr("id");
+        $('.editorMenu').css({
+            "background-color": "#173B0B"
+        });
         switch (selectedDropdown) {
             case "Tile":
+            case "Item":
                 var tile = {
                     "loc": imageSrc.substring(22),
                     "name": imageId,
-                    "type": selectedDropdown,
+                    "type": "Tile",
                 };
                 self.pickedTile = tile;
-                $(".selectedTile").attr("src", imageSrc);
-                $("#Tile").css({
+                $(".selected" + selectedDropdown).attr("src", imageSrc);
+                $("#" + selectedDropdown).css({
                     "background-color": "#FF8000"
-                });
-                $("#Character").css({
-                    "background-color": "#173B0B"
                 });
                 break;
             case "Character":
@@ -533,12 +557,9 @@ levelEditor = function () {
                     "type": selectedDropdown,
                 };
                 self.pickedTile = tile;
-                $(".selectedChar").attr("src", imageSrc);
-                $("#Character").css({
+                $(".selected" + selectedDropdown).attr("src", imageSrc);
+                $("#" + selectedDropdown).css({
                     "background-color": "#FF8000"
-                });
-                $("#Tile").css({
-                    "background-color": "#173B0B"
                 });
                 break;
             case "Background":
@@ -551,7 +572,7 @@ levelEditor = function () {
         }
     });
 
-    
+
     /* Attach event listeners */
     self.canvas.addEventListener('click', self.clicked);
     document.addEventListener('contextmenu', event => event.preventDefault());
