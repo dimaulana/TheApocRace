@@ -4,7 +4,6 @@
    					Sahil Anand,
    					Victor Mutandwa
 */
-
 function Game() {
 	var self = {}
 
@@ -394,6 +393,14 @@ window.onload=function(){
 					}
 				}
 
+				var bullets = self.entityManager.getEntitiesByTag("Bullet");
+				for (var i = 0; i < bullets.length; i++) {
+					currentOverlap = self.getOverlap(bullets[i], entity);
+					if (currentOverlap.x > 0 && currentOverlap.y > 0) {
+						bullets[i].properties.alive = false;
+					}
+				}
+
 			}
 
 			// Collision of bullets with self.player and enemies;
@@ -539,6 +546,21 @@ window.onload=function(){
 				// TODO:
 				// Quit game;
 				// Save progress;
+				self.quitGame();
+				/*
+				self.paused = false;
+				$('.paused').hide();
+				self.gameStarted = false;
+				//TODO: FIX HERE :Clear all canvas and previous game history
+				$('.star').show();
+				$(".interface").html("");
+				$(".btn-group-vertical").html("");
+				self.backgroundSound.stop();
+				document.getElementById("main_audio").play();
+    			self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
+				$('#game').hide();
+				generateMenus('mainMenu');
+				*/
 			break;
 
 			case 68: // d key
@@ -590,6 +612,7 @@ window.onload=function(){
 
 	function clickHandler(event) {
 		var buttonX = 700;
+		var buttonXR=700;
 		var resumeButtonY = 410;
 		var saveButtonY = 478;
 		var quitButtonY = 541;
@@ -598,13 +621,14 @@ window.onload=function(){
 
 		//Resume button
 		if (
-			event.x > buttonX &&
-			event.x < (buttonX + buttonW) &&
+			event.x > buttonXR &&
+			event.x < (buttonXR + buttonW) &&
 			event.y > (resumeButtonY) &&
 			event.y < (resumeButtonY + buttonH)
 		) {
 			// Executes if  resume button was clicked!
 			paused = false;
+			console.log(" Resume POSITION Clicked");
 		}
 		///save button save listener
 		else if (
@@ -650,16 +674,22 @@ window.onload=function(){
 		self.ctx.font = "100px arcade";
 		self.ctx.fillStyle = 'white';
 
-		if (self.currentLevel === totalLevels) {
-			self.gameOver(false);
-		} else {
-			self.ctx.fillText("Level " + self.currentLevel + "\n finished", 300, 350);
+		var levelNumber = self.currentLevel.substring(5);
+		var newLevelName = "story";
+
+		if (levelNumber >= totalLevels) 
+		{
+			self.gameOver(true);
+		} else 
+		{
+			self.ctx.fillText("Level " + levelNumber + "\n finished", 300, 350);
 		}
 		self.gameStarted = false;
 
 		setTimeout(function () {
-			if (++self.currentLevel <= totalLevels) {
-				self.startNewGame(self.currentLevel)
+			if (++levelNumber <= totalLevels) {
+				newLevelName += levelNumber;
+				self.startNewGame('story', newLevelName);
 			}
 		}, 5000);
 	}
@@ -670,7 +700,7 @@ window.onload=function(){
 
 		if (repeat) {
 			setTimeout(function() {
-						self.startNewGame(1)
+						self.startNewGame('story', 'story1')
 						}, 5000);
 		}
 	}
@@ -701,6 +731,22 @@ window.onload=function(){
 	}
 	**/
 
+	self.quitGame = function(){
+		
+		self.paused = false;
+		$('.paused').hide();
+		self.gameStarted = false;
+		//TODO: FIX HERE :Clear all canvas and previous game history
+		$('.star').show();
+		$(".interface").html("");
+		$(".btn-group-vertical").html("");
+		self.backgroundSound.stop();
+		document.getElementById("main_audio").play();
+		self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
+		$('#game').hide();
+		generateMenus('mainMenu');
+	}
+
 	self.isPaused = function() {
 		// TODO:
 		// Move draw to the div paused  using ralative
@@ -722,6 +768,7 @@ window.onload=function(){
 		self.ctx.fillStyle = "blue";
 		//Resume button
 		self.ctx.fillRect(resumeButtonX, resumeButtonY, buttonW, buttonH);
+		console.log(" Resume POSITION HERE");
 		//Save button
 		
 		self.ctx.fillRect(saveButtonX, saveButtonY, buttonW, buttonH);
@@ -757,8 +804,33 @@ window.onload=function(){
     	}
 
 	}
+	self.setupLevel = function(data) {
+		// Explicitly removing player;
+		self.entityManager.removeEntity(self.player);
 
-	self.startNewGame = function(level) {
+		self.username.name = data.username;
+		self.loadLevel(data);
+
+		// Get new player object;
+		self.player = self.entityManager.getEntityByTag("Player");
+
+		if (!self.player) {
+			alert("Oops, Something went wrong! \nPlease try again");
+			generateMenus("playMenu");
+			return;
+		}
+
+		self.addListener(); // Add user buttons listener;
+
+		self.gameStarted = true;
+		self.frameCount = 0;
+
+		$('.star').hide();
+		$('#game').show();
+		$('.paused').hide();
+	}
+
+	self.startNewGame = function(mode, level) {
 		self.entityManager.removeAllEntities(); // Clear all entities if any;
 
 		if (!level) {
@@ -766,38 +838,7 @@ window.onload=function(){
 			level = 'level1';
 		}
 
-		socket.emit('storyMode', {level: level});
-
-		socket.on('levelPack', function(data) {
-			// Explicitly removing player;
-			self.entityManager.removeEntity(self.player);
-
-			self.username.name = data.username;
-			self.loadLevel(data);
-
-			// Get new player object;
-			self.player = self.entityManager.getEntityByTag("Player");
-
-			if (!self.player) {
-				alert("Oops, Something went wrong! \nPlease try again");
-				generateMenus("playMenu");
-				return;
-			}
-
-			self.addListener(); // Add user buttons listener;
-
-			self.gameStarted = true;
-			self.frameCount = 0;
-
-			$('.star').hide();
-			$('#game').show();
-			$('.paused').hide();
-
-		});
-
-		socket.on("filesInDirectory", function (data) {
-			self.filesInDirectory = data.files;
-		});
+		socket.emit('storyMode', {mode: mode, level: level});
 	}
 
 	self.update = function() {
@@ -828,10 +869,58 @@ window.onload=function(){
 
 // Load a new game given a level;
 var game;
-function loadGame(level) {
+function loadGame(mode, level) {
 
 	game = new Game();
-	game.startNewGame(level);
+	game.startNewGame(mode, level);
 
 	setInterval(game.update, 1000/30);
+}
+
+function getCustom() {
+	socket.emit('getGameLevelNames', {});
+}
+
+// Setting up the socket functions;
+socket.on('receiveCustomLevel', function(levels) {
+	loadGameCustom(levels);
+});
+
+socket.on('levelPack', function(data) {
+	if (!game) return;
+	game.setupLevel(data);
+});
+
+// TODO: Do we still need this;
+socket.on("storyModeFromDb", function (data) {
+	if (!game) return;
+	game.filesInDirectory = data;
+});
+
+function loadGameCustom(levels) {
+    if (!levels) {
+        alert("No level found");
+        generateMenus("buildMenu");
+        return;
+    }
+    var items = [];
+    $.each(levels, function (i) {
+        items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>" + levels[i] + "</button>");
+    });
+    items.push("<button id='loadLevel' class='btn btn-primary btn-lg ml-2'>Back</button>")
+    $(items.join('')).appendTo(".menu");
+
+    $(".menu #loadLevel").on("click", function () {
+        var selectedLvl = $(this).text();
+        $('.star').addClass("off");
+        if (selectedLvl === "Back") {
+            $(".interface").html("");
+            $(".menu").html("");
+            $('.star').removeClass("off");
+            generateMenus("buildMenu");
+        } else {
+            // Load custom levels created by the user;
+            loadGame('custom', selectedLvl);
+        }
+    });
 }

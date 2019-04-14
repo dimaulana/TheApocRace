@@ -23,7 +23,7 @@ app.get('/', function(req,res) {
 app.use('/client',express.static(__dirname + '/client'));
 
 // Initialize the database;
-//DatabaseManager();
+DatabaseManager();
 
 //PORT from the server host
 serv.listen(process.env.PORT || 8080);
@@ -59,12 +59,14 @@ var startGame = function(data) {
 			level: data.level,
 			username: currentUser.name,
 			socket: data.socket,
+			mode: data.mode,
 			assetManager: assetManager
 		});
 	//game.init();
 }
 
 var newLevelEditor = function(data){
+	data.username = currentUser.name;
 	var levelEditor = new LevelEditor(data);
 	levelEditor.readLevel();
 
@@ -136,21 +138,32 @@ io.sockets.on('connection',function(socket) {
 
 		// TODO: Get level for story mode;
 		//var myLevel = getLevelStoppedPreviously();
-		var myLevel = data.level;
+		//var myLevel = data.level
 
 		startGame({
-			level: myLevel,
+			level: data.level,
+			mode: data.mode,
 			socket: socket,
 		});
-
-		fs.readdir('./server/levels/', function (err, files) {
-			if (err) {
-				return console.log('Unable to scan directory: ' + err);
+		//Deprecated for now: Will be brought back in the PR that brings offline mode for stories
+		// fs.readdir('./server/levels/', function (err, files) {
+		// 	if (err) {
+		// 		return console.log('Unable to scan directory: ' + err);
+		// 	}
+		// 	var pack = {files: files}
+		// 	socket.emit("filesInDirectory", pack);
+		// });
+	
+		Database.readLevelsForStoryMode(function(data){
+			if(!data)
+			{
+				socket.emit("storyModeFromDb", {});
 			}
-			var pack = {files: files}
-			socket.emit("filesInDirectory", pack);
+			else
+			{
+				socket.emit("storyModeFromDb", data);
+			}
 		});
-
 	});
 
 	socket.on('playLevel', function(data) {
@@ -176,6 +189,28 @@ io.sockets.on('connection',function(socket) {
 
 	socket.on('loadLevel', function(levelName){
 		newLevelEditor({levelName: levelName, socket: socket});
+	});
+
+	socket.on('getLevelNames', function() {
+		Database.getUserLevelNames(currentUser.name, function(levelList) {
+			if (!levelList) {
+				socket.emit('receiveLevelNamesFromDb', {});
+			}
+			else {
+				socket.emit('receiveLevelNamesFromDb', levelList);
+			}
+		});
+	});
+
+	socket.on('getGameLevelNames', function() {
+		Database.getUserLevelNames(currentUser.name, function(levelList) {
+			if (!levelList) {
+				socket.emit('receiveCustomLevel', {});
+			}
+			else {
+				socket.emit('receiveCustomLevel', levelList);
+			}
+		});
 	});
 
 	socket.on('evalServer',function(data) {

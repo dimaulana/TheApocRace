@@ -14,6 +14,8 @@
 // var MongoClient = require('mongodb').MongoClient;
 const collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
 
+*/
+
 const assetCollection = [
 							{"type": "Texture", "name": "Player", "path": "client/images/playerrun.png"},
 							{"type": "Texture", "name": "PlayerJump", "path": "client/images/playerjump.png"},
@@ -39,6 +41,8 @@ const assetCollection = [
 							{"type": "Sound", "name": "StoryMode", "path": "client/sound/background.mp3"}
 						];
 
+						
+
 //Database manager used to insert assets in our db;
 DatabaseManager = function () {
 	console.log('Connection successful');
@@ -49,8 +53,6 @@ DatabaseManager = function () {
 		})
 	};
 };
------------------------------------------------------------------------
-*/
 
 const mongoose = require('mongoose');
 const url = "mongodb+srv://admin:admin@aporun-l1ht9.mongodb.net/apoRun?retryWrites=true";
@@ -166,11 +168,13 @@ Database.getAllAssets = function(cb) {
 
 //--------- Level functions ---------------------------;
 Database.writeToDatabase = function(data){
-	Level.findOne({levelName: data.levelName}, function(err, res){
+	// Check for user specific level names;
+	Level.findOne({levelName: data.levelName, user: data.user}, function(err, res) {
+		console.log(res);
 		if (res) {
 			// Level exists, then update tileMap;
 			Level.findOneAndUpdate(
-				{levelName: data.levelName},
+				{levelName: data.levelName, user: data.user}, // user specific level names;
 				{$set: {tileMap: data.tileMap }},
 				{new: true},
 				function(err, res) {
@@ -186,8 +190,9 @@ Database.writeToDatabase = function(data){
 	});
 }
 
-Database.readFromDatabase = function(levelName, cb){
-	Level.findOne({levelName : levelName}, function(err, res){
+Database.readFromDatabase = function(data, cb){
+	// Get user specific levels;
+	Level.findOne({levelName : data.levelName, user: data.user}, function(err, res){
 		if(res)
 			cb(res);
 		else
@@ -195,7 +200,8 @@ Database.readFromDatabase = function(levelName, cb){
 	});
 }
 
-Database.readLevelBasedOnUser = function(username, cb){
+// Get the names of user made levels;
+Database.getUserLevelNames = function(username, cb){
 	Level.find({user: username}, function(err, res){
 		if(res){
 			var levelNames = new Array();
@@ -203,8 +209,24 @@ Database.readLevelBasedOnUser = function(username, cb){
 			{
 				levelNames.push(res[i].levelName);
 			}
-			console.log(levelNames);
+			// console.log(res);
 			cb(levelNames);
+		}
+		else
+			cb();
+	});
+}
+
+Database.readLevelsForStoryMode = function(cb){
+	Level.find({levelName : {$regex: /story/}}, function(err, res){
+		if(res)
+		{
+			var storyLevels = new Array();
+			for(var i = 0; i < res.length; i++)
+			{
+				storyLevels.push(res[i].levelName);
+			}
+			cb(storyLevels);
 		}
 		else
 			cb();
