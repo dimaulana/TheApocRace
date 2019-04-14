@@ -69,11 +69,13 @@ boss1 = new Image();
 boss1.src = "client/images/bossThumbnail.png";
 boss1.spriteSrc = "client/images/boss1.png";
 boss1.name = "Boss 1";
+boss1.ai = "Boss";
 
 boss2 = new Image();
 boss2.src = "client/images/boss2Thumbnail.png";
 boss2.spriteSrc = "client/images/boss2.png";
 boss2.name = "Boss 2";
+boss2.ai = "Boss";
 
 var enemyList = [enemy1, enemy2, boss1, boss2];
 enemyList.name = "Character";
