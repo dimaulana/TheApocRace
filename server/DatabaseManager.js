@@ -6,15 +6,15 @@
 	Author: Hussein Parpia
 */
 
-
-/**  -------------- DEPRACATED --------------------------
-
 // var mongojs = require("mongojs");
-// var url = 'localhost:27017/apoRun';
-// var MongoClient = require('mongodb').MongoClient;
-const collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
 
-*/
+const mongoose = require('mongoose');
+const url = "mongodb+srv://admin:admin@aporun-l1ht9.mongodb.net/apoRun?retryWrites=true";
+// var url = 'localhost:27017/apoRun';
+var passwordHash = require('password-hash');
+
+//var MongoClient = require('mongodb').MongoClient;
+//const collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
 
 const assetCollection = [
 							{"type": "Texture", "name": "Player", "path": "client/images/playerrun.png"},
@@ -40,24 +40,6 @@ const assetCollection = [
 							{"type": "Font", "name": "Helvetica", "path": "client/fonts/helvetica.ttf"},
 							{"type": "Sound", "name": "StoryMode", "path": "client/sound/background.mp3"}
 						];
-
-						
-
-//Database manager used to insert assets in our db;
-DatabaseManager = function () {
-	console.log('Connection successful');
-	for (var i = 0; i < assetCollection.length; i++) {
-		var asset = new Asset(assetCollection[i]);
-		asset.save(function(err, a){
-			if (err) throw err;
-		})
-	};
-};
-
-const mongoose = require('mongoose');
-const url = "mongodb+srv://admin:admin@aporun-l1ht9.mongodb.net/apoRun?retryWrites=true";
-var passwordHash = require('password-hash');
-
 
 /* This manages the creation of database schema
    Creates models that are used in our game;
@@ -86,10 +68,29 @@ const levelSchema = new Schema({
 	user: String
 });
 
+// Leaderboard Schema;
+const LeaderboardSchema = new Schema({
+	user: String,
+	topScore: Number,
+})
+
+// Setting up models;
 let User = mongoose.model('user', userShema);
 let Asset = mongoose.model('asset', assetSchema);
 let Level = mongoose.model('level', levelSchema);
+let Leaderboard = mongoose.model('leaderboard', LeaderboardSchema);
 
+// TODO: This inserts data multiple times; need fix
+//Database manager used to insert assets in our db;
+DatabaseManager = function (cb) {
+	for (var i = 0; i < assetCollection.length; i++) {
+		var asset = new Asset(assetCollection[i]);
+		asset.save(function(err, a){
+			if (err) throw err;
+		})
+	};
+	cb();
+};
 
 
 // Database functions which handle the writing, reading, deleting and modifying of
@@ -231,6 +232,37 @@ Database.readLevelsForStoryMode = function(cb){
 		else
 			cb();
 	});
+}
+
+//--------------- Leaderboard functions ----------------------
+Database.recordUserScore = function(data) {
+	Leaderboard.findOne({user: data.user}, function(err, res) {
+		if (res) {
+			Leaderboard.findOneAndUpdate(
+				{user: data.user},
+				{$set: {topScore: data.score}},
+				{new: true},
+				function(err, res) {
+					if (err) throw err;
+				}
+			)
+		}
+		else {
+			var leader = new Leaderboard({user: data.user, topScore: data.score});
+			leader.save(function(err){
+				if(err) throw err;
+			});
+		}
+	})
+}
+
+Database.getLeaderboards = function(cb) {
+	Leaderboard.find(function(err, res){
+		if (res)
+			cb(res);
+		else
+			cb();s
+	})
 }
 
 
