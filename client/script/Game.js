@@ -662,6 +662,7 @@ window.onload=function(){
 		} else 
 		{
 			self.ctx.fillText("Level " + levelNumber + "\n finished", 300, 350);
+			self.backgroundSound.stop();
 		}
 		self.gameStarted = false;
 
@@ -672,12 +673,13 @@ window.onload=function(){
 			}
 		}, 5000);
 	}
-
+		
 	// Print game over and restart game if needed;
 	self.gameOver = function(repeat) {
 		self.ctx.fillText("Game Over", 400, 350);
 
 		if (repeat) {
+			self.backgroundSound.stop();
 			setTimeout(function() {
 						self.startNewGame('story', 'story1')
 						}, 5000);
