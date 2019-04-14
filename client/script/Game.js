@@ -718,8 +718,6 @@ window.onload=function(){
 		$('.star').show();
 		$(".interface").html("");
 		$(".btn-group-vertical").html("");
-		//self.score.int=0;
-		//self.coins.count=0;
 		self.backgroundSound.stop();
 		document.getElementById("main_audio").play();
 		self.entityManager.removeAllEntities();
