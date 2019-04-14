@@ -144,7 +144,7 @@ class Weapon extends Component {
 		super();
 		this.clock = 0;
 		this.name = "normal";
-		this.map = {"normal": 20, "laser": 30}; // Can update coolDown based on this map;
+		this.map = {"normal": 20, "laser": 50}; // Can update coolDown based on this map;
 		this.coolDown = 20;
 		this.imageLoc = {};
 		this.imageLoc.normal = param.loc;
