@@ -35,6 +35,7 @@ const assetCollection = [
 							{"type": "Texture", "name": "LosAngeles", "path": "/client/images/LosAngeles.png"},
 							{"type": "Texture", "name": "Florida", "path": "/client/images/Florida.png"},
 							{"type": "Texture", "name": "Bullet", "path": "/client/images/bullets.png"},
+							{"type": "Texture", "name": "Laser", "path": "/client/images/laser.png"},
 							{"type": "Font", "name": "Helvetica", "path": "client/fonts/helvetica.ttf"},
 							{"type": "Sound", "name": "StoryMode", "path": "client/sound/background.mp3"}
 						];
