@@ -626,32 +626,26 @@ window.onload=function(){
 		) {
 			// Executes if  save button was clicked!
 			//TODO:Add SAVE FUNCTION HERE
-			//console.log("Save");
 			self.saveProgress();
-			alert("Game was saved");
 
 		}
 		//quit button listener
 		else if (
-				x > buttonX &&
-				x < buttonX + buttonW &&
-				y > quitButtonY &&
-				y < quitButtonY + buttonH
+				event.x > buttonX &&
+				event.x < buttonX + buttonW &&
+				event.y > quitButtonY &&
+				event.y < quitButtonY + buttonH
 		) {
-			//console.log(" Quit POSITION HERE");
 			self.quitGame();
-			alert("Quit game!");
-				
+			
 		}
 	}
-	
 
 	self.addListener = function() {
 		document.addEventListener("keydown", self.keyDownHandler, false);
 		document.addEventListener("keyup", self.keyUpHandler, false);
 		self.canvas.addEventListener("click", clickHandler, false);
 	}
-
 
 	self.endLevel = function() {
 		var totalLevels = self.filesInDirectory.length;
@@ -759,12 +753,8 @@ window.onload=function(){
 		//Resume button
 		self.ctx.fillRect(buttonX, resumeButtonY, buttonW, buttonH);
 		//Save button
-<<<<<<< HEAD
-		
-		self.ctx.fillRect(saveButtonX, saveButtonY, buttonW, buttonH);
-=======
 		self.ctx.fillRect(buttonX, saveButtonY, buttonW, buttonH);
->>>>>>> changed listener dimensions of buttons
+
 		//Quit button
 		self.ctx.fillRect(buttonX, quitButtonY, buttonW, buttonH);
 		self.ctx.fillStyle = "yellow";
@@ -809,15 +799,8 @@ window.onload=function(){
 		self.username.name = data.username;
 		self.loadLevel(data);
 
-<<<<<<< HEAD
 		// Get new player object;
 		self.player = self.entityManager.getEntityByTag("Player");
-=======
-		socket.on('levelPack', function(data) {
-			// Explicitly removing player;
-			//if (!self.player)
-				self.entityManager.removeEntity(self.player);
->>>>>>> changed listener dimensions of buttons
 
 		if (!self.player) {
 			alert("Oops, Something went wrong! \nPlease try again");
