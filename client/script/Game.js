@@ -347,6 +347,13 @@ function Game() {
 					entity.properties.alive = false;
 				}
 			}
+			else if (entity.tag == "Health") {
+				var currentOverlap = self.getOverlap(self.player, entity);
+				if (currentOverlap.x > 0 && currentOverlap.y > 0) {
+					entity.properties.hp += 10;
+					entity.properties.alive = false;
+				}
+			}
 			else if (entity.tag == "Tile1" ||
 					 entity.tag == "Tile2" ||
 					 entity.tag == "Tile3" ||
@@ -575,6 +582,7 @@ function Game() {
 				case "Bullet":
 				case "Laser":
 				case "Coin":
+				case "Health":
 					if (!self.viewport.inView(e, 40)) return;
 
 					self.ctx.drawImage(e.image, e.animation.frame * e.properties.width, 0, e.properties.width, e.properties.height,
@@ -849,6 +857,7 @@ function Game() {
 
 	}
 	self.setupLevel = function(data) {
+		console.log(data);
 		// Explicitly removing player;
 		self.entityManager.removeEntity(self.player);
 
