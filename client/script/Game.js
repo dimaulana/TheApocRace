@@ -597,20 +597,6 @@ function Game() {
 				// Quit game;
 				// Save progress;
 				self.quitGame();
-				/*
-				self.paused = false;
-				$('.paused').hide();
-				self.gameStarted = false;
-				//TODO: FIX HERE :Clear all canvas and previous game history
-				$('.star').show();
-				$(".interface").html("");
-				$(".btn-group-vertical").html("");
-				self.backgroundSound.stop();
-				document.getElementById("main_audio").play();
-    			self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
-				$('#game').hide();
-				generateMenus('mainMenu');
-				*/
 			break;
 
 			case 68: // d key
@@ -664,25 +650,26 @@ function Game() {
 		}
 	}
 
+		//Handler function
 	function clickHandler(event) {
-		var buttonX = 700;
-		var buttonXR=700;
-		var resumeButtonY = 410;
-		var saveButtonY = 478;
-		var quitButtonY = 541;
+		var buttonX = 350;
+		var buttonXR=350;
+		var resumeButtonY = 352;
+		var saveButtonY = 420;
+		var quitButtonY = 488;
 		var buttonW = 160;
 		var buttonH = 50;
-
+		var x = event.clientX;
+		var y = event.clientY;
 		//Resume button
 		if (
-			event.x > buttonXR &&
-			event.x < (buttonXR + buttonW) &&
-			event.y > (resumeButtonY) &&
-			event.y < (resumeButtonY + buttonH)
+				event.x > buttonXR &&
+			    event.x < (buttonXR + buttonW) &&
+				event.y > (resumeButtonY) &&
+				event.y < (resumeButtonY + buttonH)
 		) {
 			// Executes if  resume button was clicked!
 			paused = false;
-			console.log(" Resume POSITION Clicked");
 		}
 		///save button save listener
 		else if (
@@ -693,26 +680,18 @@ function Game() {
 		) {
 			// Executes if  save button was clicked!
 			//TODO:Add SAVE FUNCTION HERE
-			console.log("Save");
+			self.saveProgress();
 
 		}
 		//quit button listener
 		else if (
-			event.x > buttonX &&
-			event.x < buttonX + buttonW &&
-			event.y > quitButtonY &&
-			event.y < quitButtonY + buttonH
+				event.x > buttonX &&
+				event.x < buttonX + buttonW &&
+				event.y > quitButtonY &&
+				event.y < quitButtonY + buttonH
 		) {
-			// Executes if button was clicked!
-			self.paused = false;
-			$('.paused').hide();
-			self.gameStarted = false;
-			//TODO: FIX HERE :Clear all canvas and previous game history
-			$('.star').show();
-			$(".interface").html("");
-			self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
-			$('#game').hide();
-			generateMenus('playMenu');
+			self.quitGame();
+			
 		}
 	}
 
@@ -737,6 +716,7 @@ function Game() {
 		} else
 		{
 			self.ctx.fillText("Level " + levelNumber + "\n finished", 300, 350);
+			self.backgroundSound.stop();
 		}
 		self.gameStarted = false;
 
@@ -747,12 +727,13 @@ function Game() {
 			}
 		}, 5000);
 	}
-
+		
 	// Print game over and restart game if needed;
 	self.gameOver = function(repeat) {
 		self.ctx.fillText("Game Over", 400, 350);
 
 		if (repeat) {
+			self.backgroundSound.stop();
 			setTimeout(function() {
 						self.startNewGame('story', 'story1')
 						}, 5000);
@@ -790,43 +771,46 @@ function Game() {
 		self.paused = false;
 		$('.paused').hide();
 		self.gameStarted = false;
-		//TODO: FIX HERE :Clear all canvas and previous game history
 		$('.star').show();
 		$(".interface").html("");
 		$(".btn-group-vertical").html("");
 		self.backgroundSound.stop();
 		document.getElementById("main_audio").play();
+		self.entityManager.removeAllEntities();
+		self.entityManager.removeEntity(self.player);
 		self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
 		$('#game').hide();
 		generateMenus('mainMenu');
 	}
 
 	self.isPaused = function() {
-		// TODO:
-		// Move draw to the div paused  using ralative
 		self.ctx.beginPath();
 		self.ctx.fillStyle = "red";
 		self.ctx.fillText('GAME PAUSED', 550, 150);
 		//Add buttons
-		var resumeButtonX = 570;
-		// var buttonX = 570;
-		var saveButtonX = 570;
-		var quitButtonX = 570;
+		
+		//var buttonX = 350;
+		//var buttonXR=350;
+		//var resumeButtonY = 352;
+		//var saveButtonY = 420;
+		//var quitButtonY = 488;
+		 	
+		var buttonX = 570;
 		var resumeButtonY = 300;
 		var saveButtonY = 370;
-		var quitButtonY = 440;
+		var quitButtonY = 440; 
 		var buttonW = 160;
 		var buttonH = 50;
 		//Setting up in-game buttons
 
 		self.ctx.fillStyle = "blue";
 		//Resume button
-		self.ctx.fillRect(resumeButtonX, resumeButtonY, buttonW, buttonH);
-		console.log(" Resume POSITION HERE");
+		self.ctx.fillRect(buttonX, resumeButtonY, buttonW, buttonH);
 		//Save button
-		self.ctx.fillRect(saveButtonX, saveButtonY, buttonW, buttonH);
+		self.ctx.fillRect(buttonX, saveButtonY, buttonW, buttonH);
+
 		//Quit button
-		self.ctx.fillRect(quitButtonX, quitButtonY, buttonW, buttonH);
+		self.ctx.fillRect(buttonX, quitButtonY, buttonW, buttonH);
 		self.ctx.fillStyle = "yellow";
 		self.ctx.fillText("Resume", 600, 335);
 		self.ctx.fillText("Save", 620, 405);
@@ -837,6 +821,11 @@ function Game() {
 		self.ctx.rect(100, 50, 1080, 600);
 		self.ctx.stroke();
 		self.ctx.fill();
+	}
+	//TODO:Saves the game progress
+	self.saveProgress=function(){
+	
+		
 	}
 
 	self.loadLevel = function(data) {
