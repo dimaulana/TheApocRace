@@ -729,14 +729,15 @@ function Game() {
 		self.ctx.fillStyle = 'white';
 
 		var levelNumber = self.currentLevel.substring(5);
+		var number = parseInt(levelNumber);
 		var newLevelName = "story";
 
-		if (levelNumber >= totalLevels)
+		if (number >= totalLevels) 
 		{
 			self.gameOver(true);
 		} else
 		{
-			self.ctx.fillText("Level " + levelNumber + "\n finished", 300, 350);
+			self.ctx.fillText("Level " + number + "\n finished", 300, 350);
 		}
 		self.gameStarted = false;
 

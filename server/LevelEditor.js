@@ -35,6 +35,7 @@ function LevelEditor(param) {
     */
 
     self.writeToDatabase = function(data){
+        self.socket.emit('getUserName', self.user);
         Database.writeToDatabase(data);
     }
 
