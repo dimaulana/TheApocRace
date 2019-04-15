@@ -55,9 +55,7 @@ const assetCollection = [
 
 mongoose.connect(url, {useNewUrlParser: true});
 
-// if(useMongoCloud){
-	const db = mongoose.connection;
-// }
+const db = mongoose.connection;
 
 let Schema = mongoose.Schema;
 
