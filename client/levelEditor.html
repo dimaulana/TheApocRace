@@ -2,8 +2,7 @@
 
 
 <script>
-  var editor = levelEditor();
-  editor.initiate();
+
 </script>
 
 <style>
@@ -85,7 +84,7 @@
 
   #editor {
     border: 2px solid;
-    display: none;
+    /* display: none; */
     background-color: #3D3D3D;
   }
 
@@ -106,9 +105,9 @@
           </a>
         </li>
         <li class="editorMenu" id="Item">
-            <a href="#" id="Item" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-          <img class="selectedItem" src="client/images/healthPack.png">
-          Extras</a>
+          <a href="#" id="Item" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+            <img class="selectedItem" src="client/images/healthPack.png">
+            Extras</a>
         </li>
         <li class="editorMenu" id="Character">
           <a href="#" id="Character" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -133,11 +132,11 @@
     <div class="col-xs-4" id="canvasEditor">
       <canvas id="editor" height="720" width="1280"> </canvas>
       <button class="btn btn-primary" id="previous" style="float: left;" disabled>
-          <<</button> <div id="screenCounter" class="align-self-center">
-      </div>
-      <button class="btn btn-primary" id="next" style="float: right;">>>
-      </button>
+        <<</button> <div id="screenCounter" class="align-self-center">
     </div>
+    <button class="btn btn-primary" id="next" style="float: right;">>>
+    </button>
+  </div>
   </div>
 
   <!-- Save Level Modal -->
