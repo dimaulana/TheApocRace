@@ -5,6 +5,7 @@
   "main": "app.js",
   "dependencies": {
     "express": "^4.16.4",
+    "find-process": "^1.4.1",
     "mongoose": "^5.5.1",
     "password-hash": "^1.2.2",
     "socket.io": "^2.2.0"

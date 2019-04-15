@@ -391,7 +391,6 @@ levelEditor = function () {
         $(".saveLevel").on("click", function () {
             var levelName = $("#levelName").val();
             var user = socket.on('getUserName', function(data){
-                console.log("user", data);
                 if (levelName.includes('story') && data !== 'admin') {
                     alert('Invalid user, cannot save story mode levels!');
                     return;
