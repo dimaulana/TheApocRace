@@ -46,11 +46,6 @@ function Game() {
 	}
 	self.coins.image.src = "/client/images/singlecoin.png";
 
-<<<<<<< HEAD
-window.onload=function(){
-	// document.getElementById("main_audio").play();
-}
-=======
 	window.onload=function(){
 		document.getElementById("main_audio").play();
 	}
@@ -67,7 +62,6 @@ window.onload=function(){
 			entity.properties.weaponInterval = entity.properties.weaponMap.normal;
 		}
 	}
->>>>>>> 42b5002ec316e0aac228326c97862eae78f02d2d
 
 	self.spawnBullet = function(entity) {
 		// Check weaponClock;
@@ -738,11 +732,7 @@ window.onload=function(){
 		var number = parseInt(levelNumber);
 		var newLevelName = "story";
 
-<<<<<<< HEAD
 		if (number >= totalLevels) 
-=======
-		if (levelNumber >= totalLevels)
->>>>>>> 42b5002ec316e0aac228326c97862eae78f02d2d
 		{
 			self.gameOver(true);
 		} else
@@ -858,7 +848,7 @@ window.onload=function(){
 
     		if (levelData[i].tag == "Sound") {
 					self.backgroundSound = new Sound(levelData[i].fileLocation);
-					// document.getElementById("main_audio").pause();
+					document.getElementById("main_audio").pause();
     			self.backgroundSound.play();
     			continue;
     		}
