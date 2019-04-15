@@ -22,7 +22,7 @@ function Entity(param) {
 	self.image = new Image();
 	self.image.src = self.properties.fileLocation;
 
-	if (self.tag == "Player" || self.tag == "Enemy" || self.tag == "Bullet" || self.tag == "Laser" || self.tag == "Coin" || self.tag == "Health") {
+	if (self.tag == "Player" || self.tag == "Enemy" || self.tag == "Bullet" || self.tag == "Laser" || self.tag == "Coin") {
 		self.animation = new Animation();
 	}
 	else if (self.tag == "Background") {

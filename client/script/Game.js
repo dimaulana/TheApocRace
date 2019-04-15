@@ -14,6 +14,7 @@ function Game() {
 
 	self.player;
 	self.level;
+	self.gameMode;
 	self.frameCount;
 	self.backgroundSound;
 	self.viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
@@ -61,6 +62,7 @@ function Game() {
 			entity.properties.weaponName = 'normal';
 			entity.properties.weaponInterval = entity.properties.weaponMap.normal;
 		}
+		entity.properties.weaponClock = entity.properties.weaponInterval; // allows player to shoot instantly
 	}
 
 	self.spawnBullet = function(entity) {
@@ -80,10 +82,19 @@ function Game() {
 		}
 
 		param.origin = entity.tag; // Save the shooter;
-		param.pos = {
-			x: entity.properties.pos.x + 18,
-			y: entity.properties.pos.y + 16
+		param.scale = {
+			x: (entity.properties.scale.x == -1.0) ? -1.0 : 1.0,
+			y: 1.0
+		};
+
+		param.pos = {};
+		if (param.scale.x == -1.0) {
+			param.pos.x = entity.properties.pos.x - 30;
 		}
+		else {
+			param.pos.x = entity.properties.pos.x + 18;
+		}
+		param.pos.y = entity.properties.pos.y + 16
 		param.prevPos = param.pos;
 
 		param.clock = 0;
@@ -102,7 +113,7 @@ function Game() {
 			param.width = 100;
 			param.lifespan = 10;
 			param.fileLocation = entity.properties.laserFile; // Image source;
-			param.frame_sets = [[0], [1], [1], [1]];
+			param.frame_sets = [[0], [0], [0], [0]];
 			param.speed = {
 				x: 50,
 				y: 0
@@ -111,10 +122,7 @@ function Game() {
 
 		param.height = 20;
 
-		param.scale = {
-			x: (entity.properties.scale.x == -1.0) ? -1.0 : 1.0,
-			y: 1.0
-		};
+
 		param.alive = true;
 
 		for (var i = 0; i < bulletsToSpawn; i++) {
@@ -557,6 +565,7 @@ function Game() {
 				case "Tile2":
 				case "Tile3":
 				case "Tile4":
+				case "Health":
 					if (!self.viewport.inView(e, 40)) return;
 
 					self.ctx.drawImage(e.image, e.properties.pos.x - self.viewport.x, e.properties.pos.y - self.viewport.y,
@@ -582,7 +591,6 @@ function Game() {
 				case "Bullet":
 				case "Laser":
 				case "Coin":
-				case "Health":
 					if (!self.viewport.inView(e, 40)) return;
 
 					self.ctx.drawImage(e.image, e.animation.frame * e.properties.width, 0, e.properties.width, e.properties.height,
@@ -730,6 +738,20 @@ function Game() {
 
 		self.gameStarted = false;
 
+		if (self.gameMode == 'custom') {
+			$('.star').show();
+			$(".interface").html("");
+			$(".btn-group-vertical").html("");
+			self.backgroundSound.stop();
+			document.getElementById("main_audio").play();
+			self.entityManager.removeAllEntities();
+			self.entityManager.removeEntity(self.player);
+			self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
+			$('#game').hide();
+			generateMenus('buildMenu');
+			return;
+		}
+
 		setTimeout(function () {
 			if (++levelNumber <= totalLevels) {
 				newLevelName += levelNumber;
@@ -857,7 +879,6 @@ function Game() {
 
 	}
 	self.setupLevel = function(data) {
-		console.log(data);
 		// Explicitly removing player;
 		self.entityManager.removeEntity(self.player);
 
@@ -884,6 +905,7 @@ function Game() {
 	}
 
 	self.startNewGame = function(mode, level) {
+		self.gameMode = mode;
 		self.entityManager.removeAllEntities(); // Clear all entities if any;
 
 		if (!level) {

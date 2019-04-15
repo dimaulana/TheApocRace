@@ -15,7 +15,7 @@ const mongoose = require('mongoose');
 
 var environment = fs.readFileSync('server/bin/environment.json');
 var jsonObject = JSON.parse(environment);
-console.log(jsonObject.name);
+// console.log(jsonObject.name);
 
 
 var url = jsonObject.name === "dev" ?  "mongodb://localhost/apoRun" : "mongodb+srv://admin:admin@aporun-l1ht9.mongodb.net/apoRun?retryWrites=true";
@@ -222,7 +222,6 @@ Database.getUserLevelNames = function(username, cb){
 			{
 				levelNames.push(res[i].levelName);
 			}
-			// console.log(res);
 			cb(levelNames);
 		}
 		else

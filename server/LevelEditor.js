@@ -41,7 +41,6 @@ function LevelEditor(param) {
 
     self.readLevel = function() {
         var data = {};
-        console.log(self.user);
         if(self.levelName !== "") {
             data = Database.readFromDatabase({levelName: self.levelName, user: self.user} , function(levelData) {
                 if(!levelData)
