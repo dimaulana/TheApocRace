@@ -365,12 +365,15 @@ levelEditor = function () {
     self.saveLevel = function () {
         $(".saveLevel").on("click", function () {
             var levelName = $("#levelName").val();
+            var user = socket.on('getUserName', function(data){
+                console.log("user", data);
+                if (levelName.includes('story') && data !== 'admin') {
+                    alert('Invalid user, cannot save story mode levels!');
+                    return;
+                }
+            });
             self.tileMap.name = levelName;
-
-            if (levelName.includes('story')) {
-                alert('Invalid user, cannot save story mode levels!');
-                return;
-            }
+          
             /* Save data here */
             if (levelName) {
                 $('#saveModal').modal('hide');

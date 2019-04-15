@@ -8,8 +8,17 @@
 
 // var mongojs = require("mongojs");
 
+var findProcess = require('find-process');
+var fs = require('fs');
 const mongoose = require('mongoose');
-const url = "mongodb+srv://admin:admin@aporun-l1ht9.mongodb.net/apoRun?retryWrites=true";
+// var environment = require('./server/bin/environment.json');
+
+var environment = fs.readFileSync('server/bin/environment.json');
+var jsonObject = JSON.parse(environment);
+console.log(jsonObject.name);
+
+
+var url = jsonObject.name === "dev" ?  "mongodb://localhost/apoRun" : "mongodb+srv://admin:admin@aporun-l1ht9.mongodb.net/apoRun?retryWrites=true";
 // var url = 'localhost:27017/apoRun';
 var passwordHash = require('password-hash');
 
@@ -44,11 +53,37 @@ const assetCollection = [
 /* This manages the creation of database schema
    Creates models that are used in our game;
 */
+
+
+
+
+// var mongod = findProcess("port", "27017", function(err, success){
+// 	if(err){
+// 		console.log("cannot find local running mongod process, will use the cloud one.");
+// 	}
+// 	else
+// 	{
+// 		findLocalMongoProcess(true);
+// 	}
+// });
+
+// function findLocalMongoProcess(status)
+// {
+// 	url = "localhost:27017/apoRun";
+// 	console.log("status", status);
+// 	console.log("new url", url);
+// 	return status;
+// }
+
+
 mongoose.connect(url, {useNewUrlParser: true});
-const db = mongoose.connection;
+
+// if(useMongoCloud){
+	const db = mongoose.connection;
+// }
+
 let Schema = mongoose.Schema;
 
-console.log('USING MONGO DB ATLAS', url);
 
 // User schema;
 const userShema = new Schema({
@@ -173,7 +208,6 @@ Database.getAllAssets = function(cb) {
 Database.writeToDatabase = function(data){
 	// Check for user specific level names;
 	Level.findOne({levelName: data.levelName, user: data.user}, function(err, res) {
-		console.log(res);
 		if (res) {
 			// Level exists, then update tileMap;
 			Level.findOneAndUpdate(
@@ -196,8 +230,9 @@ Database.writeToDatabase = function(data){
 Database.readFromDatabase = function(data, cb){
 	// Get user specific levels;
 	Level.findOne({levelName : data.levelName, user: data.user}, function(err, res){
-		if(res)
+		if(res){
 			cb(res);
+		}
 		else
 			cb();
 	});

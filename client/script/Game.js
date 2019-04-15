@@ -47,7 +47,7 @@ function Game() {
 	self.coins.image.src = "/client/images/singlecoin.png";
 
 window.onload=function(){
-	document.getElementById("main_audio").play();
+	// document.getElementById("main_audio").play();
 }
 
 	self.spawnBullet = function(entity) {
@@ -675,14 +675,15 @@ window.onload=function(){
 		self.ctx.fillStyle = 'white';
 
 		var levelNumber = self.currentLevel.substring(5);
+		var number = parseInt(levelNumber);
 		var newLevelName = "story";
 
-		if (levelNumber >= totalLevels) 
+		if (number >= totalLevels) 
 		{
 			self.gameOver(true);
 		} else 
 		{
-			self.ctx.fillText("Level " + levelNumber + "\n finished", 300, 350);
+			self.ctx.fillText("Level " + number + "\n finished", 300, 350);
 		}
 		self.gameStarted = false;
 
@@ -793,7 +794,7 @@ window.onload=function(){
 
     		if (levelData[i].tag == "Sound") {
 					self.backgroundSound = new Sound(levelData[i].fileLocation);
-					document.getElementById("main_audio").pause();
+					// document.getElementById("main_audio").pause();
     			self.backgroundSound.play();
     			continue;
     		}
