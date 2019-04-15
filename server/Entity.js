@@ -81,7 +81,10 @@ class Entity{
                 param.weaponName = component.name;
                 param.weaponMap = component.map;
                 param.weaponInterval = component.coolDown;
-                param.weaponFile = component.imageLoc;
+                param.bulletFile = component.imageLoc.normal;
+                
+                if (component.imageLoc.laser)
+                    param.laserFile = component.imageLoc.laser;
             }
         });
         return param;
