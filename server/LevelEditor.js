@@ -35,11 +35,13 @@ function LevelEditor(param) {
     */
 
     self.writeToDatabase = function(data){
+        self.socket.emit('getUserName', self.user);
         Database.writeToDatabase(data);
     }
 
     self.readLevel = function() {
         var data = {};
+        console.log(self.user);
         if(self.levelName !== "") {
             data = Database.readFromDatabase({levelName: self.levelName, user: self.user} , function(levelData) {
                 if(!levelData)

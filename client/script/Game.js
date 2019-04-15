@@ -691,7 +691,7 @@ function Game() {
 				event.y < quitButtonY + buttonH
 		) {
 			self.quitGame();
-			
+
 		}
 	}
 
@@ -708,16 +708,18 @@ function Game() {
 		self.ctx.fillStyle = 'white';
 
 		var levelNumber = self.currentLevel.substring(5);
+		var number = parseInt(levelNumber);
 		var newLevelName = "story";
 
-		if (levelNumber >= totalLevels)
+		if (number >= totalLevels)
 		{
 			self.gameOver(true);
-		} else
-		{
+		}
+		else {
 			self.ctx.fillText("Level " + levelNumber + "\n finished", 300, 350);
 			self.backgroundSound.stop();
 		}
+
 		self.gameStarted = false;
 
 		setTimeout(function () {
@@ -727,7 +729,7 @@ function Game() {
 			}
 		}, 5000);
 	}
-		
+
 	// Print game over and restart game if needed;
 	self.gameOver = function(repeat) {
 		self.ctx.fillText("Game Over", 400, 350);
@@ -788,17 +790,17 @@ function Game() {
 		self.ctx.fillStyle = "red";
 		self.ctx.fillText('GAME PAUSED', 550, 150);
 		//Add buttons
-		
+
 		//var buttonX = 350;
 		//var buttonXR=350;
 		//var resumeButtonY = 352;
 		//var saveButtonY = 420;
 		//var quitButtonY = 488;
-		 	
+
 		var buttonX = 570;
 		var resumeButtonY = 300;
 		var saveButtonY = 370;
-		var quitButtonY = 440; 
+		var quitButtonY = 440;
 		var buttonW = 160;
 		var buttonH = 50;
 		//Setting up in-game buttons
@@ -824,8 +826,8 @@ function Game() {
 	}
 	//TODO:Saves the game progress
 	self.saveProgress=function(){
-	
-		
+
+
 	}
 
 	self.loadLevel = function(data) {
