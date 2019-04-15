@@ -169,7 +169,7 @@ Database.getAllAssets = function(cb) {
 Database.writeToDatabase = function(data){
 	// Check for user specific level names;
 	Level.findOne({levelName: data.levelName, user: data.user}, function(err, res) {
-		console.log(res);
+		// console.log(res);
 		if (res) {
 			// Level exists, then update tileMap;
 			Level.findOneAndUpdate(

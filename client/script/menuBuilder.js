@@ -53,17 +53,20 @@ $(document).ready(function () {
                     break;
             }
         } else if (currentPage === "buildMenu") {
-            switch (menuClicked) {
-                case "New Level":
-                    $('.interface').load("client/levelEditor.html", startEditor);
-                    break;
-                case "Load Level":
-                    loadEditor();
-                    break;
-                case "Back":
-                    generateMenus("mainMenu");
-                    break;
-            }
+            $('.interface').load("client/levelEditor.html", function() {
+                switch (menuClicked) {
+                    case "New Level":
+                        startEditor();
+                        break;
+                    case "Load Level":
+                        loadEditor();
+                        break;
+                    case "Back":
+                        generateMenus("mainMenu");
+                        break;
+                }
+            });
+         
         } else if (currentPage === "optionsMenu") {
             switch (menuClicked) {
                 case "Controls":

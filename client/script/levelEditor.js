@@ -106,18 +106,29 @@ levelEditor = function () {
     self.viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
 
     /* Initiates the first empty canvas */
-    self.initiate = function (levelName) {
-        if (!levelName) levelName = "";
-        socket.emit('loadLevel', levelName);
+    self.initiate = function () {
+        console.log("Initiating");
+        /* Attach event listeners */
+        self.canvas.addEventListener('click', self.clicked);
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        self.canvas.addEventListener('mousedown', self.down);
+        self.canvas.addEventListener('mousemove', self.move);
+        self.canvas.addEventListener('mouseup', self.reset);
+        // socket.emit("loadLevel", "");
+        // if (!levelName) levelName = "";
         socket.on('getLevelData', function (data) {
+            console.log("SOCKET CALL");
             /* If we are loading an existing level, load level */
             if (!jQuery.isEmptyObject(data)) {
+                console.log(data);
                 self.tileMap = data;
                 self.drawToCanvas(data);
             } else {
+                console.log("Default canvas")
                 self.defaultCanvas();
             }
         });
+
         self.displayGrid();
         /* Adds screen number indicator */
         $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
@@ -125,12 +136,12 @@ levelEditor = function () {
         self.populateDropdown();
 
         socket.on('receiveLevelNamesFromDb', function (levels) {
-            loadCustomLevels(levels);
+            console.log("levels: " + levels);
+            loadCustomLevels(levels, self);
         });
     }
 
     self.defaultCanvas = function () {
-
         /* Sets up default player position for blank canvas */
         var character = new Image();
         character.src = "client/images/playerrun.png"
@@ -163,6 +174,7 @@ levelEditor = function () {
     }
 
     self.drawToCanvas = function (data) {
+        console.log("drawing to canvas");
         $.each(data, function (i) {
             if (data[i].x > 1280 || data[i].x < 0) {
                 return;
@@ -202,7 +214,7 @@ levelEditor = function () {
         self.drawToCanvas(self.tileMap);
     };
 
-    /* Sets background TODO: Figure out sprite backgrounds */
+    /* Sets background */
     self.setBackground = function () {
         self.canvas.style.background = "url('" + self.background.src + "')";
     }
@@ -452,12 +464,14 @@ levelEditor = function () {
                 tileMap: tileMapToSend,
                 levelName: levelName
             }
+            console.log(pack);
             socket.emit('saveNewLevel', pack);
         });
     }
 
     /* Load Level */
     self.loadLevel = function (levelName) {
+        console.log("load socket call");
         socket.emit('loadLevel', levelName);
     }
 
@@ -508,16 +522,15 @@ levelEditor = function () {
         var selectedOption = $(this).attr("id");
         switch (selectedOption) {
             case "Back":
-
                 /* Reset all listeners */
                 self.canvas.removeEventListener('click', self.clicked, false);
                 self.canvas.removeEventListener('mousedown', self.down, false);
                 self.canvas.removeEventListener('mousemove', self.move, false);
                 self.canvas.removeEventListener('mouseup', self.reset, false);
-                $(document).off("mousemove", self.menuMov);
                 $(".saveLevel").off("click", self.saveLevel);
+                socket.removeAllListeners("getLevelData");
+                socket.removeAllListeners("receiveLevelNamesFromDb");
 
-                // alert('Exiting will remove unsave changes. Are you sure ?');
                 $(".interface").empty();
                 $(".menu").empty();
                 $('.star').removeClass("off");
@@ -532,6 +545,7 @@ levelEditor = function () {
 
     /* Handle dropdown on clicks */
     $(document).on("click", ".objects li .dropdown-menu a", function () {
+        console.log("other here");
         var imageSrc = $("img", this).attr("src");
         var selectedDropdown = $(this).closest("li").attr("id");
         var imageId = $(this).closest("a").attr("id");
@@ -575,30 +589,31 @@ levelEditor = function () {
     });
 
 
-    /* Attach event listeners */
-    self.canvas.addEventListener('click', self.clicked);
-    document.addEventListener('contextmenu', event => event.preventDefault());
-    self.canvas.addEventListener('mousedown', self.down);
-    self.canvas.addEventListener('mousemove', self.move);
-    self.canvas.addEventListener('mouseup', self.reset);
+
 
     /* Starters */
+    self.initiate();
     return self;
 };
 
 function startEditor() {
+    var editor = levelEditor();
     $('.star').addClass("off");
-    $('#editor').show();
-    editor.loadLevel();
+    $('.interface').show("fast");
+    editor.loadLevel("");
 }
 
 function loadEditor() {
+    var editor = levelEditor();
     /* To Do: get list of levels from directory */
     // socket.on('getLevelsFromDb', function (levels) ;
     socket.emit('getLevelNames', {});
 }
 
-function loadCustomLevels(levels) {
+function loadCustomLevels(levels, editor) {
+    $(".interface").hide();
+    $(".menu").html("");
+    console.log("Load Custom Levels");
     if (!levels) {
         alert("No level found");
         generateMenus("buildMenu");
@@ -615,15 +630,16 @@ function loadCustomLevels(levels) {
         var selectedLvl = $(this).text();
         $('.star').addClass("off");
         if (selectedLvl === "Back") {
-            $(".interface").html("");
+            $(".interface").hide();
             $(".menu").html("");
             $('.star').removeClass("off");
             generateMenus("buildMenu");
         } else {
-            $('.interface').load("client/levelEditor.html", function () {
-                $('#editor').show();
+            $('.interface').show("fast", function() {
                 editor.loadLevel(selectedLvl);
             });
+            // var editor = levelEditor();
+
         }
     });
 }
