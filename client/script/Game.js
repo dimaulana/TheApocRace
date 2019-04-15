@@ -14,6 +14,7 @@ function Game() {
 
 	self.player;
 	self.level;
+	self.gameMode;
 	self.frameCount;
 	self.backgroundSound;
 	self.viewport = new Viewport(0, 0, 1280, 720); // The viewport of the game;
@@ -61,6 +62,7 @@ function Game() {
 			entity.properties.weaponName = 'normal';
 			entity.properties.weaponInterval = entity.properties.weaponMap.normal;
 		}
+		entity.properties.weaponClock = entity.properties.weaponInterval; // allows player to shoot instantly
 	}
 
 	self.spawnBullet = function(entity) {
@@ -80,10 +82,19 @@ function Game() {
 		}
 
 		param.origin = entity.tag; // Save the shooter;
-		param.pos = {
-			x: entity.properties.pos.x + 18,
-			y: entity.properties.pos.y + 16
+		param.scale = {
+			x: (entity.properties.scale.x == -1.0) ? -1.0 : 1.0,
+			y: 1.0
+		};
+
+		param.pos = {};
+		if (param.scale.x == -1.0) {
+			param.pos.x = entity.properties.pos.x - 30;
 		}
+		else {
+			param.pos.x = entity.properties.pos.x + 18;
+		}
+		param.pos.y = entity.properties.pos.y + 16
 		param.prevPos = param.pos;
 
 		param.clock = 0;
@@ -102,7 +113,7 @@ function Game() {
 			param.width = 100;
 			param.lifespan = 10;
 			param.fileLocation = entity.properties.laserFile; // Image source;
-			param.frame_sets = [[0], [1], [1], [1]];
+			param.frame_sets = [[0], [0], [0], [0]];
 			param.speed = {
 				x: 50,
 				y: 0
@@ -111,10 +122,7 @@ function Game() {
 
 		param.height = 20;
 
-		param.scale = {
-			x: (entity.properties.scale.x == -1.0) ? -1.0 : 1.0,
-			y: 1.0
-		};
+
 		param.alive = true;
 
 		for (var i = 0; i < bulletsToSpawn; i++) {
@@ -347,6 +355,13 @@ function Game() {
 					entity.properties.alive = false;
 				}
 			}
+			else if (entity.tag == "Health") {
+				var currentOverlap = self.getOverlap(self.player, entity);
+				if (currentOverlap.x > 0 && currentOverlap.y > 0) {
+					entity.properties.hp += 10;
+					entity.properties.alive = false;
+				}
+			}
 			else if (entity.tag == "Tile1" ||
 					 entity.tag == "Tile2" ||
 					 entity.tag == "Tile3" ||
@@ -488,7 +503,7 @@ function Game() {
 
 		if (self.player.properties.pos.y > self.canvas.height) {
 			self.player.properties.alive = false;
-			self.gameOver(true);
+			self.gameOver(false);
 		}
 	}
 
@@ -550,6 +565,7 @@ function Game() {
 				case "Tile2":
 				case "Tile3":
 				case "Tile4":
+				case "Health":
 					if (!self.viewport.inView(e, 40)) return;
 
 					self.ctx.drawImage(e.image, e.properties.pos.x - self.viewport.x, e.properties.pos.y - self.viewport.y,
@@ -597,20 +613,6 @@ function Game() {
 				// Quit game;
 				// Save progress;
 				self.quitGame();
-				/*
-				self.paused = false;
-				$('.paused').hide();
-				self.gameStarted = false;
-				//TODO: FIX HERE :Clear all canvas and previous game history
-				$('.star').show();
-				$(".interface").html("");
-				$(".btn-group-vertical").html("");
-				self.backgroundSound.stop();
-				document.getElementById("main_audio").play();
-    			self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
-				$('#game').hide();
-				generateMenus('mainMenu');
-				*/
 			break;
 
 			case 68: // d key
@@ -664,25 +666,26 @@ function Game() {
 		}
 	}
 
+		//Handler function
 	function clickHandler(event) {
-		var buttonX = 700;
-		var buttonXR=700;
-		var resumeButtonY = 410;
-		var saveButtonY = 478;
-		var quitButtonY = 541;
+		var buttonX = 350;
+		var buttonXR=350;
+		var resumeButtonY = 352;
+		var saveButtonY = 420;
+		var quitButtonY = 488;
 		var buttonW = 160;
 		var buttonH = 50;
-
+		var x = event.clientX;
+		var y = event.clientY;
 		//Resume button
 		if (
-			event.x > buttonXR &&
-			event.x < (buttonXR + buttonW) &&
-			event.y > (resumeButtonY) &&
-			event.y < (resumeButtonY + buttonH)
+				event.x > buttonXR &&
+			    event.x < (buttonXR + buttonW) &&
+				event.y > (resumeButtonY) &&
+				event.y < (resumeButtonY + buttonH)
 		) {
 			// Executes if  resume button was clicked!
 			paused = false;
-			console.log(" Resume POSITION Clicked");
 		}
 		///save button save listener
 		else if (
@@ -693,26 +696,18 @@ function Game() {
 		) {
 			// Executes if  save button was clicked!
 			//TODO:Add SAVE FUNCTION HERE
-			console.log("Save");
+			self.saveProgress();
 
 		}
 		//quit button listener
 		else if (
-			event.x > buttonX &&
-			event.x < buttonX + buttonW &&
-			event.y > quitButtonY &&
-			event.y < quitButtonY + buttonH
+				event.x > buttonX &&
+				event.x < buttonX + buttonW &&
+				event.y > quitButtonY &&
+				event.y < quitButtonY + buttonH
 		) {
-			// Executes if button was clicked!
-			self.paused = false;
-			$('.paused').hide();
-			self.gameStarted = false;
-			//TODO: FIX HERE :Clear all canvas and previous game history
-			$('.star').show();
-			$(".interface").html("");
-			self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
-			$('#game').hide();
-			generateMenus('playMenu');
+			self.quitGame();
+
 		}
 	}
 
@@ -732,14 +727,21 @@ function Game() {
 		var number = parseInt(levelNumber);
 		var newLevelName = "story";
 
-		if (number >= totalLevels) 
+		if (number >= totalLevels)
 		{
 			self.gameOver(true);
-		} else
-		{
-			self.ctx.fillText("Level " + number + "\n finished", 300, 350);
 		}
+		else {
+			self.ctx.fillText("Level " + levelNumber + "\n finished", 300, 350);
+			self.backgroundSound.stop();
+		}
+
 		self.gameStarted = false;
+
+		if (self.gameMode == 'custom') {
+			self.gameOver(false);
+			return;
+		}
 
 		setTimeout(function () {
 			if (++levelNumber <= totalLevels) {
@@ -752,11 +754,20 @@ function Game() {
 	// Print game over and restart game if needed;
 	self.gameOver = function(repeat) {
 		self.ctx.fillText("Game Over", 400, 350);
+		self.backgroundSound.stop();
 
-		if (repeat) {
+		self.gameStarted = false;
+		if (self.gameMode == 'custom') {
 			setTimeout(function() {
-						self.startNewGame('story', 'story1')
-						}, 5000);
+							self.quitGame()
+						}, 2000);
+		}
+		else {
+			if (repeat) {
+				setTimeout(function() {
+								self.startNewGame('story', 'story1')
+							}, 5000);
+			}
 		}
 	}
 
@@ -791,28 +802,31 @@ function Game() {
 		self.paused = false;
 		$('.paused').hide();
 		self.gameStarted = false;
-		//TODO: FIX HERE :Clear all canvas and previous game history
 		$('.star').show();
 		$(".interface").html("");
 		$(".btn-group-vertical").html("");
 		self.backgroundSound.stop();
 		document.getElementById("main_audio").play();
+		self.entityManager.removeAllEntities();
+		self.entityManager.removeEntity(self.player);
 		self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
 		$('#game').hide();
-		generateMenus('mainMenu');
+		generateMenus('playMenu');
 	}
 
 	self.isPaused = function() {
-		// TODO:
-		// Move draw to the div paused  using ralative
 		self.ctx.beginPath();
 		self.ctx.fillStyle = "red";
 		self.ctx.fillText('GAME PAUSED', 550, 150);
 		//Add buttons
-		var resumeButtonX = 570;
-		// var buttonX = 570;
-		var saveButtonX = 570;
-		var quitButtonX = 570;
+
+		//var buttonX = 350;
+		//var buttonXR=350;
+		//var resumeButtonY = 352;
+		//var saveButtonY = 420;
+		//var quitButtonY = 488;
+
+		var buttonX = 570;
 		var resumeButtonY = 300;
 		var saveButtonY = 370;
 		var quitButtonY = 440;
@@ -822,12 +836,12 @@ function Game() {
 
 		self.ctx.fillStyle = "blue";
 		//Resume button
-		self.ctx.fillRect(resumeButtonX, resumeButtonY, buttonW, buttonH);
-		console.log(" Resume POSITION HERE");
+		self.ctx.fillRect(buttonX, resumeButtonY, buttonW, buttonH);
 		//Save button
-		self.ctx.fillRect(saveButtonX, saveButtonY, buttonW, buttonH);
+		self.ctx.fillRect(buttonX, saveButtonY, buttonW, buttonH);
+
 		//Quit button
-		self.ctx.fillRect(quitButtonX, quitButtonY, buttonW, buttonH);
+		self.ctx.fillRect(buttonX, quitButtonY, buttonW, buttonH);
 		self.ctx.fillStyle = "yellow";
 		self.ctx.fillText("Resume", 600, 335);
 		self.ctx.fillText("Save", 620, 405);
@@ -839,6 +853,8 @@ function Game() {
 		self.ctx.stroke();
 		self.ctx.fill();
 	}
+	//TODO:Saves the game progress
+	self.saveProgress = function(){}
 
 	self.loadLevel = function(data) {
 		self.currentLevel = data.name;
@@ -885,6 +901,7 @@ function Game() {
 	}
 
 	self.startNewGame = function(mode, level) {
+		self.gameMode = mode;
 		self.entityManager.removeAllEntities(); // Clear all entities if any;
 
 		if (!level) {
@@ -942,6 +959,11 @@ socket.on('receiveCustomLevel', function(levels) {
 
 socket.on('levelPack', function(data) {
 	if (!game) return;
+
+	if (!data) {
+		alert("Level not found. \nTry again.");
+		return;
+	}
 	game.setupLevel(data);
 });
 
@@ -954,7 +976,7 @@ socket.on("storyModeFromDb", function (data) {
 function loadGameCustom(levels) {
     if (!levels) {
         alert("No level found");
-        generateMenus("buildMenu");
+        generateMenus("playMenu");
         return;
     }
     var items = [];
@@ -971,7 +993,7 @@ function loadGameCustom(levels) {
             $(".interface").html("");
             $(".menu").html("");
             $('.star').removeClass("off");
-            generateMenus("buildMenu");
+            generateMenus("playMenu");
         } else {
             // Load custom levels created by the user;
             loadGame('custom', selectedLvl);

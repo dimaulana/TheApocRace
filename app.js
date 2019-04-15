@@ -67,12 +67,12 @@ var startGame = function(data) {
 var newLevelEditor = function(data){
 	data.username = currentUser.name;
 	var levelEditor = new LevelEditor(data);
-	levelEditor.readLevel();
-
-	data.socket.on('saveNewLevel', function(data){
-		data.user = currentUser.name;
-		levelEditor.writeToDatabase(data);
-	});
+	return levelEditor;
+	// data.socket.on('saveNewLevel', function(data){
+	// 	console.log("save socket called");
+	// 	data.user = currentUser.name;
+	// 	// levelEditor.writeToDatabase(data);
+	// });
 }
 
 var io = require('socket.io')(serv,{});
@@ -187,7 +187,14 @@ io.sockets.on('connection',function(socket) {
 	});
 
 	socket.on('loadLevel', function(levelName){
-		newLevelEditor({levelName: levelName, socket: socket});
+		var editor = newLevelEditor({levelName: levelName, socket: socket});
+		editor.readLevel();
+	});
+
+	socket.on('saveNewLevel', function(pack) {
+		pack.user = currentUser.name;
+		var editor = newLevelEditor({levelName: pack.levelName, socket: socket});
+		editor.writeToDatabase(pack);
 	});
 
 	socket.on('getLevelNames', function() {

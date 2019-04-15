@@ -37,6 +37,7 @@ function Sound(src) {
 	// TODO: Get the sound mode from the level file;
 	this.sound.setAttribute("storyMode", "none");
 	this.sound.style.display = "none";
+	this.sound.loop=true;
 	document.body.appendChild(this.sound);
 
 	this.play = function(){
