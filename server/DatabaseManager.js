@@ -53,7 +53,11 @@ const assetCollection = [
    Creates models that are used in our game;
 */
 
-mongoose.connect(url, {useNewUrlParser: true});
+mongoose.connect(url, {useNewUrlParser: true}, function(err){
+	if(err){
+		console.log("cannot connect to local database using url-", url , "\nPlease ensure you have a mongodb process running.");
+	}
+});
 
 const db = mongoose.connection;
 
