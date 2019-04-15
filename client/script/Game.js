@@ -503,7 +503,7 @@ function Game() {
 
 		if (self.player.properties.pos.y > self.canvas.height) {
 			self.player.properties.alive = false;
-			self.gameOver(true);
+			self.gameOver(false);
 		}
 	}
 
@@ -739,16 +739,7 @@ function Game() {
 		self.gameStarted = false;
 
 		if (self.gameMode == 'custom') {
-			$('.star').show();
-			$(".interface").html("");
-			$(".btn-group-vertical").html("");
-			self.backgroundSound.stop();
-			document.getElementById("main_audio").play();
-			self.entityManager.removeAllEntities();
-			self.entityManager.removeEntity(self.player);
-			self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
-			$('#game').hide();
-			generateMenus('buildMenu');
+			self.gameOver(false);
 			return;
 		}
 
@@ -763,12 +754,20 @@ function Game() {
 	// Print game over and restart game if needed;
 	self.gameOver = function(repeat) {
 		self.ctx.fillText("Game Over", 400, 350);
+		self.backgroundSound.stop();
 
-		if (repeat) {
-			self.backgroundSound.stop();
+		self.gameStarted = false;
+		if (self.gameMode == 'custom') {
 			setTimeout(function() {
-						self.startNewGame('story', 'story1')
-						}, 5000);
+							self.quitGame()
+						}, 2000);
+		}
+		else {
+			if (repeat) {
+				setTimeout(function() {
+								self.startNewGame('story', 'story1')
+							}, 5000);
+			}
 		}
 	}
 
@@ -812,7 +811,7 @@ function Game() {
 		self.entityManager.removeEntity(self.player);
 		self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
 		$('#game').hide();
-		generateMenus('mainMenu');
+		generateMenus('playMenu');
 	}
 
 	self.isPaused = function() {
@@ -855,10 +854,7 @@ function Game() {
 		self.ctx.fill();
 	}
 	//TODO:Saves the game progress
-	self.saveProgress=function(){
-
-
-	}
+	self.saveProgress = function(){}
 
 	self.loadLevel = function(data) {
 		self.currentLevel = data.name;
@@ -963,6 +959,11 @@ socket.on('receiveCustomLevel', function(levels) {
 
 socket.on('levelPack', function(data) {
 	if (!game) return;
+
+	if (!data) {
+		alert("Level not found. \nTry again.");
+		return;
+	}
 	game.setupLevel(data);
 });
 
@@ -975,7 +976,7 @@ socket.on("storyModeFromDb", function (data) {
 function loadGameCustom(levels) {
     if (!levels) {
         alert("No level found");
-        generateMenus("buildMenu");
+        generateMenus("playMenu");
         return;
     }
     var items = [];
@@ -992,7 +993,7 @@ function loadGameCustom(levels) {
             $(".interface").html("");
             $(".menu").html("");
             $('.star').removeClass("off");
-            generateMenus("buildMenu");
+            generateMenus("playMenu");
         } else {
             // Load custom levels created by the user;
             loadGame('custom', selectedLvl);

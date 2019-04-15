@@ -32,6 +32,9 @@ function GamePlay(param) {
 		}
 
 		Database.readFromDatabase({levelName: self.name, user: username}, function(levelData) {
+			if (!levelData) {
+				self.socket.emit('levelPack', {});
+			}
 			self.loadLevelData(levelData.tileMap); // load level data;
 
 			self.entityManager.getEntities().forEach(function(entity) {
