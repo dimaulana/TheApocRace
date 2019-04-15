@@ -55,7 +55,7 @@ const assetCollection = [
 
 mongoose.connect(url, {useNewUrlParser: true}, function(err){
 	if(err){
-		console.log("cannot connect to local database using url-", url , "\nPlease ensure you have a mongodb process running.");
+		console.log("cannot connect to local database using url-", url , "\nPlease run mongod in terminal and restart the server.");
 	}
 });
 
