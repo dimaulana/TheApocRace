@@ -107,26 +107,17 @@ levelEditor = function () {
 
     /* Initiates the first empty canvas */
     self.initiate = function () {
-        console.log("Initiating");
-        /* Attach event listeners */
-        self.canvas.addEventListener('click', self.clicked);
-        document.addEventListener('contextmenu', event => event.preventDefault());
-        self.canvas.addEventListener('mousedown', self.down);
-        self.canvas.addEventListener('mousemove', self.move);
-        self.canvas.addEventListener('mouseup', self.reset);
-        // socket.emit("loadLevel", "");
-        // if (!levelName) levelName = "";
-        socket.on('getLevelData', function (data) {
-            console.log("SOCKET CALL");
+        socket.once('getLevelData', function (data) {
             /* If we are loading an existing level, load level */
             if (!jQuery.isEmptyObject(data)) {
-                console.log(data);
                 self.tileMap = data;
                 self.drawToCanvas(data);
             } else {
-                console.log("Default canvas")
                 self.defaultCanvas();
             }
+        });
+        socket.once('receiveLevelNamesFromDb', function (levels) {
+            loadCustomLevels(levels, self);
         });
 
         self.displayGrid();
@@ -134,11 +125,6 @@ levelEditor = function () {
         $("#screenCounter").html(self.currentScreen + 1 + "/" + self.numberOfScreens);
         /* Populate dropdown options */
         self.populateDropdown();
-
-        socket.on('receiveLevelNamesFromDb', function (levels) {
-            console.log("levels: " + levels);
-            loadCustomLevels(levels, self);
-        });
     }
 
     self.defaultCanvas = function () {
@@ -174,7 +160,6 @@ levelEditor = function () {
     }
 
     self.drawToCanvas = function (data) {
-        console.log("drawing to canvas");
         $.each(data, function (i) {
             if (data[i].x > 1280 || data[i].x < 0) {
                 return;
@@ -462,16 +447,17 @@ levelEditor = function () {
 
             var pack = {
                 tileMap: tileMapToSend,
-                levelName: levelName
+                levelName: levelName,
             }
-            console.log(pack);
+
             socket.emit('saveNewLevel', pack);
+            $('.saveLevel').off();
         });
+
     }
 
     /* Load Level */
     self.loadLevel = function (levelName) {
-        console.log("load socket call");
         socket.emit('loadLevel', levelName);
     }
 
@@ -518,19 +504,12 @@ levelEditor = function () {
     });
 
     /* Handle main buttons on clicks */
-    $(document).on("click", ".objects li", function () {
+    $('#menuWrapper').on("click", ".objects li", function () {
         var selectedOption = $(this).attr("id");
         switch (selectedOption) {
             case "Back":
                 /* Reset all listeners */
-                self.canvas.removeEventListener('click', self.clicked, false);
-                self.canvas.removeEventListener('mousedown', self.down, false);
-                self.canvas.removeEventListener('mousemove', self.move, false);
-                self.canvas.removeEventListener('mouseup', self.reset, false);
-                $(".saveLevel").off("click", self.saveLevel);
-                socket.removeAllListeners("getLevelData");
-                socket.removeAllListeners("receiveLevelNamesFromDb");
-
+                $('#menuWrapper *').off();
                 $(".interface").empty();
                 $(".menu").empty();
                 $('.star').removeClass("off");
@@ -544,8 +523,7 @@ levelEditor = function () {
     });
 
     /* Handle dropdown on clicks */
-    $(document).on("click", ".objects li .dropdown-menu a", function () {
-        console.log("other here");
+    $('#menuWrapper').on("click", ".objects li .dropdown-menu a", function () {
         var imageSrc = $("img", this).attr("src");
         var selectedDropdown = $(this).closest("li").attr("id");
         var imageId = $(this).closest("a").attr("id");
@@ -588,7 +566,12 @@ levelEditor = function () {
         }
     });
 
-
+    /* Attach event listeners */
+    self.canvas.addEventListener('click', self.clicked);
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    self.canvas.addEventListener('mousedown', self.down);
+    self.canvas.addEventListener('mousemove', self.move);
+    self.canvas.addEventListener('mouseup', self.reset);
 
 
     /* Starters */
@@ -598,22 +581,21 @@ levelEditor = function () {
 
 function startEditor() {
     var editor = levelEditor();
-    $('.star').addClass("off");
     $('.interface').show("fast");
+    $('.star').addClass("off");
     editor.loadLevel("");
 }
 
 function loadEditor() {
     var editor = levelEditor();
+    $(".interface").hide();
     /* To Do: get list of levels from directory */
     // socket.on('getLevelsFromDb', function (levels) ;
     socket.emit('getLevelNames', {});
 }
 
 function loadCustomLevels(levels, editor) {
-    $(".interface").hide();
     $(".menu").html("");
-    console.log("Load Custom Levels");
     if (!levels) {
         alert("No level found");
         generateMenus("buildMenu");
@@ -630,16 +612,14 @@ function loadCustomLevels(levels, editor) {
         var selectedLvl = $(this).text();
         $('.star').addClass("off");
         if (selectedLvl === "Back") {
-            $(".interface").hide();
+            $(".interface").html("");
             $(".menu").html("");
             $('.star').removeClass("off");
             generateMenus("buildMenu");
         } else {
-            $('.interface').show("fast", function() {
-                editor.loadLevel(selectedLvl);
-            });
-            // var editor = levelEditor();
-
+            $(".menu").html("");
+            $('.interface').show("fast");
+            editor.loadLevel(selectedLvl);
         }
     });
 }
