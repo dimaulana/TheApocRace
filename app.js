@@ -22,8 +22,13 @@ app.get('/', function(req,res) {
 
 app.use('/client',express.static(__dirname + '/client'));
 
+// Set up asset manager and load assets from the database;
+var assetManager = new AssetManager();
+
 // Initialize the database;
-DatabaseManager();
+DatabaseManager(function() {
+	assetManager.loadAssets();
+});
 
 //PORT from the server host
 serv.listen(process.env.PORT || 8080);
@@ -32,12 +37,6 @@ console.log('Server started');
 var DEBUG = true;
 
 var SOCKET_LIST = {};
-
-// Set up asset manager and load assets from the database;
-// Doing this here in order to avoid waiting for the database call
-// to load the data;
-var assetManager = new AssetManager();
-assetManager.loadAssets();
 
 // Saves the user information to be used throughout the game engine
 var User = function(data) {

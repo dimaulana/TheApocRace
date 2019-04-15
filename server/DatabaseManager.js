@@ -6,15 +6,15 @@
 	Author: Hussein Parpia
 */
 
-
-/**  -------------- DEPRACATED --------------------------
-
 // var mongojs = require("mongojs");
-// var url = 'localhost:27017/apoRun';
-// var MongoClient = require('mongodb').MongoClient;
-const collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
 
-*/
+const mongoose = require('mongoose');
+const url = "mongodb+srv://admin:admin@aporun-l1ht9.mongodb.net/apoRun?retryWrites=true";
+// var url = 'localhost:27017/apoRun';
+var passwordHash = require('password-hash');
+
+//var MongoClient = require('mongodb').MongoClient;
+//const collections = ['user', 'asset', 'level', 'inventory', 'leaderboard'];
 
 const assetCollection = [
 							{"type": "Texture", "name": "Player", "path": "client/images/playerrun.png"},
@@ -23,41 +23,22 @@ const assetCollection = [
 							{"type": "Texture", "name": "EnemyJump", "path": "client/images/enemyjump.png"},
 							{"type" : "Texture", "name": "Minion", "path": "client/images/minionenemyrun.png"},
 							{"type" : "Texture", "name": "MinionJump", "path": "client/images/minionenemyjump.png"},
+							{"type" : "Texture", "name": "Boss1", "path": "client/images/boss1.png"},
+							{"type" : "Texture", "name": "Boss2", "path": "client/images/boss2.png"},
 							{"type": "Texture", "name": "Tile1", "path": "/client/images/tile1.png"},
 							{"type": "Texture", "name": "Tile2", "path": "/client/images/tile2.png"},
 							{"type": "Texture", "name": "Tile3", "path": "/client/images/tile3.png"},
 							{"type": "Texture", "name": "Tile4", "path": "/client/images/tile4.png"},
 							{"type": "Texture", "name": "Coin", "path": "/client/images/coins.png"},
-							{"type": "Texture", "name": "NY1", "path": "/client/images/newyork1.png"},
-							{"type": "Texture", "name": "NY2", "path": "/client/images/newyork2.png"},
-							{"type": "Texture", "name": "NY3", "path": "/client/images/newyork3.png"},
-							{"type": "Texture", "name": "LA1", "path": "/client/images/losAngeles1.png"},
-							{"type": "Texture", "name": "LA2", "path": "/client/images/losAngeles2.png"},
-							{"type": "Texture", "name": "LA3", "path": "/client/images/losAngeles3.png"},
+							{"type": "Texture", "name": "Health", "path": "/client/images/healthPack.png"},
 							{"type": "Texture", "name": "NewYork", "path": "/client/images/NewYork001.png"},
 							{"type": "Texture", "name": "LosAngeles", "path": "/client/images/LosAngeles.png"},
+							{"type": "Texture", "name": "Florida", "path": "/client/images/Florida.png"},
 							{"type": "Texture", "name": "Bullet", "path": "/client/images/bullets.png"},
+							{"type": "Texture", "name": "Laser", "path": "/client/images/laser.png"},
 							{"type": "Font", "name": "Helvetica", "path": "client/fonts/helvetica.ttf"},
 							{"type": "Sound", "name": "StoryMode", "path": "client/sound/background.mp3"}
 						];
-
-						
-
-//Database manager used to insert assets in our db;
-DatabaseManager = function () {
-	console.log('Connection successful');
-	for (var i = 0; i < assetCollection.length; i++) {
-		var asset = new Asset(assetCollection[i]);
-		asset.save(function(err, a){
-			if (err) throw err;
-		})
-	};
-};
-
-const mongoose = require('mongoose');
-const url = "mongodb+srv://admin:admin@aporun-l1ht9.mongodb.net/apoRun?retryWrites=true";
-var passwordHash = require('password-hash');
-
 
 /* This manages the creation of database schema
    Creates models that are used in our game;
@@ -86,10 +67,29 @@ const levelSchema = new Schema({
 	user: String
 });
 
+// Leaderboard Schema;
+const LeaderboardSchema = new Schema({
+	user: String,
+	topScore: Number,
+})
+
+// Setting up models;
 let User = mongoose.model('user', userShema);
 let Asset = mongoose.model('asset', assetSchema);
 let Level = mongoose.model('level', levelSchema);
+let Leaderboard = mongoose.model('leaderboard', LeaderboardSchema);
 
+// TODO: This inserts data multiple times; need fix
+//Database manager used to insert assets in our db;
+DatabaseManager = function (cb) {
+	for (var i = 0; i < assetCollection.length; i++) {
+		var asset = new Asset(assetCollection[i]);
+		asset.save(function(err, a){
+			if (err) throw err;
+		})
+	};
+	cb();
+};
 
 
 // Database functions which handle the writing, reading, deleting and modifying of
@@ -231,6 +231,37 @@ Database.readLevelsForStoryMode = function(cb){
 		else
 			cb();
 	});
+}
+
+//--------------- Leaderboard functions ----------------------
+Database.recordUserScore = function(data) {
+	Leaderboard.findOne({user: data.user}, function(err, res) {
+		if (res) {
+			Leaderboard.findOneAndUpdate(
+				{user: data.user},
+				{$set: {topScore: data.score}},
+				{new: true},
+				function(err, res) {
+					if (err) throw err;
+				}
+			)
+		}
+		else {
+			var leader = new Leaderboard({user: data.user, topScore: data.score});
+			leader.save(function(err){
+				if(err) throw err;
+			});
+		}
+	})
+}
+
+Database.getLeaderboards = function(cb) {
+	Leaderboard.find(function(err, res){
+		if (res)
+			cb(res);
+		else
+			cb();s
+	})
 }
 
 

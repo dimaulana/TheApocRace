@@ -46,22 +46,39 @@ function Game() {
 	}
 	self.coins.image.src = "/client/images/singlecoin.png";
 
-window.onload=function(){
-	document.getElementById("main_audio").play();
-}
+	window.onload=function(){
+		document.getElementById("main_audio").play();
+	}
+
+	self.changeWeapon = function(entity) {
+		if (entity.properties.weaponName == 'normal') {
+			if (entity.properties.laserFile) {
+				entity.properties.weaponName = 'laser';
+				entity.properties.weaponInterval = entity.properties.weaponMap.laser;
+			}
+		}
+		else if (entity.properties.weaponName == 'laser') {
+			entity.properties.weaponName = 'normal';
+			entity.properties.weaponInterval = entity.properties.weaponMap.normal;
+		}
+	}
 
 	self.spawnBullet = function(entity) {
 		// Check weaponClock;
 		if (entity.properties.weaponClock < entity.properties.weaponInterval) return;
 		entity.properties.weaponClock = 0; // Restart weaponClock;
 
+		var param = {};
 		var bulletsToSpawn = 0;
 		if (entity.properties.weaponName == "normal") {
 			bulletsToSpawn = 1;
+			param.tag = "Bullet";
+		}
+		else if (entity.properties.weaponName == 'laser') {
+			bulletsToSpawn = 1;
+			param.tag = "Laser";
 		}
 
-		var param = {};
-		param.tag = "Bullet";
 		param.origin = entity.tag; // Save the shooter;
 		param.pos = {
 			x: entity.properties.pos.x + 18,
@@ -70,20 +87,35 @@ window.onload=function(){
 		param.prevPos = param.pos;
 
 		param.clock = 0;
-		param.width = 20;
+
+		if (param.tag == "Bullet") {
+			param.width = 20;
+			param.lifespan = 25;
+			param.fileLocation = entity.properties.bulletFile; // Image source;
+			param.frame_sets = [[0], [1], [2, 3], [4,5]]; // Bullet frame set;
+			param.speed = {
+				x: 30,
+				y: 0
+			};
+		}
+		else if (param.tag == "Laser") {
+			param.width = 100;
+			param.lifespan = 10;
+			param.fileLocation = entity.properties.laserFile; // Image source;
+			param.frame_sets = [[0], [1], [1], [1]];
+			param.speed = {
+				x: 50,
+				y: 0
+			};
+		}
+
 		param.height = 20;
-		param.lifespan = 25;
-		param.speed = {
-			x: 30,
-			y: 0
-		};
-		param.frame_sets = [[0], [1], [2, 3], [4,5]]; // Bullet frame set;
+
 		param.scale = {
 			x: (entity.properties.scale.x == -1.0) ? -1.0 : 1.0,
 			y: 1.0
 		};
 		param.alive = true;
-		param.fileLocation = entity.properties.weaponFile; // Image source;
 
 		for (var i = 0; i < bulletsToSpawn; i++) {
 			self.entityManager.addEntity(param);
@@ -202,7 +234,7 @@ window.onload=function(){
 			if (entity.tag !== "Background")
 				if (!self.viewport.inView(entity, 40)) return;
 
-			if (entity.tag == "Bullet") {
+			if (entity.tag == "Bullet" || entity.tag == "Laser") {
 				entity.properties.clock++;
 				if (entity.properties.clock > entity.properties.lifespan) {
 					entity.properties.alive = false;
@@ -393,6 +425,7 @@ window.onload=function(){
 					}
 				}
 
+				// Collision of bullets with tiles;
 				var bullets = self.entityManager.getEntitiesByTag("Bullet");
 				for (var i = 0; i < bullets.length; i++) {
 					currentOverlap = self.getOverlap(bullets[i], entity);
@@ -403,16 +436,24 @@ window.onload=function(){
 
 			}
 
-			// Collision of bullets with self.player and enemies;
-			else if (entity.tag == "Bullet") {
+			// Collision of bullets/laser with self.player and enemies;
+			else if (entity.tag == "Bullet" || entity.tag == "Laser") {
 				if (entity.properties.origin == "Enemy") {
 					var currentOverlap = self.getOverlap(self.player, entity);
 					if (currentOverlap.x > 0 && currentOverlap.y > 0) {
 						// Bullet hit the player;
-						self.player.properties.hp--;
+						var hp = 0;
+						if (entity.tag == "Bullet") {
+							hp = 1;
+						}
+						else if (entity.tag == "Laser") {
+							hp = 2;
+						}
+						self.player.properties.hp -= hp;
 						entity.changeAnimation({"index" : (entity.properties.scale.x == -1) ? 3 : 2});
 						entity.animation.update();
-						entity.properties.alive = false;
+						if (entity.tag == "Bullet") // Only destroy bullets
+							entity.properties.alive = false;
 					}
 				}
 				else if (entity.properties.origin == "Player") {
@@ -420,10 +461,18 @@ window.onload=function(){
 						var currentOverlap = self.getOverlap(enemy, entity);
 						if (currentOverlap.x > 0 && currentOverlap.y > 0) {
 							// Bullet hit the enemy;
+							var hp = 0;
+							if (entity.tag == "Bullet") {
+								hp = 1;
+							}
+							else if (entity.tag == "Laser") {
+								hp = 2;
+							}
 							enemy.properties.hp--;
 							entity.changeAnimation({"index" : (entity.properties.scale.x == -1) ? 3 : 2});
 							entity.animation.update();
-							entity.properties.alive = false;
+							if (entity.tag == "Bullet") // Only destroy bullets
+								entity.properties.alive = false;
 						}
 					});
 				}
@@ -524,6 +573,7 @@ window.onload=function(){
 
 				case "Enemy":
 				case "Bullet":
+				case "Laser":
 				case "Coin":
 					if (!self.viewport.inView(e, 40)) return;
 
@@ -564,6 +614,10 @@ window.onload=function(){
 			case 83: // s key
 				self.player.properties.shoot = true;
 				self.spawnBullet(self.player);
+			break;
+
+			case 67: // c key
+				self.changeWeapon(self.player);
 			break;
 
 			case 80: // p key
@@ -656,10 +710,10 @@ window.onload=function(){
 		var levelNumber = self.currentLevel.substring(5);
 		var newLevelName = "story";
 
-		if (levelNumber >= totalLevels) 
+		if (levelNumber >= totalLevels)
 		{
 			self.gameOver(true);
-		} else 
+		} else
 		{
 			self.ctx.fillText("Level " + levelNumber + "\n finished", 300, 350);
 			self.backgroundSound.stop();
@@ -713,7 +767,7 @@ window.onload=function(){
 	**/
 
 	self.quitGame = function(){
-		
+
 		self.paused = false;
 		$('.paused').hide();
 		self.gameStarted = false;
