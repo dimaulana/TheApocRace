@@ -1,23 +1,28 @@
 <!--Author:Michelle Mushaninga-->
-<!--Credits page -->
+<!--Profile page -->
 <script>
 
 $(".backButton").on("click", function(){
 	$(".interface").html("");
 	generateMenus('extraMenu');
 });
+/* //var userName,score;
+
+var getProfileData= new function(data){
+
+} */
 
 </script>
 
 </head>
 <body>
 
-<div class="profile">
+<div class="leader">
 
-<h2 align="center ">Learder Board</h2>
+<h2 align="center ">LeaderBoard</h2>
 
 <div class="table-responsive-lg">
-<table class="table table-striped table-dark table-hover table-bordered text-dark w-75">
+<table class="table table-striped table-dark table-hover table-bordered text-dark w-75" align="center">
 
   <thead>
     <tr class = "text-white">
@@ -25,27 +30,27 @@ $(".backButton").on("click", function(){
       <th scope="col">Picture</th>
       <th scope="col">Username</th>
       <th scope="col">Score</th>
-      <th scope="col">Achievements</th>
+      <th scope="col">Weapons</th>
     </tr>
   </thead>
   <tbody>
     <tr class="table-danger">
       <th scope="row" class="bg-warning" >1</th>
-      <td align = "center"> <img src="pro1.png" alt="" class = "img-circle" height="20" width="20" > </td>
-      <td>destroyer</td>
+      <td align = "center"> <img src="client/images/pro1.png" alt="" class = "img-circle" height="20" width="20" > </td>
+      <td>Polo</td>
       <td>400</td>
       <td>2 trophies</td>
     </tr>
     <tr class="table-warning">
       <th scope="row" class="bg-warning">2</th>
-      <td align = "center"> <img src="pro2.png" alt="" class = "img-circle" height="20" width="20" > </td>
+      <td align = "center"> <img src="client/images/pro2.png" alt="" class = "img-circle" height="20" width="20" > </td>
       <td>Otto</td>
       <td>400</td>
       <td>2 trophies</td>
     </tr>
     <tr class="table-danger">
       <th scope="row" class="bg-warning">3</th>
-      <td align = "center"> <img src="pro1.png" alt="" class = "img-circle" height="20" width="20" > </td>
+      <td align = "center"> <img src="client/images/pro1.png" alt="" class = "img-circle" height="20" width="20" > </td>
       <td>Stay_Winning</td>
       <td>400</td>
       <td>4 trophies</td>
@@ -54,7 +59,7 @@ $(".backButton").on("click", function(){
 </table>
 </div>
 
-	<a class='backButton btn btn-primary btn-lg ml-2 type='submit'>Back</a>
+	<center><a class='backButton btn btn-primary btn-lg ml-2 type='submit'>Back</a></center>>
 </div>
 
 </body>

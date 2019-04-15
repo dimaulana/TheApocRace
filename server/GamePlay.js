@@ -32,6 +32,9 @@ function GamePlay(param) {
 		}
 
 		Database.readFromDatabase({levelName: self.name, user: username}, function(levelData) {
+			if (!levelData) {
+				self.socket.emit('levelPack', {});
+			}
 			self.loadLevelData(levelData.tileMap); // load level data;
 
 			self.entityManager.getEntities().forEach(function(entity) {
@@ -51,7 +54,8 @@ function GamePlay(param) {
 		self.player.addComponent(components.GRAVITY);
 		self.player.addComponent(components.INPUT);
 		self.player.addComponent(components.STATS, {hp: 100, score: 0}); // TODO: Get score from db, incase of continuing game;
-		self.player.addComponent(components.WEAPON, {loc: self.assetManager.getTexture("Bullet")});
+		self.player.addComponent(components.WEAPON, {loc: self.assetManager.getTexture("Bullet"),
+													laserLoc: self.assetManager.getTexture("Laser")});
 		self.player.addComponent(components.DIMENSION, {w: 40, h: 80});
 		self.player.addComponent(components.SPRITE, {loc: self.assetManager.getTexture("Player"),
 													jumpLoc: self.assetManager.getTexture("PlayerJump"),
@@ -78,6 +82,9 @@ function GamePlay(param) {
 		else if (data.ai === "Patrol") {
 			enemy.addComponent(components.PATROL, {pos: data.patrolPos, speed: data.patrolSpeed});
 			enemy.addComponent(components.STATS, {hp: 4, score: 50});
+		}
+		else if (data.ai === "Boss") {
+			enemy.addComponent(components.STATS, {hp: 10, score: 200});
 		}
 	}
 

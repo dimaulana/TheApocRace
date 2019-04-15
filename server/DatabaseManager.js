@@ -8,8 +8,17 @@
 
 // var mongojs = require("mongojs");
 
+var findProcess = require('find-process');
+var fs = require('fs');
 const mongoose = require('mongoose');
-const url = "mongodb+srv://admin:admin@aporun-l1ht9.mongodb.net/apoRun?retryWrites=true";
+// var environment = require('./server/bin/environment.json');
+
+var environment = fs.readFileSync('server/bin/environment.json');
+var jsonObject = JSON.parse(environment);
+// console.log(jsonObject.name);
+
+
+var url = jsonObject.name === "dev" ?  "mongodb://localhost/apoRun" : "mongodb+srv://admin:admin@aporun-l1ht9.mongodb.net/apoRun?retryWrites=true";
 // var url = 'localhost:27017/apoRun';
 var passwordHash = require('password-hash');
 
@@ -23,20 +32,19 @@ const assetCollection = [
 							{"type": "Texture", "name": "EnemyJump", "path": "client/images/enemyjump.png"},
 							{"type" : "Texture", "name": "Minion", "path": "client/images/minionenemyrun.png"},
 							{"type" : "Texture", "name": "MinionJump", "path": "client/images/minionenemyjump.png"},
+							{"type" : "Texture", "name": "Boss1", "path": "client/images/boss1.png"},
+							{"type" : "Texture", "name": "Boss2", "path": "client/images/boss2.png"},
 							{"type": "Texture", "name": "Tile1", "path": "/client/images/tile1.png"},
 							{"type": "Texture", "name": "Tile2", "path": "/client/images/tile2.png"},
 							{"type": "Texture", "name": "Tile3", "path": "/client/images/tile3.png"},
 							{"type": "Texture", "name": "Tile4", "path": "/client/images/tile4.png"},
 							{"type": "Texture", "name": "Coin", "path": "/client/images/coins.png"},
-							{"type": "Texture", "name": "NY1", "path": "/client/images/newyork1.png"},
-							{"type": "Texture", "name": "NY2", "path": "/client/images/newyork2.png"},
-							{"type": "Texture", "name": "NY3", "path": "/client/images/newyork3.png"},
-							{"type": "Texture", "name": "LA1", "path": "/client/images/losAngeles1.png"},
-							{"type": "Texture", "name": "LA2", "path": "/client/images/losAngeles2.png"},
-							{"type": "Texture", "name": "LA3", "path": "/client/images/losAngeles3.png"},
+							{"type": "Texture", "name": "Health", "path": "/client/images/healthPack.png"},
 							{"type": "Texture", "name": "NewYork", "path": "/client/images/NewYork001.png"},
 							{"type": "Texture", "name": "LosAngeles", "path": "/client/images/LosAngeles.png"},
+							{"type": "Texture", "name": "Florida", "path": "/client/images/Florida.png"},
 							{"type": "Texture", "name": "Bullet", "path": "/client/images/bullets.png"},
+							{"type": "Texture", "name": "Laser", "path": "/client/images/laser.png"},
 							{"type": "Font", "name": "Helvetica", "path": "client/fonts/helvetica.ttf"},
 							{"type": "Sound", "name": "StoryMode", "path": "client/sound/background.mp3"}
 						];
@@ -44,9 +52,13 @@ const assetCollection = [
 /* This manages the creation of database schema
    Creates models that are used in our game;
 */
+
 mongoose.connect(url, {useNewUrlParser: true});
+
 const db = mongoose.connection;
+
 let Schema = mongoose.Schema;
+
 
 // User schema;
 const userShema = new Schema({
@@ -171,7 +183,6 @@ Database.getAllAssets = function(cb) {
 Database.writeToDatabase = function(data){
 	// Check for user specific level names;
 	Level.findOne({levelName: data.levelName, user: data.user}, function(err, res) {
-		console.log(res);
 		if (res) {
 			// Level exists, then update tileMap;
 			Level.findOneAndUpdate(
@@ -194,8 +205,9 @@ Database.writeToDatabase = function(data){
 Database.readFromDatabase = function(data, cb){
 	// Get user specific levels;
 	Level.findOne({levelName : data.levelName, user: data.user}, function(err, res){
-		if(res)
+		if(res){
 			cb(res);
+		}
 		else
 			cb();
 	});
@@ -210,7 +222,6 @@ Database.getUserLevelNames = function(username, cb){
 			{
 				levelNames.push(res[i].levelName);
 			}
-			// console.log(res);
 			cb(levelNames);
 		}
 		else

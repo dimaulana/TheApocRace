@@ -5,7 +5,7 @@ document.getElementsByTagName('head')[0].appendChild(script);
 var mainMenu = ["Play", "Build", "Options", "Extras", "Sign Out"];
 var buildMenu = ["New Level", "Load Level", "Back"];
 var playMenu = ["Story Mode", "Custom", "Back"];
-var extraMenu = ["Credits", "Profile", "Back"];
+var extraMenu = ["Credits", "LeaderBoard", "Back"];
 var optionsMenu = ["Controls", "Sound", "Back"];
 
 var currentPage;
@@ -45,7 +45,7 @@ $(document).ready(function () {
                 case "Credits":
                    $('.interface').load("client/credits.html");
                     break;
-                case "Profile":
+                case "LeaderBoard":
                     $('.interface').load("client/profile.html");
                     break;
                 case "Back":
@@ -53,17 +53,17 @@ $(document).ready(function () {
                     break;
             }
         } else if (currentPage === "buildMenu") {
-            switch (menuClicked) {
-                case "New Level":
+                switch (menuClicked) {
+                    case "New Level":
                     $('.interface').load("client/levelEditor.html", startEditor);
-                    break;
-                case "Load Level":
-                    loadEditor();
-                    break;
-                case "Back":
-                    generateMenus("mainMenu");
-                    break;
-            }
+                        break;
+                    case "Load Level":
+                    $('.interface').load("client/levelEditor.html", loadEditor);
+                        break;
+                    case "Back":
+                        generateMenus("mainMenu");
+                        break;
+                }      
         } else if (currentPage === "optionsMenu") {
             switch (menuClicked) {
                 case "Controls":
