@@ -184,7 +184,7 @@ Database.getAllAssets = function(cb) {
 }
 
 //--------- Level functions ---------------------------;
-Database.writeToDatabase = function(data){
+Database.writeToDatabase = function(data, cb){
 	// Check for user specific level names;
 	Level.findOne({levelName: data.levelName, user: data.user}, function(err, res) {
 		if (res) {
@@ -194,13 +194,20 @@ Database.writeToDatabase = function(data){
 				{$set: {tileMap: data.tileMap }},
 				{new: true},
 				function(err, res) {
-				// TODO: Check if the level was updated properly;
+					if (res) {
+						cb(true);
+					}
+					else
+						cb(false);
 				});
 		}
 		else { // Insert new level data;
 			var level = new Level({tileMap: data.tileMap, levelName: data.levelName, user: data.user});
 			level.save(function(err) {
-				if(err) throw err;
+				if(err) 
+					cb(false);
+				else
+					cb(true);
 			});
 		}
 	});

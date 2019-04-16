@@ -112,13 +112,22 @@ levelEditor = function () {
             if (!jQuery.isEmptyObject(data)) {
                 self.tileMap = data;
                 self.drawToCanvas(data);
+                console.log(data);
             } else {
                 self.defaultCanvas();
             }
         });
+
         socket.once('receiveLevelNamesFromDb', function (levels) {
             loadCustomLevels(levels, self);
         });
+
+        socket.once('saveLevelResponse', function(res) {
+            if (res)
+                alert("Level saved successfully");
+            else
+                alert("Level could not be saved"); 
+        })
 
         self.displayGrid();
         /* Adds screen number indicator */
@@ -390,12 +399,12 @@ levelEditor = function () {
     self.saveLevel = function () {
         $(".saveLevel").on("click", function () {
             var levelName = $("#levelName").val();
-            var user = socket.on('getUserName', function(data){
-                if (levelName.includes('story') && data !== 'admin') {
-                    alert('Invalid user, cannot save story mode levels!');
-                    return;
-                }
-            });
+            // var user = socket.on('getUserName', function(data){
+            //     if (levelName.includes('story') && data !== 'admin') {
+            //         alert('Invalid user, cannot save story mode levels!');
+            //         return;
+            //     }
+            // });
             self.tileMap.name = levelName;
           
             /* Save data here */

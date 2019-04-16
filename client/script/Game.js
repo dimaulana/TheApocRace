@@ -909,7 +909,7 @@ function Game() {
 			level = 'level1';
 		}
 
-		socket.emit('storyMode', {mode: mode, level: level});
+		socket.emit('playGame', {mode: mode, level: level});
 	}
 
 	self.update = function() {
@@ -967,7 +967,6 @@ socket.on('levelPack', function(data) {
 	game.setupLevel(data);
 });
 
-// TODO: Do we still need this;
 socket.on("storyModeFromDb", function (data) {
 	if (!game) return;
 	game.filesInDirectory = data;

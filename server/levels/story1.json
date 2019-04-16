@@ -1,0 +1,307 @@
+[
+  {
+    "name": "Player",
+    "type": "Character",
+    "x": 40,
+    "y": 560,
+    "tilePos": 449,
+    "tilePos1": 481
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 0,
+    "y": 680,
+    "tilePos": 544,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 40,
+    "y": 680,
+    "tilePos": 545,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 80,
+    "y": 680,
+    "tilePos": 546,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 160,
+    "y": 680,
+    "tilePos": 548,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 200,
+    "y": 680,
+    "tilePos": 549,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 240,
+    "y": 680,
+    "tilePos": 550,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 280,
+    "y": 680,
+    "tilePos": 551,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 320,
+    "y": 680,
+    "tilePos": 552,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 360,
+    "y": 680,
+    "tilePos": 553,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 400,
+    "y": 680,
+    "tilePos": 554,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 440,
+    "y": 680,
+    "tilePos": 555,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 480,
+    "y": 680,
+    "tilePos": 556,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 520,
+    "y": 680,
+    "tilePos": 557,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 120,
+    "y": 680,
+    "tilePos": 547,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 560,
+    "y": 680,
+    "tilePos": 558,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 640,
+    "y": 680,
+    "tilePos": 560,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 680,
+    "y": 680,
+    "tilePos": 561,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 720,
+    "y": 680,
+    "tilePos": 562,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 760,
+    "y": 680,
+    "tilePos": 563,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 800,
+    "y": 680,
+    "tilePos": 564,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 840,
+    "y": 680,
+    "tilePos": 565,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 880,
+    "y": 680,
+    "tilePos": 566,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 920,
+    "y": 680,
+    "tilePos": 567,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 960,
+    "y": 680,
+    "tilePos": 568,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 1000,
+    "y": 680,
+    "tilePos": 569,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 1040,
+    "y": 680,
+    "tilePos": 570,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 600,
+    "y": 680,
+    "tilePos": 559,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 1080,
+    "y": 680,
+    "tilePos": 571,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 1160,
+    "y": 680,
+    "tilePos": 573,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 1240,
+    "y": 680,
+    "tilePos": 575,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 1200,
+    "y": 680,
+    "tilePos": 574,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Tile3",
+    "type": "Tile",
+    "x": 1120,
+    "y": 680,
+    "tilePos": 572,
+    "img": "client/images/tile3.png"
+  },
+  {
+    "name": "Coin",
+    "type": "Tile",
+    "x": 560,
+    "y": 360,
+    "tilePos": 302,
+    "img": "client/images/singlecoin.png"
+  },
+  {
+    "name": "Coin",
+    "type": "Tile",
+    "x": 640,
+    "y": 360,
+    "tilePos": 304,
+    "img": "client/images/singlecoin.png"
+  },
+  {
+    "name": "Coin",
+    "type": "Tile",
+    "x": 680,
+    "y": 320,
+    "tilePos": 273,
+    "img": "client/images/singlecoin.png"
+  },
+  {
+    "name": "End",
+    "type": "Point",
+    "x": 1240,
+    "y": 680
+  },
+  {
+    "type": "Sound",
+    "name": "StoryMode",
+    "src": "client/sound/background.mp3",
+    "x": 0
+  },
+  {
+    "type": "Background",
+    "name": "NewYork",
+    "src": "client/images/newyork1.png"
+  }
+]
