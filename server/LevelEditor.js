@@ -12,7 +12,7 @@ function LevelEditor(param) {
     self.writeToFile = function(data) {
         if (self.user !== 'admin') {
             console.log("RESTRICTED ACTION: NO ACCESS TO READ OR EDIT STORY MODE");
-            socket.emit('saveLevelResponse', false);
+            self.socket.emit('saveLevelResponse', false);
             return;
         }
 
@@ -53,7 +53,7 @@ function LevelEditor(param) {
     }
 
     self.writeToDatabase = function(data){
-        self.socket.emit('getUserName', self.user);
+        // self.socket.emit('getUserName', self.user);
         Database.writeToDatabase(data, function(res) {
             if (res)
                 self.socket.emit('saveLevelResponse', true);

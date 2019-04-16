@@ -194,7 +194,7 @@ io.sockets.on('connection',function(socket) {
 
 	socket.on('saveNewLevel', function(pack) {
 		var editor = newLevelEditor({levelName: pack.levelName, socket: socket});
-		
+		pack.user = currentUser.name;
 		if (processEnv == 'dev' && pack.levelName.includes('story')) {
 			editor.writeToFile(pack);
 		}
@@ -204,7 +204,7 @@ io.sockets.on('connection',function(socket) {
 	});
 
 	socket.on('getLevelNames', function() {
-		if (currentUser.name == 'admin') {
+		if (currentUser.name === 'admin') {
 			fs.readdir('./server/levels/', function (err, files) {
 				if (err) {
 					return console.log('Unable to scan directory: ' + err);
@@ -214,8 +214,8 @@ io.sockets.on('connection',function(socket) {
 					levelList.push(files[i].split('.')[0]);
 				}
 				socket.emit("receiveLevelNamesFromDb", levelList);
-				return;
 			});
+			return;
 		}
 
 		Database.getUserLevelNames(currentUser.name, function(levelList) {
