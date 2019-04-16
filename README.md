@@ -2,6 +2,8 @@
 
 This repository contains the implementation of a customized single-player platformer game called **`The Apocolyptic Race`** from scratch using Node JS, Express, HTML5 and Socket.io. Everything from asset creation, level editor and the game engine is customized and easily extendable to a multiplayer platform game.
 
+The game is also available on heroku. **https://theapocalypticrace.herokuapp.com**
+
 **Technology Stack Installation:**
 * For a local run, MongoDB must be installed on your machine. Please refer to this link for installation guide based on your operating system (https://www.mongodb.com/). 
 * Cloud database is also available. We are using MongoDB Atlas for storing everything that the game needs to have. All you need to do is sign up as a user from the game.
