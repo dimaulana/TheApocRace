@@ -16,6 +16,10 @@ var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
 
+var env = fs.readFileSync('server/bin/environment.json');
+var processEnv = JSON.parse(env).name;
+
+
 app.get('/', function(req,res) {
 	res.sendFile(__dirname + '/client/index.html');
 });
@@ -132,31 +136,30 @@ io.sockets.on('connection',function(socket) {
 		});
 	});
 
-	socket.on('storyMode', function(data) {
-		// Create player and other entities
-
-		// TODO: Get level for story mode;
-		//var myLevel = getLevelStoppedPreviously();
-		//var myLevel = data.level
-
+	socket.on('playGame', function(data) {
 		startGame({
 			level: data.level,
 			mode: data.mode,
 			socket: socket,
 		});
-		//Deprecated for now: Will be brought back in the PR that brings offline mode for stories
-		// fs.readdir('./server/levels/', function (err, files) {
-		// 	if (err) {
-		// 		return console.log('Unable to scan directory: ' + err);
-		// 	}
-		// 	var pack = {files: files}
-		// 	socket.emit("filesInDirectory", pack);
-		// });
 	
-		Database.readLevelsForStoryMode(function(data){
-			if(!data)
+		Database.readLevelsForStoryMode(function(data) {
+			if(data.length === 0)
 			{
-				socket.emit("storyModeFromDb", {});
+				// Check local;
+				fs.readdir('./server/levels/', function (err, files) {
+					if (!files) {
+						socket.emit("storyModeFromDb", {});
+						return;
+					}
+
+					var levelList = [];
+					for (var i = 0; i < files.length; i++ ) {
+						levelList.push(files[i].split('.')[0]);
+					}
+					
+					socket.emit("storyModeFromDb", levelList);
+				});
 			}
 			else
 			{
@@ -164,14 +167,6 @@ io.sockets.on('connection',function(socket) {
 			}
 		});
 	});
-
-	socket.on('playLevel', function(data) {
-		startGame({
-			level: data.level,
-			socket: socket,
-		});
-	});
-
 
 	socket.on('disconnect',function() {
 		delete SOCKET_LIST[socket.id];
@@ -188,16 +183,41 @@ io.sockets.on('connection',function(socket) {
 
 	socket.on('loadLevel', function(levelName){
 		var editor = newLevelEditor({levelName: levelName, socket: socket});
-		editor.readLevel();
+
+		if (processEnv == 'dev' && levelName.includes('story')) {
+			editor.readSavedFile();
+		}
+		else {
+			editor.readLevel();
+		}
 	});
 
 	socket.on('saveNewLevel', function(pack) {
-		pack.user = currentUser.name;
 		var editor = newLevelEditor({levelName: pack.levelName, socket: socket});
-		editor.writeToDatabase(pack);
+		
+		if (processEnv == 'dev' && pack.levelName.includes('story')) {
+			editor.writeToFile(pack);
+		}
+		else {
+			editor.writeToDatabase(pack);
+		}
 	});
 
 	socket.on('getLevelNames', function() {
+		if (currentUser.name == 'admin') {
+			fs.readdir('./server/levels/', function (err, files) {
+				if (err) {
+					return console.log('Unable to scan directory: ' + err);
+				}
+				var levelList = [];
+				for (var i = 0; i < files.length; i++ ) {
+					levelList.push(files[i].split('.')[0]);
+				}
+				socket.emit("receiveLevelNamesFromDb", levelList);
+				return;
+			});
+		}
+
 		Database.getUserLevelNames(currentUser.name, function(levelList) {
 			if (!levelList) {
 				socket.emit('receiveLevelNamesFromDb', {});

@@ -33,8 +33,17 @@ function GamePlay(param) {
 
 		Database.readFromDatabase({levelName: self.name, user: username}, function(levelData) {
 			if (!levelData) {
-				self.socket.emit('levelPack', {});
+				var data = self.checkLevelLocal(); // In case of story;
+				if (!data) {
+					self.socket.emit('levelPack', {});
+					return;
+				}
+				else {
+					levelData = {};
+					levelData.tileMap = JSON.parse(data);
+				}
 			}
+
 			self.loadLevelData(levelData.tileMap); // load level data;
 
 			self.entityManager.getEntities().forEach(function(entity) {
@@ -46,6 +55,17 @@ function GamePlay(param) {
 		});
 
 		//self.loadLevelData(self.getLevelData(levelPack.name));
+	}
+
+	self.checkLevelLocal = function() {
+		var data = {};
+        if(self.name !== "") {
+            var fileName =  './server/levels/' + self.name + ".json";
+            data = fs.readFileSync(fileName, 'utf8');
+        }
+
+        return data;
+        
 	}
 
 	self.spawnPlayer = function(data) {
